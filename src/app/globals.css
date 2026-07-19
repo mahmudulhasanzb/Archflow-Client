@@ -1,26 +1,63 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #FAFBFC;
+  --surface: #FFFFFF;
+  --surface-2: #F1F3F6;
+  --border: #E1E4EA;
+  --text: #181B20;
+  --text-2: #6B7280;
+  
+  --indigo: #4F46E5;
+  --indigo-soft: #EEF0FF;
+  
+  --teal: #0D9488;
+  --teal-soft: #E6F5F3;
+  
+  --coral: #EA5C34;
+  --coral-soft: #FFF0EA;
+  
+  --success: #16A34A;
+  --success-soft: #E7F7EC;
+  
+  --warn: #D97706;
+  --warn-soft: #FEF3E2;
+
+  --background: var(--bg);
+  --foreground: var(--text);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border-custom: var(--border);
+  --color-text-custom: var(--text);
+  --color-text-muted: var(--text-2);
+  
+  --color-indigo-custom: var(--indigo);
+  --color-indigo-soft: var(--indigo-soft);
+  --color-teal-custom: var(--teal);
+  --color-teal-soft: var(--teal-soft);
+  --color-coral-custom: var(--coral);
+  --color-coral-soft: var(--coral-soft);
+  
+  --color-success-custom: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warn-custom: var(--warn);
+  --color-warn-soft: var(--warn-soft);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter), sans-serif;
+  --font-display: var(--font-space-grotesk), sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-inter), sans-serif;
 }
+
+h1, h2, h3, h4, h5, h6, .disp {
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+
