@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { baseURL } from '@/lib/api/baseUrl';
-import { ArrowLeft, Cpu, Layers, Layout, ShieldAlert, Calendar, Star, BookOpen, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Cpu, Layers, Layout, ShieldAlert, Calendar, Star, BookOpen, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 interface AgentStep {
   content: string;
