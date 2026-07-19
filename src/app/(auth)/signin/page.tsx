@@ -3,155 +3,164 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signIn } from '@/lib/auth-client';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { authClient } from '@/lib/auth-client';
+import { Eye, EyeOff } from 'lucide-react';
+import toast from 'react-hot-toast';
 
-const SignInPage = () => {
+type Inputs = {
+  email: string;
+  password: string;
+};
+
+export default function SignInPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password) {
-      setError('Please fill in all fields.');
-      return;
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<Inputs>({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
-    setError('');
-    setLoading(true);
+  const onSubmit: SubmitHandler<Inputs> = async data => {
+    const { email, password } = data;
+
+    const toastId = toast.loading('Signing in...');
 
     try {
-      const { error: signInError } = await signIn.email({
+      const { error } = await authClient.signIn.email({
         email,
         password,
         callbackURL: '/workspace',
       });
 
-      if (signInError) {
-        setError(signInError.message || 'Invalid email or password.');
+      if (error) {
+        toast.error(error.message || 'Invalid email or password.', {
+          id: toastId,
+        });
       } else {
+        toast.success('Signed in successfully!', {
+          id: toastId,
+        });
+
         router.push('/workspace');
       }
-    } catch (err: any) {
-      setError('An unexpected error occurred. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    } catch (error) {
+      console.error(error);
 
-  const handleDemoLogin = async () => {
-    setError('');
-    setLoading(true);
-    setEmail('demo@archflow.com');
-    setPassword('Password123!');
-
-    try {
-      // Small timeout to simulate auto-fill visualization
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      const { error: signInError } = await signIn.email({
-        email: 'demo@archflow.com',
-        password: 'Password123!',
-        callbackURL: '/workspace',
+      toast.error('An unexpected error occurred. Please try again.', {
+        id: toastId,
       });
-
-      if (signInError) {
-        // If demo user doesn't exist, we can try to auto-register them
-        setError('Demo account error. Try creating an account instead.');
-      } else {
-        router.push('/workspace');
-      }
-    } catch (err) {
-      setError('Demo login failed. Please try registering.');
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#FAFBFC] px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-xl border border-[#E1E4EA] shadow-sm">
+      <div className="w-full max-w-md space-y-8 rounded-xl border border-[#E1E4EA] bg-white p-8 shadow-sm">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-[#181B20] font-display">
+          <h2 className="mt-6 text-center font-display text-3xl font-bold tracking-tight text-[#181B20]">
             Welcome back to <span className="text-[#4F46E5]">Archflow</span>
           </h2>
+
           <p className="mt-2 text-center text-sm text-[#6B7280]">
             Or{' '}
             <Link
               href="/signup"
-              className="font-medium text-[#0D9488] hover:text-[#0b7a70] transition-colors"
+              className="font-display font-medium text-[#0D9488] transition-colors hover:text-[#0b7a70]"
             >
               create a new account
             </Link>
           </p>
         </div>
 
-        {error && (
-          <div className="rounded-lg bg-[#FFF0EA] p-3 text-sm text-[#EA5C34] border border-[#ffdbd0]">
-            {error}
-          </div>
-        )}
-
-        <form className="mt-8 space-y-6" onSubmit={handleSignIn}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4 rounded-md">
-            <div>
-              <label htmlFor="email-address" className="block text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-1">
+            {/* Email */}
+            <div className="space-y-1.5">
+              <label
+                htmlFor="email-address"
+                className="block text-xs font-semibold uppercase tracking-wider text-[#6B7280]"
+              >
                 Email Address
               </label>
+
               <input
                 id="email-address"
-                name="email"
                 type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="relative block w-full rounded-lg border border-[#E1E4EA] px-3 py-2 text-[#181B20] placeholder-[#6B7280] focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] sm:text-sm bg-[#F1F3F6]/50"
                 placeholder="you@example.com"
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email address',
+                  },
+                })}
+                className="w-full rounded-lg border border-[#E1E4EA] bg-[#F1F3F6]/50 px-3.5 py-2 text-sm text-[#181B20] placeholder-[#6B7280] transition-colors focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
               />
+
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
-            <div>
-              <label htmlFor="password" className="block text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-1">
+
+            {/* Password */}
+            <div className="space-y-1.5">
+              <label
+                htmlFor="password"
+                className="block text-xs font-semibold uppercase tracking-wider text-[#6B7280]"
+              >
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="relative block w-full rounded-lg border border-[#E1E4EA] px-3 py-2 text-[#181B20] placeholder-[#6B7280] focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] sm:text-sm bg-[#F1F3F6]/50"
-                placeholder="••••••••"
-              />
+
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  {...register('password', {
+                    required: 'Password is required',
+                  })}
+                  className="w-full rounded-lg border border-[#E1E4EA] bg-[#F1F3F6]/50 px-3.5 py-2 pr-10 text-sm text-[#181B20] placeholder-[#6B7280] transition-colors focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5]"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(prev => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280] transition-colors hover:text-[#181B20]"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative flex w-full justify-center rounded-lg bg-[#4F46E5] px-4 py-2 text-sm font-semibold text-white hover:bg-[#3f37c9] focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:ring-offset-2 transition-colors disabled:opacity-50"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleDemoLogin}
-              disabled={loading}
-              className="group relative flex w-full justify-center rounded-lg border border-[#E1E4EA] bg-[#F1F3F6] px-4 py-2 text-sm font-semibold text-[#181B20] hover:bg-[#e4e7eb] focus:outline-none transition-colors disabled:opacity-50"
-            >
-              One-click Demo Login
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="group relative flex w-full justify-center rounded-lg bg-[#4F46E5] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#3f37c9] focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isSubmitting ? 'Signing in...' : 'Sign in'}
+          </button>
         </form>
       </div>
     </div>
   );
-};
-
-export default SignInPage;
+}
