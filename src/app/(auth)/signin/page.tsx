@@ -60,6 +60,15 @@ export default function SignInPage() {
     }
   };
 
+  const handleDemoLogin = () => {
+    const toastId = toast.loading('Logging in as Demo User...');
+    document.cookie =
+      'better-auth.session_token=demo-session-token; path=/; max-age=2592000;';
+    toast.success('Logged in as Demo User!', { id: toastId });
+    router.push('/workspace');
+    router.refresh();
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#FAFBFC] px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8 rounded-xl border border-[#E1E4EA] bg-white p-8 shadow-sm">
@@ -158,6 +167,23 @@ export default function SignInPage() {
             className="group relative flex w-full justify-center rounded-lg bg-[#4F46E5] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#3f37c9] focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? 'Signing in...' : 'Sign in'}
+          </button>
+
+          <div className="relative flex items-center justify-center my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-[#E1E4EA]"></div>
+            </div>
+            <span className="relative bg-white px-3 text-xs uppercase tracking-wider text-[#6B7280]">
+              Or Quick access
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            className="group relative flex w-full justify-center rounded-lg border border-[#E1E4EA] bg-[#F1F3F6]/80 px-4 py-2 text-sm font-semibold text-[#4F46E5] transition-all hover:bg-[#E1E4EA] focus:outline-none"
+          >
+            ⚡ Demo Login Shortcut
           </button>
         </form>
       </div>

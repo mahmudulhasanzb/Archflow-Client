@@ -22,8 +22,8 @@ export default function DashboardSidebar() {
 
   const menuItems = [
     { name: 'Dashboard Home', href: '/workspace', icon: LayoutDashboard },
-    { name: 'New Blueprint', href: '/blueprints/add', icon: PlusCircle },
-    { name: 'My Blueprints', href: '/blueprints/manage', icon: FolderHeart },
+    { name: 'New Blueprint', href: '/add-blueprint', icon: PlusCircle },
+    { name: 'My Blueprints', href: '/manage-blueprints', icon: FolderHeart },
   ];
 
   return (

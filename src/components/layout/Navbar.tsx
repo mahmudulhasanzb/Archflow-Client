@@ -16,21 +16,21 @@ const Navbar = () => {
       fetchOptions: {
         onSuccess: () => {
           router.push('/');
-        }
-      }
+        },
+      },
     });
   };
 
   const navLinks = session
     ? [
-        { name: 'Explore', href: '/explore' },
+        { name: 'Explore', href: '/blueprints' },
         { name: 'Workspace', href: '/workspace' },
         { name: 'Add Blueprint', href: '/blueprints/add' },
         { name: 'Manage', href: '/blueprints/manage' },
         { name: 'Docs', href: '/docs' },
       ]
     : [
-        { name: 'Explore', href: '/explore' },
+        { name: 'Explore', href: '/blueprints' },
         { name: 'Docs', href: '/docs' },
         { name: 'About', href: '/about' },
       ];
@@ -41,7 +41,10 @@ const Navbar = () => {
         <div className="flex h-16 justify-between items-center">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2 text-xl font-bold text-[#181B20] font-display">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-xl font-bold text-[#181B20] font-display"
+            >
               <Activity className="h-6 w-6 text-[#4F46E5]" />
               <span>Archflow</span>
             </Link>
@@ -49,7 +52,7 @@ const Navbar = () => {
 
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
+            {navLinks.map(link => (
               <Link
                 key={link.name}
                 href={link.href}
@@ -98,7 +101,11 @@ const Navbar = () => {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="inline-flex items-center justify-center rounded-lg p-2 text-[#6B7280] hover:bg-[#F1F3F6] hover:text-[#181B20] focus:outline-none"
             >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -107,7 +114,7 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="border-b border-[#E1E4EA] bg-white px-4 py-3 md:hidden space-y-1">
-          {navLinks.map((link) => (
+          {navLinks.map(link => (
             <Link
               key={link.name}
               href={link.href}
@@ -121,7 +128,10 @@ const Navbar = () => {
             {session ? (
               <div className="flex flex-col gap-2">
                 <div className="px-3 text-xs text-[#6B7280]">
-                  Signed in as <span className="font-semibold text-[#181B20]">{session.user?.name}</span>
+                  Signed in as{' '}
+                  <span className="font-semibold text-[#181B20]">
+                    {session.user?.name}
+                  </span>
                 </div>
                 <button
                   onClick={() => {

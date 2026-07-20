@@ -14,7 +14,8 @@ const Footer = () => {
               <span>Archflow</span>
             </div>
             <p className="text-sm">
-              AI Software Architect: translating single paragraph software ideas into system designs, checklists, and code stubs.
+              AI Software Architect: translating single paragraph software ideas
+              into system designs, checklists, and code stubs.
             </p>
           </div>
 
@@ -25,17 +26,26 @@ const Footer = () => {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/explore" className="hover:text-[#181B20] transition-colors">
+                <Link
+                  href="/blueprints"
+                  className="hover:text-[#181B20] transition-colors"
+                >
                   Explore Blueprints
                 </Link>
               </li>
               <li>
-                <Link href="/workspace" className="hover:text-[#181B20] transition-colors">
+                <Link
+                  href="/workspace"
+                  className="hover:text-[#181B20] transition-colors"
+                >
                   Workspace
                 </Link>
               </li>
               <li>
-                <Link href="/docs" className="hover:text-[#181B20] transition-colors">
+                <Link
+                  href="/docs"
+                  className="hover:text-[#181B20] transition-colors"
+                >
                   Documentation
                 </Link>
               </li>
@@ -49,12 +59,19 @@ const Footer = () => {
             </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/about" className="hover:text-[#181B20] transition-colors">
+                <Link
+                  href="/about"
+                  className="hover:text-[#181B20] transition-colors"
+                >
                   About Archflow
                 </Link>
               </li>
               <li>
-                <Link href="https://github.com" target="_blank" className="hover:text-[#181B20] transition-colors">
+                <Link
+                  href="https://github.com"
+                  target="_blank"
+                  className="hover:text-[#181B20] transition-colors"
+                >
                   GitHub Repos
                 </Link>
               </li>
@@ -67,28 +84,37 @@ const Footer = () => {
               Contact & Socials
             </h3>
             <div className="flex space-x-4 mb-4">
-              <Link href="https://github.com" target="_blank" className="hover:text-[#181B20] transition-colors">
+              <Link
+                href="https://github.com"
+                target="_blank"
+                className="hover:text-[#181B20] transition-colors"
+              >
                 <Github className="h-5 w-5" />
               </Link>
-              <Link href="https://vercel.com" target="_blank" className="hover:text-[#181B20] transition-colors">
+              <Link
+                href="https://mahmudulhasan-dev.vercel.app"
+                target="_blank"
+                className="hover:text-[#181B20] transition-colors"
+              >
                 <Globe className="h-5 w-5" />
               </Link>
-              <Link href="mailto:support@archflow.com" className="hover:text-[#181B20] transition-colors">
+              <Link
+                href="mailto:support@archflow.com"
+                className="hover:text-[#181B20] transition-colors"
+              >
                 <Mail className="h-5 w-5" />
               </Link>
             </div>
-            <p className="text-xs">
-              Email: support@archflow.com
-            </p>
+            <p className="text-xs">Email: support@archflow.com</p>
           </div>
         </div>
 
         <div className="mt-8 border-t border-[#E1E4EA] pt-8 flex flex-col md:flex-row justify-between items-center text-xs">
-          <p>&copy; {new Date().getFullYear()} Archflow. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} Archflow. All rights reserved.
+          </p>
           <div className="flex gap-4 mt-4 md:mt-0 font-medium">
-            <span>Next.js 16</span>
-            <span>Express.js</span>
-            <span>MongoDB</span>
+            <span>Built by Mahmudul Hasan with ❤️</span>
           </div>
         </div>
       </div>

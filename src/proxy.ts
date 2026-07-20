@@ -20,8 +20,7 @@ export const config = {
   matcher: [
     '/workspace',
     '/workspace/:path*',
-    '/blueprints/add',
-    '/blueprints/manage',
-    '/items/:path*',
+    '/add-blueprint',
+    '/manage-blueprints',
   ],
 };
