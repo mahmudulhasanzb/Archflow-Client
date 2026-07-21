@@ -1,21 +1,72 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Send, Sparkles, X, Loader2, MessageSquareCode } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquareCode, X, Send, Bot, User, RefreshCw } from 'lucide-react';
-import { authClient } from '@/lib/auth-client';
-import toast from 'react-hot-toast';
+import { askSupportAgent } from '@/lib/api/supportAgent';
 
-export default function SupportChat() {
-  const { data: session } = authClient.useSession();
-  const [isOpen, setIsOpen] = useState(false);
+interface AiAssistatProps {
+  title?: string;
+  description?: string;
+}
+
+const SupportChat = ({
+  title = 'AI Assistant',
+  description = "Ask me anything and I'll do my best to assist you!",
+}: AiAssistatProps) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [input, setInput] = useState<string>('');
+  const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([]);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  // Call real AI response using OpenRouter
+  const getAIResponse = async (userMessage: string) => {
+    setIsTyping(true);
+    try {
+      const reply = await askSupportAgent(userMessage);
+      setMessages(prev => [...prev, { text: reply, isUser: false }]);
+    } catch (err) {
+      console.error(err);
+      setMessages(prev => [
+        ...prev,
+        { text: 'Failed to get response from AI. Please try again.', isUser: false },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+
+    if (input.trim() === '') return;
+
+    const userMessage = input;
+    setMessages(prev => [...prev, { text: userMessage, isUser: true }]);
+    setInput('');
+
+    getAIResponse(userMessage);
+  };
+
+  const clearChat = () => {
+    setMessages([]);
+  };
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (isOpen) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isOpen]);
 
   return (
     <>
       {/* Floating Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#4F46E5] text-white shadow-lg shadow-indigo-500/30 hover:bg-[#4338CA] hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 hover:bg-indigo-500 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
         title="AI Support Chat"
         id="support-chat-toggle"
       >
@@ -57,59 +108,138 @@ export default function SupportChat() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 50 }}
             transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-            className="fixed bottom-24 right-6 z-50 flex h-[550px] w-[380px] max-w-[calc(100vw-2rem)] flex-col rounded-2xl border border-[#E1E4EA] bg-white shadow-2xl overflow-hidden font-sans"
+            className="fixed bottom-24 right-6 z-50 flex h-[600px] w-[400px] max-w-[calc(100vw-2rem)] flex-col bg-gradient-to-br from-slate-900 to-indigo-950 rounded-xl overflow-hidden shadow-2xl border border-indigo-500/20 font-sans"
           >
             {/* Header */}
-            <div className="flex items-center justify-between bg-gradient-to-r from-[#4F46E5] to-[#4338CA] px-4 py-4 text-white">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md">
-                  <Bot className="h-6 w-6 text-teal-300" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-sm leading-tight tracking-wide font-display">
-                    Archflow AI Support
-                  </h3>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span className="text-[11px] text-indigo-100 font-medium">
-                      Real-Time AI Assistant
-                    </span>
-                  </div>
-                </div>
+            <div className="bg-indigo-600/30 backdrop-blur-sm p-4 border-b border-indigo-500/30 flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <Sparkles className="text-indigo-300 h-5 w-5 animate-pulse" />
+                <h2 className="text-white font-medium">{title}</h2>
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  className="rounded p-1 text-indigo-200 hover:bg-white/10 hover:text-white transition-colors"
-                  title="Clear Chat History"
+                  onClick={clearChat}
+                  className="text-indigo-200 hover:text-white transition-colors text-xs font-semibold px-2 py-1 rounded hover:bg-white/10"
                 >
-                  <RefreshCw className="h-4 w-4" />
+                  Clear
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="rounded p-1 text-indigo-200 hover:bg-white/10 hover:text-white transition-colors"
+                  className="text-indigo-200 hover:text-white transition-colors"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
-            {/* Input Form */}
-            <form className="border-t border-[#E1E4EA] p-3 flex items-center bg-white gap-2">
-              <input
-                type="text"
-                placeholder="Ask support..."
-                className="flex-1 min-w-0 bg-[#F1F3F6] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/40 focus:bg-white text-[#181B20] transition-all"
-              />
-              <button
-                type="submit"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#4F46E5] text-white hover:bg-[#4338CA] disabled:bg-gray-200 disabled:text-gray-400 transition-colors"
-              >
-                <Send className="h-4.5 w-4.5" />
-              </button>
+            {/* Messages container */}
+            <div className="p-4 flex-grow overflow-y-auto bg-slate-900/50">
+              {messages.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center">
+                  <Sparkles className="h-12 w-12 text-indigo-400 mb-4" />
+                  <h3 className="text-indigo-200 text-lg mb-2">
+                    How can I help you today?
+                  </h3>
+                  <p className="text-slate-400 text-xs max-w-xs">{description}</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {messages.map((msg, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[80%] p-3 rounded-2xl ${
+                          msg.isUser
+                            ? 'bg-indigo-600 text-white rounded-tr-none'
+                            : 'bg-slate-700/60 text-slate-100 rounded-tl-none border border-slate-600/50'
+                        } animate-fade-in`}
+                      >
+                        <p className="text-xs">{msg.text}</p>
+                      </div>
+                    </div>
+                  ))}
+                  {isTyping && (
+                    <div className="flex justify-start">
+                      <div className="max-w-[80%] p-3 rounded-2xl bg-slate-700/60 text-slate-100 rounded-tl-none border border-slate-600/50">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></div>
+                          <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse delay-75"></div>
+                          <div className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse delay-150"></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
+            </div>
+
+            {/* Input form */}
+            <form
+              onSubmit={handleSubmit}
+              className={`p-4 border-t ${isFocused ? 'border-indigo-500/70 bg-slate-800/80' : 'border-slate-700/50 bg-slate-800/30'} transition-colors duration-200`}
+            >
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  placeholder="Type your message..."
+                  className="w-full bg-slate-700/50 border border-slate-600/50 rounded-full py-2.5 pl-4 pr-12 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/70 text-xs"
+                />
+                <button
+                  type="submit"
+                  disabled={input.trim() === ''}
+                  className={`absolute right-1 rounded-full p-2 ${
+                    input.trim() === ''
+                      ? 'text-slate-500 bg-slate-700/50 cursor-not-allowed'
+                      : 'text-white bg-indigo-600 hover:bg-indigo-500'
+                  } transition-colors`}
+                >
+                  {isTyping ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </form>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <style>
+        {`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out forwards;
+        }
+        
+        .delay-75 {
+          animation-delay: 0.2s;
+        }
+        
+        .delay-150 {
+          animation-delay: 0.4s;
+        }
+        `}
+      </style>
     </>
   );
-}
+};
+
+export default SupportChat;
