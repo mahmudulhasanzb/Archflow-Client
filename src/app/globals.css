@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --bg: #FAFBFC;
   --surface: #FFFFFF;
@@ -64,6 +66,13 @@
 }
 
 .dark {
+  --bg: #090C15;
+  --surface: #0E1321;
+  --surface-2: #171E30;
+  --border: #222C43;
+  --text: #F3F4F6;
+  --text-2: #9CA3AF;
+
   --background: 222.2 84% 4.9%;
   --foreground: 210 40% 98%;
 
@@ -184,9 +193,135 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-inter), sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3, h4, h5, h6, .disp {
   font-family: var(--font-space-grotesk), sans-serif;
+}
+
+/* Premium Dark Mode overrides for hardcoded Tailwind hex colors */
+.dark body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Main background overrides */
+  & .bg-\[\#FAFBFC\],
+  & [class*="bg-[#FAFBFC]"] {
+    background-color: var(--bg) !important;
+  }
+  
+  /* Primary surface background overrides */
+  & .bg-white,
+  & [class*="bg-white"] {
+    background-color: var(--surface) !important;
+  }
+  
+  /* Secondary surface background overrides */
+  & .bg-\[\#F1F3F6\],
+  & [class*="bg-[#F1F3F6]"],
+  & .bg-slate-50,
+  & [class*="bg-slate-50"] {
+    background-color: var(--surface-2) !important;
+  }
+  
+  /* Opacity background variations */
+  & .bg-\[\#FAFBFC\]\/50,
+  & [class*="bg-[#FAFBFC]/50"] {
+    background-color: rgba(9, 12, 21, 0.5) !important;
+  }
+  
+  & .bg-\[\#FAFBFC\]\/80,
+  & [class*="bg-[#FAFBFC]/80"],
+  & .bg-white\/80,
+  & [class*="bg-white/80"] {
+    background-color: rgba(14, 19, 33, 0.8) !important;
+  }
+
+  & .bg-\[\#F1F3F6\]\/50,
+  & [class*="bg-[#F1F3F6]/50"] {
+    background-color: rgba(23, 30, 48, 0.5) !important;
+  }
+
+  & .bg-\[\#F1F3F6\]\/80,
+  & [class*="bg-[#F1F3F6]/80"] {
+    background-color: rgba(23, 30, 48, 0.8) !important;
+  }
+
+  /* Primary text color overrides */
+  & .text-\[\#181B20\],
+  & [class*="text-[#181B20]"],
+  & .text-slate-800,
+  & [class*="text-slate-800"] {
+    color: var(--text) !important;
+  }
+  
+  /* Secondary/Muted text color overrides */
+  & .text-\[\#6B7280\],
+  & [class*="text-[#6B7280]"],
+  & .text-slate-600,
+  & [class*="text-slate-600"] {
+    color: var(--text-2) !important;
+  }
+
+  /* Border color overrides */
+  & .border-\[\#E1E4EA\],
+  & [class*="border-[#E1E4EA]"],
+  & .border-slate-100,
+  & [class*="border-slate-100"],
+  & .border-slate-200,
+  & [class*="border-slate-200"] {
+    border-color: var(--border) !important;
+  }
+
+  /* Hover state overrides */
+  & .hover\:bg-\[\#FAFBFC\]:hover,
+  & [class*="hover:bg-[#FAFBFC]"]:hover {
+    background-color: var(--bg) !important;
+  }
+
+  & .hover\:bg-\[\#F1F3F6\]:hover,
+  & [class*="hover:bg-[#F1F3F6]"]:hover {
+    background-color: var(--surface-2) !important;
+  }
+
+  & .hover\:text-\[\#181B20\]:hover,
+  & [class*="hover:text-[#181B20]"]:hover {
+    color: var(--text) !important;
+  }
+
+  /* Dark mode visual updates for shadows, badges, cards, scrollbars */
+  & .shadow-sm,
+  & [class*="shadow-sm"] {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5) !important;
+  }
+
+  & .bg-slate-100,
+  & [class*="bg-slate-100"] {
+    background-color: var(--surface-2) !important;
+  }
+  
+  & .text-slate-700,
+  & [class*="text-slate-700"] {
+    color: var(--text) !important;
+  }
+
+  & .bg-slate-50\/50,
+  & [class*="bg-slate-50/50"] {
+    background-color: rgba(23, 30, 48, 0.25) !important;
+  }
+
+  & select option {
+    background-color: var(--surface);
+    color: var(--text);
+  }
+
+  & input, & textarea, & select {
+    color: var(--text) !important;
+  }
 }
 

@@ -32,6 +32,21 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (_) {}
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col font-sans bg-[#FAFBFC] text-[#181B20]">
         {children}
         <Toaster position="top-right" />

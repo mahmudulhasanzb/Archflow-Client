@@ -1,15 +1,34 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
-import { Menu, X, ArrowRight, Activity } from 'lucide-react';
+import { Menu, X, ArrowRight, Activity, Sun, Moon } from 'lucide-react';
 
 const Navbar = () => {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const activeTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    setTheme(activeTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    localStorage.setItem('theme', nextTheme);
+    if (nextTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   const handleSignOut = async () => {
     await authClient.signOut({
@@ -62,6 +81,21 @@ const Navbar = () => {
               </Link>
             ))}
 
+            {/* Desktop Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle dark mode"
+              className="rounded-lg p-2 text-[#6B7280] hover:bg-[#F1F3F6] hover:text-[#181B20] transition-colors focus:outline-none cursor-pointer"
+            >
+              {!mounted ? (
+                <div className="h-4.5 w-4.5" />
+              ) : theme === 'dark' ? (
+                <Sun className="h-4.5 w-4.5 text-amber-500" />
+              ) : (
+                <Moon className="h-4.5 w-4.5" />
+              )}
+            </button>
+
             {isPending ? (
               <div className="h-8 w-20 animate-pulse rounded-lg bg-[#F1F3F6]" />
             ) : session ? (
@@ -95,8 +129,21 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex md:hidden">
+          {/* Mobile Menu Button & Theme Toggle */}
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle dark mode"
+              className="rounded-lg p-2 text-[#6B7280] hover:bg-[#F1F3F6] hover:text-[#181B20] transition-colors focus:outline-none cursor-pointer"
+            >
+              {!mounted ? (
+                <div className="h-4.5 w-4.5" />
+              ) : theme === 'dark' ? (
+                <Sun className="h-4.5 w-4.5 text-amber-500" />
+              ) : (
+                <Moon className="h-4.5 w-4.5" />
+              )}
+            </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="inline-flex items-center justify-center rounded-lg p-2 text-[#6B7280] hover:bg-[#F1F3F6] hover:text-[#181B20] focus:outline-none"

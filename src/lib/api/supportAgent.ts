@@ -4,10 +4,9 @@ import OpenAI from 'openai';
 
 const apiKey = process.env.OPENROUTER_API_KEY;
 const modelName = process.env.AI_MODEL_NAME;
-const baseURL = process.env.API_BASE_URL;
 
 const openai = new OpenAI({
-  baseURL: baseURL,
+  baseURL: 'https://openrouter.ai/api/v1',
   apiKey: apiKey,
   // dangerouslyAllowBrowser: true, // Allowed for frontend browser calls
 });
