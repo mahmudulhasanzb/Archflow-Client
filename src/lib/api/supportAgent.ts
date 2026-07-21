@@ -21,7 +21,7 @@ export async function askSupportAgent(userMessage: string): Promise<string> {
           content: "You are Archflow AI Support, You are developer name is Mahmudul Hasan, a specialized technical AI assistant built for Archflow (a platform for generating, reviewing, and exporting multi-agent software architecture blueprints).Be concise, helpful and technically accurate. Support user queries about Node.js, Next.js, Express, microservices, databases, Stripe payment integration, and general cloud architectures.",
         },
         {
-          role: 'assistant',
+          role: 'user',
           content: userMessage,
         },
       ],
