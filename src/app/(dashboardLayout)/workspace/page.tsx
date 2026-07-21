@@ -130,7 +130,7 @@ export default function WorkspacePage() {
             </p>
           </div>
           <Link
-            href="/blueprints/add"
+            href="/add-blueprint"
             className="block text-center rounded-lg bg-[#4F46E5] py-2.5 text-sm font-semibold text-white hover:bg-[#3f37c9] transition-colors"
           >
             Start Generator Form

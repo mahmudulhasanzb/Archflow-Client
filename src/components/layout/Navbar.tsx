@@ -25,7 +25,7 @@ const Navbar = () => {
     ? [
         { name: 'Explore', href: '/blueprints' },
         { name: 'Workspace', href: '/workspace' },
-        { name: 'Add Blueprint', href: '/blueprints/add' },
+        { name: 'Add Blueprint', href: '/add-blueprint' },
         { name: 'Manage', href: '/blueprints/manage' },
         { name: 'Docs', href: '/docs' },
       ]
