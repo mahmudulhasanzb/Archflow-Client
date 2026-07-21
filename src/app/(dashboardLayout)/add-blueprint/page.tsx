@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { serverMutation } from '@/lib/api/mutation';
+import { authClient } from '@/lib/auth-client';
 import toast from 'react-hot-toast';
 import { 
   Cpu, 
@@ -14,6 +15,7 @@ import Link from 'next/link';
 
 export default function AddBlueprintPage() {
   const router = useRouter();
+  const { data: session } = authClient.useSession();
   const [loading, setLoading] = useState(false);
 
   // Form states
@@ -24,6 +26,12 @@ export default function AddBlueprintPage() {
   const [status, setStatus] = useState('ready');
   const [rating, setRating] = useState(5);
   const [author, setAuthor] = useState('hasan@gmail.com');
+
+  useEffect(() => {
+    if (session?.user?.email) {
+      setAuthor(session.user.email);
+    }
+  }, [session]);
 
   // Architecture Flow states
   const [archTitle, setArchTitle] = useState('');
@@ -70,6 +78,7 @@ export default function AddBlueprintPage() {
       status,
       rating: Number(rating) || 5,
       author,
+      email: author,
       createdAt: new Date().toISOString(),
     };
 
