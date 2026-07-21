@@ -28,11 +28,11 @@ export const GET = async (request: NextRequest, ctx: { params: Promise<any> }) =
     });
   }
 
-  return baseHandler.GET(request, syncCtx);
+  return (baseHandler.GET as any)(request, syncCtx);
 };
 
 export const POST = async (request: NextRequest, ctx: { params: Promise<any> }) => {
   const params = await ctx.params;
   const syncCtx = { ...ctx, params };
-  return baseHandler.POST(request, syncCtx);
+  return (baseHandler.POST as any)(request, syncCtx);
 };

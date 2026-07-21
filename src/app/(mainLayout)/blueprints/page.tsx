@@ -13,6 +13,7 @@ interface Blueprint {
   _id: string;
   title: string;
   description: string;
+  shortDescription?: string;
   stack?: string;
   teckStack?: string | string[];
   complexity?: string;
@@ -20,6 +21,7 @@ interface Blueprint {
   rating?: number;
   status: string;
   createdAt?: string;
+  Date?: string;
 }
 
 export default function ExplorePage() {

@@ -57,7 +57,7 @@ export default async function FeaturedBlueprints() {
     },
   ];
 
-  let displayBlueprints = staticBlueprintsList;
+  let displayBlueprints: any[] = staticBlueprintsList;
   let isFromApi = false;
 
   try {
