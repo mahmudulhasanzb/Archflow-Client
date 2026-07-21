@@ -5,12 +5,7 @@ import { useRouter } from 'next/navigation';
 import { serverMutation } from '@/lib/api/mutation';
 import { authClient } from '@/lib/auth-client';
 import toast from 'react-hot-toast';
-import { 
-  Cpu, 
-  Layers, 
-  BookOpen, 
-  ArrowLeft 
-} from 'lucide-react';
+import { Cpu, Layers, BookOpen, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AddBlueprintPage() {
@@ -53,8 +48,8 @@ export default function AddBlueprintPage() {
     // Parse techStack
     const teckStack = techStackInput
       .split(',')
-      .map((item) => item.trim())
-      .filter((item) => item.length > 0);
+      .map(item => item.trim())
+      .filter(item => item.length > 0);
 
     const payload = {
       title,
@@ -92,7 +87,9 @@ export default function AddBlueprintPage() {
       }
     } catch (err: any) {
       console.error(err);
-      toast.error('Failed to create blueprint: ' + (err.message || 'Server error'));
+      toast.error(
+        'Failed to create blueprint: ' + (err.message || 'Server error'),
+      );
     } finally {
       setLoading(false);
     }
@@ -113,12 +110,16 @@ export default function AddBlueprintPage() {
             Create Architecture Blueprint
           </h1>
           <p className="text-sm text-[#6B7280] mt-1">
-            Specify technical details, architecture phases, and target tech stack.
+            Specify technical details, architecture phases, and target tech
+            stack.
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8 bg-white border border-[#E1E4EA] rounded-xl p-6 sm:p-8 shadow-sm">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8 bg-white border border-[#E1E4EA] rounded-xl p-6 sm:p-8 shadow-sm"
+      >
         {/* Core Metadata Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-[#E1E4EA]">
           <div className="md:col-span-2">
@@ -129,7 +130,7 @@ export default function AddBlueprintPage() {
               type="text"
               required
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={e => setTitle(e.target.value)}
               placeholder="e.g. Realtime Collaborative Workspace"
               className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
             />
@@ -142,7 +143,7 @@ export default function AddBlueprintPage() {
             <textarea
               required
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={e => setDescription(e.target.value)}
               placeholder="Overview description of the system architecture design..."
               rows={3}
               className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
@@ -156,7 +157,7 @@ export default function AddBlueprintPage() {
             <input
               type="text"
               value={techStackInput}
-              onChange={(e) => setTechStackInput(e.target.value)}
+              onChange={e => setTechStackInput(e.target.value)}
               placeholder="Nextjs, React, MongoDB, WebSockets"
               className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
             />
@@ -168,7 +169,7 @@ export default function AddBlueprintPage() {
             </label>
             <select
               value={complexcity}
-              onChange={(e) => setComplexcity(e.target.value)}
+              onChange={e => setComplexcity(e.target.value)}
               className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800 appearance-none cursor-pointer"
             >
               <option value="low">Low Complexity</option>
@@ -185,7 +186,7 @@ export default function AddBlueprintPage() {
               type="email"
               required
               value={author}
-              onChange={(e) => setAuthor(e.target.value)}
+              onChange={e => setAuthor(e.target.value)}
               className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
             />
           </div>
@@ -201,7 +202,7 @@ export default function AddBlueprintPage() {
               step="0.1"
               required
               value={rating}
-              onChange={(e) => setRating(Number(e.target.value))}
+              onChange={e => setRating(Number(e.target.value))}
               className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
             />
           </div>
@@ -217,7 +218,9 @@ export default function AddBlueprintPage() {
           <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl space-y-4">
             <div className="flex items-center gap-2 text-[#4F46E5]">
               <Cpu className="h-5 w-5" />
-              <span className="font-bold text-xs uppercase tracking-wider">Step 1: System Architecture</span>
+              <span className="font-bold text-xs uppercase tracking-wider">
+                Step 1: System Architecture
+              </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -227,7 +230,7 @@ export default function AddBlueprintPage() {
                 <input
                   type="text"
                   value={archTitle}
-                  onChange={(e) => setArchTitle(e.target.value)}
+                  onChange={e => setArchTitle(e.target.value)}
                   placeholder="System Layout & Topology"
                   className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
                 />
@@ -239,7 +242,7 @@ export default function AddBlueprintPage() {
                 <input
                   type="text"
                   value={archDesc}
-                  onChange={(e) => setArchDesc(e.target.value)}
+                  onChange={e => setArchDesc(e.target.value)}
                   placeholder="Details of gateways, microservices routing, or database structure..."
                   className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
                 />
@@ -251,7 +254,9 @@ export default function AddBlueprintPage() {
           <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl space-y-4">
             <div className="flex items-center gap-2 text-[#0D9488]">
               <Layers className="h-5 w-5" />
-              <span className="font-bold text-xs uppercase tracking-wider">Step 2: Core Features</span>
+              <span className="font-bold text-xs uppercase tracking-wider">
+                Step 2: Core Features
+              </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -261,7 +266,7 @@ export default function AddBlueprintPage() {
                 <input
                   type="text"
                   value={featureTitle}
-                  onChange={(e) => setFeatureTitle(e.target.value)}
+                  onChange={e => setFeatureTitle(e.target.value)}
                   placeholder="Functional Scope"
                   className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
                 />
@@ -273,7 +278,7 @@ export default function AddBlueprintPage() {
                 <input
                   type="text"
                   value={featureDesc}
-                  onChange={(e) => setFeatureDesc(e.target.value)}
+                  onChange={e => setFeatureDesc(e.target.value)}
                   placeholder="Detail user authentication, sync engine, real-time channels..."
                   className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
                 />
@@ -285,7 +290,9 @@ export default function AddBlueprintPage() {
           <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl space-y-4">
             <div className="flex items-center gap-2 text-[#EA5C34]">
               <BookOpen className="h-5 w-5" />
-              <span className="font-bold text-xs uppercase tracking-wider">Step 3: Roadmap & Plan</span>
+              <span className="font-bold text-xs uppercase tracking-wider">
+                Step 3: Roadmap & Plan
+              </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -295,7 +302,7 @@ export default function AddBlueprintPage() {
                 <input
                   type="text"
                   value={planTitle}
-                  onChange={(e) => setPlanTitle(e.target.value)}
+                  onChange={e => setPlanTitle(e.target.value)}
                   placeholder="Execution Phases"
                   className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
                 />
@@ -307,7 +314,7 @@ export default function AddBlueprintPage() {
                 <input
                   type="text"
                   value={planDesc}
-                  onChange={(e) => setPlanDesc(e.target.value)}
+                  onChange={e => setPlanDesc(e.target.value)}
                   placeholder="Phase 1 setup, Phase 2 migration, Phase 3 validation checklist..."
                   className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
                 />
