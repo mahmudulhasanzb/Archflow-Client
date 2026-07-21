@@ -183,7 +183,7 @@ export default function SignInPage() {
             onClick={handleDemoLogin}
             className="group relative flex w-full justify-center rounded-lg border border-[#E1E4EA] bg-[#F1F3F6]/80 px-4 py-2 text-sm font-semibold text-[#4F46E5] transition-all hover:bg-[#E1E4EA] focus:outline-none"
           >
-            ⚡ Demo Login Shortcut
+            ⚡ One Click Login
           </button>
         </form>
       </div>
