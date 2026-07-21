@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Layers, Layout, ShieldAlert, Cpu, Star } from 'lucide-react';
+import { Layers, Layout, ShieldAlert, Cpu, Star, ArrowRight } from 'lucide-react';
 
 interface Blueprint {
   _id: string;
@@ -21,101 +21,107 @@ interface BlueprintCardProps {
   blueprint: Blueprint;
 }
 
+const ICONS = [Cpu, Layers, Layout, ShieldAlert];
+const ACCENTS = [
+  { color: '#4F46E5', soft: '#EEF0FF' },
+  { color: '#0D9488', soft: '#E6F5F3' },
+  { color: '#EA5C34', soft: '#FFF0EA' },
+  { color: '#4F46E5', soft: '#EEF0FF' },
+];
+
+function hashIndex(str: string, len: number) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash = (hash * 31 + str.charCodeAt(i)) % len;
+  return hash;
+}
+
+const complexityStyle = (c: string) => {
+  const v = c.toLowerCase();
+  if (v === 'high') return 'text-rose-600 bg-rose-50';
+  if (v === 'medium') return 'text-amber-600 bg-amber-50';
+  return 'text-emerald-600 bg-emerald-50';
+};
+
 export default function BlueprintCard({ blueprint }: BlueprintCardProps) {
-  // Normalize fields
   const id = blueprint._id || 'mock';
   const title = blueprint.title || 'Untitled Blueprint';
-  const description = blueprint.shortDescription || blueprint.description || 'No description available.';
+  const description =
+    blueprint.shortDescription || blueprint.description || 'No description available.';
   const complexity = blueprint.complexity || blueprint.complexcity || 'Medium';
   const rating = blueprint.rating || 4.5;
 
-  let stackString = 'Next.js';
-  if (blueprint.stack) {
-    stackString = blueprint.stack;
-  } else if (blueprint.teckStack) {
-    if (Array.isArray(blueprint.teckStack)) {
-      stackString = blueprint.teckStack.join(' + ');
-    } else {
-      stackString = blueprint.teckStack;
-    }
+  let stackItems: string[] = [];
+  if (blueprint.teckStack) {
+    stackItems = Array.isArray(blueprint.teckStack)
+      ? blueprint.teckStack
+      : blueprint.teckStack.split(',').map(s => s.trim());
+  } else if (blueprint.stack) {
+    stackItems = blueprint.stack.split(',').map(s => s.trim());
   }
+  if (stackItems.length === 0) stackItems = ['Next.js'];
 
-  // Helper icons
-  const getIcon = (stackName: string) => {
-    const name = stackName.toLowerCase();
-    if (name.includes('express') || name.includes('node')) return Layers;
-    if (name.includes('stripe') || name.includes('billing')) return Layout;
-    if (name.includes('task') || name.includes('redis')) return ShieldAlert;
-    return Cpu;
-  };
-
-  const getIconColorClass = (stackName: string) => {
-    const name = stackName.toLowerCase();
-    if (name.includes('express') || name.includes('node')) return 'text-[#0D9488]';
-    if (name.includes('stripe') || name.includes('billing')) return 'text-[#EA5C34]';
-    if (name.includes('task') || name.includes('redis')) return 'text-[#4F46E5]';
-    return 'text-[#4F46E5]';
-  };
-
-  const getBgColorClass = (stackName: string) => {
-    const name = stackName.toLowerCase();
-    if (name.includes('express') || name.includes('node')) return 'bg-[#E6F5F3]';
-    if (name.includes('stripe') || name.includes('billing')) return 'bg-[#FFF0EA]';
-    if (name.includes('task') || name.includes('redis')) return 'bg-[#EEF0FF]';
-    return 'bg-[#EEF0FF]';
-  };
-
-  const Icon = getIcon(stackString);
+  const idx = hashIndex(title, ICONS.length);
+  const Icon = ICONS[idx];
+  const { color, soft } = ACCENTS[idx];
 
   return (
-    <div className="group bg-white rounded-xl border border-[#E1E4EA] overflow-hidden shadow-sm flex flex-col justify-between h-[360px] hover:shadow-md hover:border-[#4F46E5]/40 transition-all duration-300">
-      {/* Visual Header */}
-      <div className={`${getBgColorClass(stackString)} h-40 flex items-center justify-center border-b border-[#E1E4EA] group-hover:opacity-95 transition-opacity`}>
-        <Icon className={`h-10 w-10 ${getIconColorClass(stackString)} transform group-hover:scale-110 transition-transform duration-300`} />
+    <div className="card-hover group flex flex-col overflow-hidden rounded-xl border border-[#E1E4EA] bg-white shadow-sm hover:border-[#4F46E5]/30">
+      {/* Gradient header area */}
+      <div
+        className="relative flex h-36 items-center justify-center border-b border-[#E1E4EA] transition-opacity duration-200 group-hover:opacity-90"
+        style={{ background: `linear-gradient(135deg, ${soft} 0%, white 100%)` }}
+      >
+        <Icon
+          className="h-12 w-12 transition-transform duration-300 group-hover:scale-110"
+          style={{ color }}
+        />
+        {/* Complexity badge top-right */}
+        <span
+          className={`absolute top-3 right-3 rounded px-2 py-0.5 text-[9px] font-bold uppercase ${complexityStyle(complexity)}`}
+        >
+          {complexity}
+        </span>
       </div>
 
       {/* Content */}
-      <div className="p-4 flex-1 flex flex-col justify-between">
-        <div>
-          <div className="flex justify-between items-start gap-2">
-            <h3 className="text-sm font-bold text-[#181B20] font-display line-clamp-1 group-hover:text-[#4F46E5] transition-colors">
-              {title}
-            </h3>
-            <span className="shrink-0 text-[10px] px-2 py-0.5 rounded-full bg-slate-100 font-medium text-slate-600">
-              {stackString.split('+')[0].trim()}
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        <h3 className="line-clamp-1 text-sm font-bold text-[#181B20] font-display transition-colors duration-200 group-hover:text-[#4F46E5]">
+          {title}
+        </h3>
+        <p className="line-clamp-3 text-xs text-[#6B7280] leading-relaxed">
+          {description}
+        </p>
+
+        {/* Tech stack pills */}
+        <div className="flex flex-wrap gap-1 mt-auto">
+          {stackItems.slice(0, 3).map(tag => (
+            <span
+              key={tag}
+              className="rounded-full bg-[#F1F3F6] px-2 py-0.5 text-[9px] font-semibold text-[#6B7280]"
+            >
+              {tag}
             </span>
-          </div>
-          <p className="text-xs text-[#6B7280] mt-2 line-clamp-3 leading-relaxed">
-            {description}
-          </p>
+          ))}
+          {stackItems.length > 3 && (
+            <span className="rounded-full bg-[#F1F3F6] px-2 py-0.5 text-[9px] font-semibold text-[#6B7280]">
+              +{stackItems.length - 3}
+            </span>
+          )}
         </div>
-        
-        {/* Footer info */}
-        <div className="pt-3 flex justify-between items-center text-[10px] text-[#6B7280] border-t border-slate-100">
+
+        {/* Footer */}
+        <div className="flex items-center justify-between border-t border-[#E1E4EA] pt-3 text-[10px] text-[#6B7280]">
           <div className="flex items-center gap-1">
             <Star className="h-3 w-3 fill-amber-400 stroke-amber-400" />
-            <span className="font-semibold text-slate-800">{rating.toFixed(1)}</span>
+            <span className="font-semibold text-[#181B20]">{Number(rating).toFixed(1)}</span>
           </div>
-          <span className={`font-bold px-2 py-0.5 rounded text-[9px] uppercase ${
-            complexity.toLowerCase() === 'high' 
-              ? 'text-rose-600 bg-rose-50' 
-              : complexity.toLowerCase() === 'medium'
-              ? 'text-amber-600 bg-amber-50'
-              : 'text-emerald-600 bg-emerald-50'
-          }`}>
-            {complexity}
-          </span>
+          <Link
+            href={`/blueprints/${id}`}
+            className="flex items-center gap-0.5 font-semibold text-[#4F46E5] hover:underline"
+          >
+            View <ArrowRight className="h-3 w-3" />
+          </Link>
         </div>
-      </div>
-
-      {/* Action */}
-      <div className="p-4 pt-0">
-        <Link
-          href={`/blueprints/${id}`}
-          className="block text-center rounded-lg bg-[#FAFBFC] border border-[#E1E4EA] py-2 text-xs font-semibold text-[#181B20] hover:bg-[#4F46E5] hover:text-white hover:border-[#4F46E5] transition-all duration-200"
-        >
-          View Details
-        </Link>
       </div>
     </div>
   );
