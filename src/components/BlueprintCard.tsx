@@ -43,7 +43,7 @@ const complexityStyle = (c: string) => {
 };
 
 export default function BlueprintCard({ blueprint }: BlueprintCardProps) {
-  const id = blueprint._id || 'mock';
+  const id = blueprint._id;
   const title = blueprint.title || 'Untitled Blueprint';
   const description =
     blueprint.shortDescription || blueprint.description || 'No description available.';
