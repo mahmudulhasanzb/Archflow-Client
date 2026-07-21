@@ -13,7 +13,9 @@ interface Blueprint {
   _id: string;
   title: string;
   description: string;
+  stack?: string;
   teckStack?: string | string[];
+  complexity?: string;
   complexcity?: string;
   rating?: number;
   status: string;
