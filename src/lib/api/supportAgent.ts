@@ -8,7 +8,7 @@ const modelName = process.env.AI_MODEL_NAME;
 const openai = new OpenAI({
   baseURL: 'https://openrouter.ai/api/v1',
   apiKey: apiKey,
-  // dangerouslyAllowBrowser: true, // Allowed for frontend browser calls
+  dangerouslyAllowBrowser: true, // Allowed for frontend browser calls
 });
 
 export async function askSupportAgent(userMessage: string): Promise<string> {
