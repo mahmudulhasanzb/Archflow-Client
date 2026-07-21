@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Cpu, Layers, Layout, ShieldAlert, Star } from 'lucide-react';
+import { Cpu, Layers, Layout, ShieldAlert, Star, ArrowRight } from 'lucide-react';
 import { getAllBlueprints } from '@/lib/api/server';
 
 interface Blueprint {
@@ -13,51 +13,71 @@ interface Blueprint {
   status?: string;
 }
 
-export default async function FeaturedBlueprints() {
-  const staticBlueprintsList = [
-    {
-      _id: '1',
-      title: 'Realtime Collaborative Editor',
-      description: 'Multiplayer document editing using Yjs CRDTs and WebSocket relays.',
-      complexity: 'High',
-      rating: 4.9,
-      color: 'bg-[#EEF0FF]',
-      icon: Cpu,
-      iconColor: 'text-[#4F46E5]',
-    },
-    {
-      _id: '2',
-      title: 'Microservice Gateway Pattern',
-      description: 'Unified routing portal with rate limiting, auth translation, and load balancing.',
-      complexity: 'Medium',
-      rating: 4.7,
-      color: 'bg-[#E6F5F3]',
-      icon: Layers,
-      iconColor: 'text-[#0D9488]',
-    },
-    {
-      _id: '3',
-      title: 'Serverless SaaS Billing Hub',
-      description: 'Stripe-integrated subscription webhook listener and consumption-metering logic.',
-      complexity: 'High',
-      rating: 4.8,
-      color: 'bg-[#FFF0EA]',
-      icon: Layout,
-      iconColor: 'text-[#EA5C34]',
-    },
-    {
-      _id: '4',
-      title: 'Distributed Task Queue',
-      description: 'BullMQ background worker cluster using Redis streams for reliable job dispatching.',
-      complexity: 'Medium',
-      rating: 4.6,
-      color: 'bg-[#EEF0FF]',
-      icon: ShieldAlert,
-      iconColor: 'text-[#4F46E5]',
-    },
-  ];
+const STATIC: {
+  _id: string;
+  title: string;
+  description: string;
+  complexity: string;
+  rating: number;
+  icon: typeof Cpu;
+  color: string;
+  accent: string;
+}[] = [
+  {
+    _id: '1',
+    title: 'Realtime Collaborative Editor',
+    description: 'Multiplayer document editing using Yjs CRDTs and WebSocket relays.',
+    complexity: 'High',
+    rating: 4.9,
+    icon: Cpu,
+    color: '#EEF0FF',
+    accent: '#4F46E5',
+  },
+  {
+    _id: '2',
+    title: 'Microservice Gateway Pattern',
+    description: 'Unified routing portal with rate limiting, auth translation, and load balancing.',
+    complexity: 'Medium',
+    rating: 4.7,
+    icon: Layers,
+    color: '#E6F5F3',
+    accent: '#0D9488',
+  },
+  {
+    _id: '3',
+    title: 'Serverless SaaS Billing Hub',
+    description: 'Stripe-integrated subscription webhook listener and consumption-metering logic.',
+    complexity: 'High',
+    rating: 4.8,
+    icon: Layout,
+    color: '#FFF0EA',
+    accent: '#EA5C34',
+  },
+  {
+    _id: '4',
+    title: 'Distributed Task Queue',
+    description: 'BullMQ background worker cluster using Redis streams for reliable job dispatching.',
+    complexity: 'Medium',
+    rating: 4.6,
+    icon: ShieldAlert,
+    color: '#EEF0FF',
+    accent: '#4F46E5',
+  },
+];
 
-  let displayBlueprints: any[] = staticBlueprintsList;
+const complexityStyle = (c: string) => {
+  const v = c.toLowerCase();
+  if (v === 'high') return 'text-rose-600 bg-rose-50';
+  if (v === 'medium') return 'text-amber-600 bg-amber-50';
+  return 'text-emerald-600 bg-emerald-50';
+};
+
+const API_ICONS = [Cpu, Layers, Layout, ShieldAlert];
+const API_COLORS = ['#EEF0FF', '#E6F5F3', '#FFF0EA', '#EEF0FF'];
+const API_ACCENTS = ['#4F46E5', '#0D9488', '#EA5C34', '#4F46E5'];
+
+export default async function FeaturedBlueprints() {
+  let displayBlueprints: any[] = STATIC;
   let isFromApi = false;
 
   try {
@@ -70,73 +90,83 @@ export default async function FeaturedBlueprints() {
     console.error('Failed to load featured blueprints from API, falling back to static:', error);
   }
 
-  const icons = [Cpu, Layers, Layout, ShieldAlert];
-  const bgColors = ['bg-[#EEF0FF]', 'bg-[#E6F5F3]', 'bg-[#FFF0EA]', 'bg-[#EEF0FF]'];
-  const iconColors = ['text-[#4F46E5]', 'text-[#0D9488]', 'text-[#EA5C34]', 'text-[#4F46E5]'];
-
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 border-b border-[#E1E4EA]">
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <h2 className="text-3xl font-bold tracking-tight text-[#181B20] font-display">
-          Featured Blueprints
-        </h2>
-        <p className="mt-4 text-[#6B7280]">
-          Browse structural designs created and optimized by the multi-agent
-          system.
-        </p>
+      {/* Section header */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[#EA5C34] mb-2">
+            From the Community
+          </p>
+          <h2 className="text-3xl font-bold tracking-tight text-[#181B20] font-display">
+            Featured Blueprints
+          </h2>
+          <p className="mt-3 text-[#6B7280] leading-relaxed max-w-xl">
+            Browse structural designs created and optimized by the multi-agent system.
+          </p>
+        </div>
+        <Link
+          href="/blueprints"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#4F46E5] hover:underline shrink-0"
+        >
+          View All Blueprints <ArrowRight className="h-4 w-4" />
+        </Link>
       </div>
 
+      {/* Cards grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {displayBlueprints.map((bp, idx) => {
-          const Icon = isFromApi ? icons[idx % 4] : (staticBlueprintsList[idx]?.icon || Cpu);
-          const color = isFromApi ? bgColors[idx % 4] : (staticBlueprintsList[idx]?.color || 'bg-[#EEF0FF]');
-          const iconColor = isFromApi ? iconColors[idx % 4] : (staticBlueprintsList[idx]?.iconColor || 'text-[#4F46E5]');
-          
+          const Icon = isFromApi ? API_ICONS[idx % 4] : (STATIC[idx]?.icon ?? Cpu);
+          const color = isFromApi ? API_COLORS[idx % 4] : (STATIC[idx]?.color ?? '#EEF0FF');
+          const accent = isFromApi ? API_ACCENTS[idx % 4] : (STATIC[idx]?.accent ?? '#4F46E5');
           const ratingValue = bp.rating || 4.5;
           const complexityValue = bp.complexity || bp.complexcity || 'Medium';
 
           return (
             <div
               key={bp._id || idx}
-              className="group bg-white rounded-xl border border-[#E1E4EA] overflow-hidden shadow-sm flex flex-col justify-between h-[360px]"
+              className="card-hover group flex flex-col overflow-hidden rounded-xl border border-[#E1E4EA] bg-white shadow-sm hover:border-[#4F46E5]/30"
             >
+              {/* Gradient header */}
               <div
-                className={`${color} h-40 flex items-center justify-center border-b border-[#E1E4EA]`}
+                className="relative flex h-36 items-center justify-center border-b border-[#E1E4EA] transition-opacity duration-200 group-hover:opacity-90"
+                style={{ background: `linear-gradient(135deg, ${color} 0%, white 100%)` }}
               >
-                <Icon className={`h-10 w-10 ${iconColor}`} />
+                <Icon
+                  className="h-12 w-12 transition-transform duration-300 group-hover:scale-110"
+                  style={{ color: accent }}
+                />
+                <span
+                  className={`absolute top-3 right-3 rounded px-2 py-0.5 text-[9px] font-bold uppercase ${complexityStyle(complexityValue)}`}
+                >
+                  {complexityValue}
+                </span>
               </div>
-              <div className="p-4 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-sm font-bold text-[#181B20] font-display line-clamp-1">
-                    {bp.title}
-                  </h3>
-                  <p className="text-xs text-[#6B7280] mt-2 line-clamp-3 leading-relaxed">
-                    {bp.description}
-                  </p>
-                </div>
-                <div className="pt-4 flex justify-between items-center text-[10px] text-[#6B7280]">
+
+              {/* Content */}
+              <div className="flex flex-1 flex-col gap-3 p-4">
+                <h3 className="line-clamp-1 text-sm font-bold text-[#181B20] font-display transition-colors duration-200 group-hover:text-[#4F46E5]">
+                  {bp.title}
+                </h3>
+                <p className="line-clamp-3 text-xs text-[#6B7280] leading-relaxed flex-1">
+                  {bp.description}
+                </p>
+
+                {/* Footer */}
+                <div className="flex items-center justify-between border-t border-[#E1E4EA] pt-3 text-[10px] text-[#6B7280]">
                   <div className="flex items-center gap-1">
                     <Star className="h-3 w-3 fill-amber-400 stroke-amber-400" />
-                    <span className="font-semibold text-slate-800">{Number(ratingValue).toFixed(1)}</span>
+                    <span className="font-semibold text-[#181B20]">
+                      {Number(ratingValue).toFixed(1)}
+                    </span>
                   </div>
-                  <span className={`font-bold px-2 py-0.5 rounded text-[9px] uppercase ${
-                    complexityValue.toLowerCase() === 'high' 
-                      ? 'text-rose-600 bg-rose-50' 
-                      : complexityValue.toLowerCase() === 'medium'
-                      ? 'text-amber-600 bg-amber-50'
-                      : 'text-emerald-600 bg-emerald-50'
-                  }`}>
-                    {complexityValue}
-                  </span>
+                  <Link
+                    href={`/blueprints/${bp._id}`}
+                    className="flex items-center gap-0.5 font-semibold text-[#4F46E5] hover:underline"
+                  >
+                    View <ArrowRight className="h-3 w-3" />
+                  </Link>
                 </div>
-              </div>
-              <div className="p-4 pt-0">
-                <Link
-                  href={`/blueprints/${bp._id}`}
-                  className="block text-center rounded-lg bg-[#FAFBFC] border border-[#E1E4EA] py-2 text-xs font-semibold text-[#181B20] hover:bg-[#4F46E5] hover:text-white hover:border-[#4F46E5] transition-all duration-200"
-                >
-                  View Details
-                </Link>
               </div>
             </div>
           );
