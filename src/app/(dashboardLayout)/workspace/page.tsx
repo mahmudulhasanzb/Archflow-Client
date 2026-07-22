@@ -42,6 +42,7 @@ interface Blueprint {
 
 export default function WorkspacePage() {
   const { data: session } = authClient.useSession();
+  const userEmail = session?.user?.email;
   const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
@@ -49,10 +50,10 @@ export default function WorkspacePage() {
   useEffect(() => {
     setMounted(true);
     const fetchStats = async () => {
-      if (!session?.user?.id) return;
+      if (!userEmail) return;
       try {
         const res = await fetch(
-          `${baseURL}/api/blueprints?creatorId=${session.user.id}`,
+          `${baseURL}/api/my-blueprints/${userEmail}`,
         );
         if (res.ok) {
           const data = await res.json();
@@ -78,12 +79,7 @@ export default function WorkspacePage() {
   // 1. Blueprints Creation Over Time
   const getTimelineData = () => {
     if (blueprints.length === 0) {
-      return [
-        { name: 'Week 1', count: 4 },
-        { name: 'Week 2', count: 7 },
-        { name: 'Week 3', count: 5 },
-        { name: 'Week 4', count: 9 },
-      ];
+      return [];
     }
 
     // Sort blueprints by date ascending
@@ -119,13 +115,9 @@ export default function WorkspacePage() {
       else counts.medium++;
     });
 
-    // If no blueprints, render standard dummy distribution for visualization
+    // If no blueprints, return empty list
     if (blueprints.length === 0) {
-      return [
-        { name: 'Low', count: 2, fill: '#10B981' },
-        { name: 'Medium', count: 5, fill: '#F59E0B' },
-        { name: 'High', count: 3, fill: '#EF4444' },
-      ];
+      return [];
     }
 
     return [

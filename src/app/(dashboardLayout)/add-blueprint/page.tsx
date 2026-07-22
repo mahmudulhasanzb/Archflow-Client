@@ -74,6 +74,8 @@ export default function AddBlueprintPage() {
       rating: Number(rating) || 5,
       author,
       email: author,
+      creatorId: session?.user?.id || '',
+      userId: session?.user?.id || '',
       createdAt: new Date().toISOString(),
     };
 
@@ -81,7 +83,7 @@ export default function AddBlueprintPage() {
       const res = await serverMutation('/api/blueprints', 'POST', payload);
       if (res) {
         toast.success('Blueprint successfully created!');
-        router.push('/blueprints');
+        router.push('/manage-blueprints');
       } else {
         throw new Error('No response from server');
       }
@@ -186,8 +188,8 @@ export default function AddBlueprintPage() {
               type="email"
               required
               value={author}
-              onChange={e => setAuthor(e.target.value)}
-              className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
+              readOnly
+              className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm bg-slate-50 text-slate-500 cursor-not-allowed"
             />
           </div>
 

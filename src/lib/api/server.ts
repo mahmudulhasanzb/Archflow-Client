@@ -5,21 +5,18 @@ export const serverFetch = async (path: any) => {
   const res = await fetch(`${baseURL}${path}`, { cache: 'no-store' });
 
   if (!res.ok) {
-    console.error(
-      `Fetch error: ${res.status} ${res.statusText} for ${path}`,
-    );
+    console.error(`Fetch error: ${res.status} ${res.statusText} for ${path}`);
     return null;
   }
 
-  const text = await res.text();
   try {
-    return text ? JSON.parse(text) : null;
+    const data = await res.json();
+    return data;
   } catch (error) {
     console.error(`JSON parse error for ${path}:`, error);
     return null;
   }
 };
-
 
 // get all blueprints
 export const getAllBlueprints = async () => {
@@ -35,5 +32,3 @@ export const getAllBlueprints = async () => {
     return null;
   }
 };
-
-

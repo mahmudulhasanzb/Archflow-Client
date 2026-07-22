@@ -169,8 +169,8 @@ export default function ExplorePage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {paginatedBlueprints.map((bp, index) => (
-            <BlueprintCard key={bp._id || index} blueprint={bp} />
+          {paginatedBlueprints.map((bp) => (
+            <BlueprintCard key={bp._id} blueprint={bp} />
           ))}
         </div>
       )}

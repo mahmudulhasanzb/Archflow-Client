@@ -40,7 +40,7 @@ const Navbar = () => {
     });
   };
 
-  const navLinks = session
+  const navLinks = session?.user
     ? [
         { name: 'Explore', href: '/blueprints' },
         { name: 'Workspace', href: '/workspace' },
