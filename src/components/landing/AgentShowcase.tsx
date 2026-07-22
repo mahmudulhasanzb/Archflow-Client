@@ -1,114 +1,235 @@
-import React from 'react';
-import { Cpu, Layers, Layout, ShieldAlert, ArrowRight } from 'lucide-react';
+'use client';
+
+import React, { useState } from 'react';
+import { Cpu, Layers, Layout, ShieldAlert, ArrowRight, Code2, Sparkles, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
-const agents = [
+const AGENTS = [
   {
+    id: 'architect',
+    name: 'Architect Agent',
+    role: 'Database & Schema Modeling',
     icon: Cpu,
     accent: '#4F46E5',
     accentSoft: '#EEF0FF',
-    borderHover: 'hover:border-[#4F46E5]',
-    name: 'Architect Agent',
-    role: 'System Design',
+    badge: 'Data Model Generator',
     description:
-      'Generates schema tables, models, relationships, data validation formats, and indexing queries.',
+      'Creates normalized MongoDB / PostgreSQL schemas, indexing strategies, field validations, and entity-relationship models.',
+    sampleOutput: `{
+  "collection": "Workspaces",
+  "fields": {
+    "title": "String (indexed)",
+    "ownerId": "ObjectId (ref: User)",
+    "settings": "Object (strict validation)"
+  },
+  "indexes": ["ownerId_1_createdAt_-1"]
+}`,
+    capabilities: ['Mongoose Schemas', 'Postgres DDL', 'Indexing Optimization', 'Data Validation'],
   },
   {
+    id: 'planner',
+    name: 'Planner Agent',
+    role: 'Roadmap & Task Prioritization',
     icon: Layers,
     accent: '#0D9488',
     accentSoft: '#E6F5F3',
-    borderHover: 'hover:border-[#0D9488]',
-    name: 'Planner Agent',
-    role: 'Roadmap & Milestones',
+    badge: 'Execution Scheduler',
     description:
-      'Builds implementation roadmap check items, milestones, priority scores, and outlines complexity levels.',
+      'Deconstructs system requirements into sequential milestones, priority scores, and estimated engineering hours.',
+    sampleOutput: `[
+  { "milestone": "Phase 1 - Auth & Gateway", "estHours": 8 },
+  { "milestone": "Phase 2 - WebSocket Relays", "estHours": 14 },
+  { "milestone": "Phase 3 - Metering & Billing", "estHours": 6 }
+]`,
+    capabilities: ['SPIDR Task Splitting', 'Dependency Mapping', 'Effort Estimates', 'Sprint Roadmap'],
   },
   {
+    id: 'documenter',
+    name: 'Documenter Agent',
+    role: 'API Specs & Setup Stubs',
     icon: Layout,
     accent: '#EA5C34',
     accentSoft: '#FFF0EA',
-    borderHover: 'hover:border-[#EA5C34]',
-    name: 'Documenter Agent',
-    role: 'Docs & API Reference',
+    badge: 'Code Stub Author',
     description:
-      'Writes installation guides, API reference endpoints, folder outlines, and standard server stub setups.',
+      'Writes complete OpenAPI 3.0 documentation, environment setup guides, folder structures, and boilerplate code stubs.',
+    sampleOutput: `// Express Route Stub
+router.post('/v1/blueprints', authGuard, async (req, res) => {
+  const result = await agentSwarm.execute(req.body.prompt);
+  res.status(201).json({ success: true, data: result });
+});`,
+    capabilities: ['OpenAPI 3.0 Specs', 'Express/Fastify Stubs', 'Docker Compose Outlines', 'Setup Guides'],
   },
   {
-    icon: ShieldAlert,
-    accent: '#4F46E5',
-    accentSoft: '#EEF0FF',
-    borderHover: 'hover:border-[#4F46E5]',
+    id: 'reviewer',
     name: 'Reviewer Agent',
-    role: 'Security & QA',
+    role: 'Security & Integrity Auditor',
+    icon: ShieldAlert,
+    accent: '#16A34A',
+    accentSoft: '#E7F7EC',
+    badge: 'Quality Assurance',
     description:
-      'Verifies schema consistency, estimates performance parameters, runs security compliance checks.',
+      'Audits generated schemas against OWASP standards, checks for missing foreign key constraints, and validates data types.',
+    sampleOutput: `Audit Results:
+✔ OWASP Top 10 Compliance: PASSED
+✔ Rate Limiting Guard: DETECTED
+✔ Index Optimization: VERIFIED
+⚠ Warning: Unencrypted WebSocket payload flag noted.`,
+    capabilities: ['OWASP Security Checks', 'Schema Integrity Validation', 'Performance Bottlenecks', 'Compliance QA'],
   },
 ];
 
 export default function AgentShowcase() {
+  const [activeAgentId, setActiveAgentId] = useState('architect');
+
+  const currentAgent = AGENTS.find((a) => a.id === activeAgentId) || AGENTS[0];
+  const CurrentIcon = currentAgent.icon;
+
   return (
-    <section className="border-b border-[#E1E4EA] bg-[#FAFBFC]">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF0FF] border border-[#4F46E5]/20 px-3.5 py-1 text-xs font-semibold text-[#4F46E5] uppercase tracking-wider mb-4">
-            Multi-Agent Pipeline
+    <section className="border-b border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15] py-24 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF0FF] dark:bg-[#4F46E5]/15 border border-[#4F46E5]/30 px-3.5 py-1 text-xs font-semibold text-[#4F46E5] dark:text-[#818CF8] uppercase tracking-wider">
+            Multi-Agent Command Center
           </div>
-          <h2 className="text-3xl font-bold tracking-tight text-[#181B20] font-display">
-            Specialized Agent Showcase
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#181B20] dark:text-[#F3F4F6] font-display">
+            Meet Your Specialized AI Agent Swarm
           </h2>
-          <p className="mt-4 text-[#6B7280] leading-relaxed">
-            Four custom-configured agents working with unified session context
-            to enforce structural consistency across every blueprint.
+          <p className="text-base text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
+            Four targeted AI agents work synchronously in a single context loop to deliver seamless, production-ready system designs.
           </p>
         </div>
 
-        {/* Agent cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {agents.map(({ icon: Icon, accent, accentSoft, borderHover, name, role, description }, i) => (
-            <div
-              key={name}
-              className={`card-hover group flex flex-col p-6 rounded-xl border border-[#E1E4EA] bg-white ${borderHover} transition-colors animate-slide-up-${Math.min(i + 1, 4)}`}
-            >
-              {/* Icon */}
-              <div
-                className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110"
-                style={{ backgroundColor: accentSoft }}
-              >
-                <Icon className="h-6 w-6" style={{ color: accent }} />
+        {/* Command Center Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* Left Grid: Agent Selector Cards */}
+          <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+            {AGENTS.map((agent) => {
+              const Icon = agent.icon;
+              const isSelected = agent.id === activeAgentId;
+              return (
+                <button
+                  key={agent.id}
+                  onClick={() => setActiveAgentId(agent.id)}
+                  className={`text-left p-5 rounded-xl border transition-all duration-200 flex items-start gap-4 ${
+                    isSelected
+                      ? 'bg-white dark:bg-[#0E1321] border-[#4F46E5] shadow-lg ring-1 ring-[#4F46E5]'
+                      : 'bg-white/70 dark:bg-[#0E1321]/60 border-[#E1E4EA] dark:border-[#222C43] hover:border-[#4F46E5]/40'
+                  }`}
+                >
+                  <div
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+                    style={{ backgroundColor: agent.accentSoft }}
+                  >
+                    <Icon className="h-5 w-5" style={{ color: agent.accent }} />
+                  </div>
+
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-bold text-[#181B20] dark:text-[#F3F4F6] font-display truncate">
+                        {agent.name}
+                      </h3>
+                      <span
+                        className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded"
+                        style={{ color: agent.accent, backgroundColor: agent.accentSoft }}
+                      >
+                        {agent.badge}
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF] line-clamp-2">
+                      {agent.role}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right Preview Deck: Active Agent Inspector */}
+          <div className="lg:col-span-7">
+            <div className="bg-white dark:bg-[#0E1321] rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] p-6 shadow-xl space-y-6">
+              
+              {/* Deck Header */}
+              <div className="flex items-center justify-between border-b border-[#E1E4EA] dark:border-[#222C43] pb-5">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-xl"
+                    style={{ backgroundColor: currentAgent.accentSoft }}
+                  >
+                    <CurrentIcon className="h-6 w-6" style={{ color: currentAgent.accent }} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-[#181B20] dark:text-[#F3F4F6] font-display">
+                      {currentAgent.name}
+                    </h3>
+                    <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF]">
+                      {currentAgent.role}
+                    </p>
+                  </div>
+                </div>
+
+                <span className="flex items-center gap-1.5 text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                  Agent Ready
+                </span>
               </div>
 
-              {/* Role badge */}
-              <span
-                className="mb-2 text-[10px] font-bold uppercase tracking-widest"
-                style={{ color: accent }}
-              >
-                {role}
-              </span>
-
-              {/* Name */}
-              <h3 className="text-base font-bold text-[#181B20] font-display mb-2">
-                {name}
-              </h3>
-
               {/* Description */}
-              <p className="text-xs text-[#6B7280] leading-relaxed flex-1">
-                {description}
+              <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
+                {currentAgent.description}
               </p>
+
+              {/* Capabilities Chips */}
+              <div className="space-y-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#9CA3AF]">
+                  Core Capabilities:
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {currentAgent.capabilities.map((cap) => (
+                    <span
+                      key={cap}
+                      className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-md bg-[#F1F3F6] dark:bg-[#171E30] text-[#181B20] dark:text-[#F3F4F6] font-medium"
+                    >
+                      <CheckCircle className="h-3 w-3 text-[#4F46E5]" />
+                      {cap}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sample Output Terminal Snippet */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono text-[#6B7280]">
+                  <span className="flex items-center gap-1">
+                    <Code2 className="h-3.5 w-3.5 text-[#4F46E5]" />
+                    Sample Agent Output Stream
+                  </span>
+                  <span>JSON / TS Output</span>
+                </div>
+                <div className="bg-[#090C15] p-4 rounded-xl font-mono text-xs text-gray-300 overflow-x-auto border border-gray-800">
+                  <pre><code>{currentAgent.sampleOutput}</code></pre>
+                </div>
+              </div>
+
+              {/* Bottom CTA */}
+              <div className="pt-2 flex justify-end">
+                <Link
+                  href="/add-blueprint"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#4F46E5] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#4338CA] transition-colors"
+                >
+                  Run Agent Swarm
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+
             </div>
-          ))}
+          </div>
+
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-12 text-center">
-          <Link
-            href="/add-blueprint"
-            className="inline-flex items-center gap-2 rounded-xl bg-[#4F46E5] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#4F46E5]/20 hover:bg-[#4338CA] hover:shadow-[#4F46E5]/35 transition-all duration-200"
-          >
-            Launch the Agent Pipeline
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
       </div>
     </section>
   );

@@ -394,7 +394,50 @@ h1, h2, h3, h4, h5, h6, .disp {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
-/* Section divider gradient */
-.section-divider {
-  border-top: 1px solid var(--border);
+/* Architectural Grid Pattern */
+.bg-grid-pattern {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
 }
+.dark .bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(99, 102, 241, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+}
+
+/* Glassmorphism Terminal Backdrop */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(225, 228, 234, 0.8);
+}
+.dark .glass-panel {
+  background: rgba(14, 19, 33, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(34, 44, 67, 0.8);
+}
+
+/* Glow effects */
+.glow-cyan {
+  box-shadow: 0 0 25px rgba(13, 148, 136, 0.25);
+}
+.glow-indigo-box {
+  box-shadow: 0 10px 40px -10px rgba(79, 70, 229, 0.3);
+}
+
+/* Linear gradient text */
+.text-gradient-primary {
+  background: linear-gradient(135deg, #4F46E5 0%, #0D9488 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.dark .text-gradient-primary {
+  background: linear-gradient(135deg, #818CF8 0%, #2DD4BF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
