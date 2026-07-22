@@ -6,7 +6,11 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+export default function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: PaginationProps) {
   if (totalPages <= 1) return null;
 
   return (
@@ -18,7 +22,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       >
         Prev
       </button>
-      
+
       <div className="flex items-center gap-1.5 text-xs font-semibold text-[#181B20]">
         {Array.from({ length: totalPages }).map((_, idx) => {
           const pageNum = idx + 1;

@@ -99,13 +99,20 @@ const Navbar = () => {
             {isPending ? (
               <div className="h-8 w-20 animate-pulse rounded-lg bg-[#F1F3F6]" />
             ) : session ? (
-              <div className="flex items-center gap-4">
-                <span className="text-xs text-[#6B7280] bg-[#F1F3F6] px-2.5 py-1 rounded-full font-medium">
-                  {session.user?.name || 'User'}
-                </span>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 bg-[#F1F3F6] dark:bg-[#171E30] px-2.5 py-1 rounded-full text-xs font-medium">
+                  <span className="text-[#181B20] dark:text-[#F3F4F6] font-semibold">
+                    {session.user?.name || 'User'}
+                  </span>
+                  {((session.user as any)?.role?.toLowerCase() === 'pro' || (session.user as any)?.role?.toLowerCase() === 'admin') && (
+                    <span className="text-[10px] font-bold text-white bg-[#4F46E5] px-1.5 py-0.2 rounded-full uppercase tracking-wider">
+                      PRO
+                    </span>
+                  )}
+                </div>
                 <button
                   onClick={handleSignOut}
-                  className="rounded-lg border border-[#E1E4EA] px-3.5 py-1.5 text-xs font-semibold text-[#181B20] hover:bg-[#F1F3F6] transition-colors"
+                  className="rounded-lg border border-[#E1E4EA] dark:border-[#222C43] px-3.5 py-1.5 text-xs font-semibold text-[#181B20] dark:text-[#F3F4F6] hover:bg-[#F1F3F6] dark:hover:bg-[#171E30] transition-colors"
                 >
                   Sign Out
                 </button>

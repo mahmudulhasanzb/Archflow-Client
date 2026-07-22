@@ -82,7 +82,7 @@ export default async function FeaturedBlueprints() {
   try {
     const apiBlueprints = await getAllBlueprints();
     if (apiBlueprints && apiBlueprints.length > 0) {
-      displayBlueprints = apiBlueprints.slice(0, 4);
+      displayBlueprints = apiBlueprints.slice(0, 10);
       isFromApi = true;
     }
   } catch (error) {

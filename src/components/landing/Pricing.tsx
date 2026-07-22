@@ -2,13 +2,54 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, Sparkles, ArrowRight, Zap } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
+import { CheckCircle2, Sparkles, ArrowRight, Zap, Loader2, ShieldCheck } from 'lucide-react';
 
 export default function Pricing() {
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
   const [isAnnual, setIsAnnual] = useState(true);
+  const [loadingCheckout, setLoadingCheckout] = useState(false);
+
+  const userRole = (session?.user as any)?.role?.toLowerCase();
+  const isProUser = userRole === 'pro' || userRole === 'admin';
+
+  const handleUpgradeClick = async () => {
+    if (!session) {
+      router.push('/signin');
+      return;
+    }
+
+    if (isProUser) {
+      router.push('/add-blueprint');
+      return;
+    }
+
+    try {
+      setLoadingCheckout(true);
+      const res = await fetch('/api/checkout_sessions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else if (data.error) {
+        alert(data.error);
+        setLoadingCheckout(false);
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+      setLoadingCheckout(false);
+    }
+  };
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 border-b border-[#E1E4EA] dark:border-[#222C43]">
+    <section id="pricing" className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 border-b border-[#E1E4EA] dark:border-[#222C43]">
       
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
@@ -29,7 +70,7 @@ export default function Pricing() {
           </span>
           <button
             onClick={() => setIsAnnual(!isAnnual)}
-            className="relative h-6 w-11 rounded-full bg-[#4F46E5] p-0.5 transition-colors"
+            className="relative h-6 w-11 rounded-full bg-[#4F46E5] p-0.5 transition-colors cursor-pointer"
           >
             <span
               className={`block h-5 w-5 rounded-full bg-white transition-transform ${
@@ -146,13 +187,28 @@ export default function Pricing() {
             </ul>
           </div>
 
-          <Link
-            href="/signup"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#4F46E5] py-3 text-xs font-bold text-white shadow-lg hover:bg-[#4338CA] transition-colors"
+          <button
+            onClick={handleUpgradeClick}
+            disabled={loadingCheckout}
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#4F46E5] py-3.5 text-xs font-bold text-white shadow-lg hover:bg-[#4338CA] transition-colors cursor-pointer disabled:opacity-60"
           >
-            Upgrade to Pro
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+            {loadingCheckout ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Redirecting to Stripe...
+              </>
+            ) : isProUser ? (
+              <>
+                <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                Active Pro Plan (Go to App)
+              </>
+            ) : (
+              <>
+                Upgrade to Pro
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </button>
         </div>
 
       </div>

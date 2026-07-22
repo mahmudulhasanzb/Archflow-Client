@@ -75,7 +75,7 @@ export default function ExplorePage() {
 
   // Filter & Search Logic
   const filteredBlueprints = blueprints
-    .filter((bp) => {
+    .filter(bp => {
       const title = bp.title || '';
       const desc = bp.description || '';
       const shortDesc = bp.shortDescription || '';
@@ -115,7 +115,10 @@ export default function ExplorePage() {
   const totalItems = filteredBlueprints.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedBlueprints = filteredBlueprints.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedBlueprints = filteredBlueprints.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   // Reset page on search/filter changes
   useEffect(() => {
@@ -169,7 +172,7 @@ export default function ExplorePage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {paginatedBlueprints.map((bp) => (
+          {paginatedBlueprints.map(bp => (
             <BlueprintCard key={bp._id} blueprint={bp} />
           ))}
         </div>

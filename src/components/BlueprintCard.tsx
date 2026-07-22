@@ -1,6 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
-import { Layers, Layout, ShieldAlert, Cpu, Star, ArrowRight } from 'lucide-react';
+import {
+  Layers,
+  Layout,
+  ShieldAlert,
+  Cpu,
+  Star,
+  ArrowRight,
+} from 'lucide-react';
 
 interface Blueprint {
   _id: string;
@@ -31,7 +38,8 @@ const ACCENTS = [
 
 function hashIndex(str: string, len: number) {
   let hash = 0;
-  for (let i = 0; i < str.length; i++) hash = (hash * 31 + str.charCodeAt(i)) % len;
+  for (let i = 0; i < str.length; i++)
+    hash = (hash * 31 + str.charCodeAt(i)) % len;
   return hash;
 }
 
@@ -46,7 +54,9 @@ export default function BlueprintCard({ blueprint }: BlueprintCardProps) {
   const id = blueprint._id;
   const title = blueprint.title || 'Untitled Blueprint';
   const description =
-    blueprint.shortDescription || blueprint.description || 'No description available.';
+    blueprint.shortDescription ||
+    blueprint.description ||
+    'No description available.';
   const complexity = blueprint.complexity || blueprint.complexcity || 'Medium';
   const rating = blueprint.rating || 4.5;
 
@@ -69,7 +79,9 @@ export default function BlueprintCard({ blueprint }: BlueprintCardProps) {
       {/* Gradient header area */}
       <div
         className="relative flex h-36 items-center justify-center border-b border-[#E1E4EA] transition-opacity duration-200 group-hover:opacity-90"
-        style={{ background: `linear-gradient(135deg, ${soft} 0%, white 100%)` }}
+        style={{
+          background: `linear-gradient(135deg, ${soft} 0%, white 100%)`,
+        }}
       >
         <Icon
           className="h-12 w-12 transition-transform duration-300 group-hover:scale-110"
@@ -113,7 +125,9 @@ export default function BlueprintCard({ blueprint }: BlueprintCardProps) {
         <div className="flex items-center justify-between border-t border-[#E1E4EA] pt-3 text-[10px] text-[#6B7280]">
           <div className="flex items-center gap-1">
             <Star className="h-3 w-3 fill-amber-400 stroke-amber-400" />
-            <span className="font-semibold text-[#181B20]">{Number(rating).toFixed(1)}</span>
+            <span className="font-semibold text-[#181B20]">
+              {Number(rating).toFixed(1)}
+            </span>
           </div>
           <Link
             href={`/blueprints/${id}`}

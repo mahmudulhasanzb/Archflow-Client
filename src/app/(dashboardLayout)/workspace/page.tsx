@@ -316,7 +316,7 @@ export default function WorkspacePage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E1E4EA] text-xs">
-                {blueprints.slice(0, 4).map(bp => {
+                {blueprints.slice(0, 10).map(bp => {
                   const complexityValue = bp.complexity || bp.complexcity || 'Medium';
                   const statusValue = bp.status || 'Ready';
                   

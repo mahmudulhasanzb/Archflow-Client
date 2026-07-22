@@ -31,7 +31,7 @@ const SearchFilterControls = ({
           type="text"
           placeholder="Search blueprints..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={e => setSearch(e.target.value)}
           className="w-full rounded-lg border border-[#E1E4EA] pl-9 pr-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
         />
       </div>
@@ -41,7 +41,7 @@ const SearchFilterControls = ({
         <SlidersHorizontal className="absolute left-3 h-4 w-4 text-[#6B7280] pointer-events-none" />
         <select
           value={stackFilter}
-          onChange={(e) => setStackFilter(e.target.value)}
+          onChange={e => setStackFilter(e.target.value)}
           className="w-full rounded-lg border border-[#E1E4EA] pl-9 pr-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800 appearance-none cursor-pointer"
         >
           <option value="All">All Stacks</option>
@@ -60,7 +60,7 @@ const SearchFilterControls = ({
         <SlidersHorizontal className="absolute left-3 h-4 w-4 text-[#6B7280] pointer-events-none" />
         <select
           value={complexityFilter}
-          onChange={(e) => setComplexityFilter(e.target.value)}
+          onChange={e => setComplexityFilter(e.target.value)}
           className="w-full rounded-lg border border-[#E1E4EA] pl-9 pr-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800 appearance-none cursor-pointer"
         >
           <option value="All">All Complexities</option>
@@ -75,7 +75,7 @@ const SearchFilterControls = ({
         <ArrowUpDown className="absolute left-3 h-4 w-4 text-[#6B7280] pointer-events-none" />
         <select
           value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
+          onChange={e => setSortBy(e.target.value)}
           className="w-full rounded-lg border border-[#E1E4EA] pl-9 pr-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800 appearance-none cursor-pointer"
         >
           <option value="newest">Sort: Newest First</option>
