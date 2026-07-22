@@ -48,11 +48,21 @@ export default function SignInPage() {
     }
   };
 
-  const handleDemoLogin = () => {
-    const toastId = toast.loading('Logging in as Demo User...');
-    document.cookie = 'better-auth.session_token=demo-session-token; path=/; max-age=2592000;';
-    toast.success('Logged in as Demo User!', { id: toastId });
-    router.push('/workspace');
+  const handleDemoLogin = async () => {
+    toast.loading('Logging in as Demo User...');
+    setTimeout(() => {
+      toast.dismiss();
+    }, 4000);
+    const { error } = await authClient.signIn.email({
+      email: "demo@gmail.com",
+      password: "DemoP@ssord",
+      callbackURL: '/workspace',
+    });
+    if (!error) {
+      toast.success('Signed in successfully!');
+    } else {
+      toast.error(error.message || 'Invalid email or password.');
+    }
     router.refresh();
   };
 
@@ -173,7 +183,7 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#4F46E5] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#4F46E5]/25 transition-all hover:bg-[#4338CA] hover:shadow-[#4F46E5]/40 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#4F46E5] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#4F46E5]/25 transition-all hover:bg-[#4338CA] hover:shadow-[#4F46E5]/40 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
             >
               {isSubmitting ? 'Signing in...' : 'Sign In'}
             </button>
@@ -189,7 +199,7 @@ export default function SignInPage() {
             <button
               type="button"
               onClick={handleDemoLogin}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#E1E4EA] bg-white px-4 py-2.5 text-sm font-semibold text-[#4F46E5] transition-all hover:bg-[#EEF0FF] hover:border-[#4F46E5]/30"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#E1E4EA] bg-white px-4 py-2.5 text-sm cursor-pointer font-semibold text-[#4F46E5] transition-all hover:bg-[#EEF0FF] hover:border-[#4F46E5]/30"
             >
               <Zap className="h-4 w-4" />
               One Click Demo Login
