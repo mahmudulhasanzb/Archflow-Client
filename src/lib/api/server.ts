@@ -1,8 +1,14 @@
-import { baseURL } from './baseUrl';
+import { baseURL, getAuthHeaders } from './baseUrl';
 
 // serverFetch
 export const serverFetch = async (path: any) => {
-  const res = await fetch(`${baseURL}${path}`, { cache: 'no-store' });
+  const authHeaders = await getAuthHeaders();
+  const res = await fetch(`${baseURL}${path}`, {
+    cache: 'no-store',
+    headers: {
+      ...authHeaders,
+    },
+  });
 
   if (!res.ok) {
     console.error(`Fetch error: ${res.status} ${res.statusText} for ${path}`);
@@ -18,7 +24,7 @@ export const serverFetch = async (path: any) => {
   }
 };
 
-// get all blueprints
+// get all blueprints (public)
 export const getAllBlueprints = async () => {
   const res = await fetch(`${baseURL}/api/all-blueprints`);
   if (!res.ok) {
