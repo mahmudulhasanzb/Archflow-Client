@@ -7,6 +7,9 @@ interface Blueprint {
   _id: string;
   title: string;
   description: string;
+  shortDescription?: string;
+  stack?: string;
+  teckStack?: string | string[];
   complexity?: string;
   complexcity?: string;
   rating?: number;
@@ -47,21 +50,10 @@ const STATIC_BLUEPRINTS = [
     accentSoft: '#FFF0EA',
     tags: ['Stripe', 'MongoDB', 'Express', 'Webhooks'],
   },
-  {
-    _id: '4',
-    title: 'Distributed Background Job Queue',
-    description: 'BullMQ cluster setup using Redis streams for guaranteed job dispatching and retries.',
-    complexity: 'Medium',
-    rating: 4.7,
-    icon: ShieldAlert,
-    accent: '#4F46E5',
-    accentSoft: '#EEF0FF',
-    tags: ['BullMQ', 'Redis', 'TypeScript', 'Worker'],
-  },
 ];
 
 const complexityBadgeStyle = (complexity: string) => {
-  const c = complexity.toLowerCase();
+  const c = (complexity || 'Medium').toLowerCase();
   if (c === 'high') {
     return 'text-rose-600 bg-rose-50 border-rose-200 dark:bg-rose-950/50 dark:text-rose-400 dark:border-rose-800';
   }
@@ -72,8 +64,20 @@ const complexityBadgeStyle = (complexity: string) => {
 };
 
 const ICONS = [Cpu, Layers, Layout, ShieldAlert];
-const ACCENTS = ['#4F46E5', '#0D9488', '#EA5C34', '#4F46E5'];
-const ACCENT_SOFTS = ['#EEF0FF', '#E6F5F3', '#FFF0EA', '#EEF0FF'];
+const ACCENTS = ['#4F46E5', '#0D9488', '#EA5C34'];
+const ACCENT_SOFTS = ['#EEF0FF', '#E6F5F3', '#FFF0EA'];
+
+function getStackTags(bp: Blueprint): string[] {
+  if (bp.teckStack) {
+    return Array.isArray(bp.teckStack)
+      ? bp.teckStack
+      : bp.teckStack.split(',').map((s) => s.trim());
+  }
+  if (bp.stack) {
+    return bp.stack.split(',').map((s) => s.trim());
+  }
+  return ['Node.js', 'Next.js'];
+}
 
 export default async function FeaturedBlueprints() {
   let displayBlueprints: any[] = STATIC_BLUEPRINTS;
@@ -82,7 +86,8 @@ export default async function FeaturedBlueprints() {
   try {
     const apiBlueprints = await getAllBlueprints();
     if (apiBlueprints && apiBlueprints.length > 0) {
-      displayBlueprints = apiBlueprints.slice(0, 10);
+      // Show ONLY latest 3 blueprints from backend API
+      displayBlueprints = apiBlueprints.slice(0, 3);
       isFromApi = true;
     }
   } catch (error) {
@@ -102,11 +107,11 @@ export default async function FeaturedBlueprints() {
             Featured Blueprints
           </h2>
           <p className="text-base text-[#6B7280] dark:text-[#9CA3AF] max-w-xl">
-            Explore verified system architectures engineered by multi-agent pipelines.
+            Explore latest system architectures engineered by multi-agent pipelines.
           </p>
         </div>
         <Link
-          href="/explore"
+          href="/blueprints"
           className="inline-flex items-center gap-2 text-sm font-bold text-[#4F46E5] dark:text-[#818CF8] hover:underline shrink-0"
         >
           View All Blueprints
@@ -114,20 +119,20 @@ export default async function FeaturedBlueprints() {
         </Link>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Grid: 3 Latest Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {displayBlueprints.map((bp, idx) => {
-          const Icon = isFromApi ? ICONS[idx % 4] : (STATIC_BLUEPRINTS[idx]?.icon ?? Cpu);
-          const accent = isFromApi ? ACCENTS[idx % 4] : (STATIC_BLUEPRINTS[idx]?.accent ?? '#4F46E5');
-          const accentSoft = isFromApi ? ACCENT_SOFTS[idx % 4] : (STATIC_BLUEPRINTS[idx]?.accentSoft ?? '#EEF0FF');
-          const tags = isFromApi ? ['Node.js', 'MongoDB'] : (STATIC_BLUEPRINTS[idx]?.tags ?? ['API']);
+          const Icon = isFromApi ? ICONS[idx % 3] : (STATIC_BLUEPRINTS[idx]?.icon ?? Cpu);
+          const accent = isFromApi ? ACCENTS[idx % 3] : (STATIC_BLUEPRINTS[idx]?.accent ?? '#4F46E5');
+          const accentSoft = isFromApi ? ACCENT_SOFTS[idx % 3] : (STATIC_BLUEPRINTS[idx]?.accentSoft ?? '#EEF0FF');
+          const tags = isFromApi ? getStackTags(bp) : (STATIC_BLUEPRINTS[idx]?.tags ?? ['Node.js']);
           const ratingValue = bp.rating || 4.8;
           const complexityValue = bp.complexity || bp.complexcity || 'Medium';
 
           return (
             <div
               key={bp._id || idx}
-              className="group flex flex-col justify-between rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] p-5 shadow-sm hover:shadow-xl hover:border-[#4F46E5]/40 transition-all duration-300"
+              className="group flex flex-col justify-between rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] p-6 shadow-sm hover:shadow-xl hover:border-[#4F46E5]/40 transition-all duration-300"
             >
               <div className="space-y-4">
                 {/* Header Badge */}
@@ -152,12 +157,12 @@ export default async function FeaturedBlueprints() {
 
                 {/* Description */}
                 <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed line-clamp-3">
-                  {bp.description}
+                  {bp.shortDescription || bp.description}
                 </p>
 
                 {/* Tech Tags */}
                 <div className="flex flex-wrap gap-1.5 pt-2">
-                  {tags.map((tag: string) => (
+                  {tags.slice(0, 4).map((tag: string) => (
                     <span
                       key={tag}
                       className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F1F3F6] dark:bg-[#171E30] text-[#6B7280] dark:text-[#9CA3AF]"

@@ -5,7 +5,15 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { authClient } from '@/lib/auth-client';
-import { Eye, EyeOff, Activity, Cpu, Layers, ShieldAlert, Zap } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Activity,
+  Cpu,
+  Layers,
+  ShieldAlert,
+  Zap,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 
 type Inputs = {
@@ -14,9 +22,9 @@ type Inputs = {
 };
 
 const FEATURES = [
-  { icon: Cpu,        text: 'AI architect agent generates full schemas' },
-  { icon: Layers,     text: 'Multi-agent pipeline with 4 specialists' },
-  { icon: ShieldAlert,text: 'Security audit included in every blueprint' },
+  { icon: Cpu, text: 'AI architect agent generates full schemas' },
+  { icon: Layers, text: 'Multi-agent pipeline with 4 specialists' },
+  { icon: ShieldAlert, text: 'Security audit included in every blueprint' },
 ];
 
 export default function SignInPage() {
@@ -38,13 +46,17 @@ export default function SignInPage() {
         callbackURL: '/workspace',
       });
       if (error) {
-        toast.error(error.message || 'Invalid email or password.', { id: toastId });
+        toast.error(error.message || 'Invalid email or password.', {
+          id: toastId,
+        });
       } else {
         toast.success('Signed in successfully!', { id: toastId });
         router.push('/workspace');
       }
     } catch {
-      toast.error('An unexpected error occurred. Please try again.', { id: toastId });
+      toast.error('An unexpected error occurred. Please try again.', {
+        id: toastId,
+      });
     }
   };
 
@@ -54,8 +66,8 @@ export default function SignInPage() {
       toast.dismiss();
     }, 4000);
     const { error } = await authClient.signIn.email({
-      email: "demo@gmail.com",
-      password: "DemoP@ssord",
+      email: 'demo@gmail.com',
+      password: 'DemoP@ssord',
       callbackURL: '/workspace',
     });
     if (!error) {
@@ -71,15 +83,23 @@ export default function SignInPage() {
       {/* ── Left brand panel ───────────────────────────────────── */}
       <div className="hidden lg:flex lg:w-[45%] flex-col justify-between p-12 bg-gradient-to-br from-[#4F46E5] via-[#4338CA] to-[#3730A3] relative overflow-hidden">
         {/* Decorative orbs */}
-        <div aria-hidden className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-white/5 blur-3xl" />
-        <div aria-hidden className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-[#0D9488]/20 blur-3xl" />
+        <div
+          aria-hidden
+          className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-white/5 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-[#0D9488]/20 blur-3xl"
+        />
 
         {/* Logo */}
         <div className="relative flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15">
             <Activity className="h-5 w-5 text-white" />
           </div>
-          <span className="text-xl font-bold text-white font-display">Archflow</span>
+          <span className="text-xl font-bold text-white font-display">
+            Archflow
+          </span>
         </div>
 
         {/* Headline */}
@@ -92,8 +112,8 @@ export default function SignInPage() {
             <span className="text-[#86EFAC]">one idea.</span>
           </h2>
           <p className="text-indigo-200 text-sm leading-relaxed max-w-xs">
-            Our multi-agent AI system turns a paragraph description into complete
-            schemas, roadmaps, and code stubs — in seconds.
+            Our multi-agent AI system turns a paragraph description into
+            complete schemas, roadmaps, and code stubs — in seconds.
           </p>
 
           {/* Feature list */}
@@ -121,7 +141,9 @@ export default function SignInPage() {
           {/* Mobile logo */}
           <div className="flex items-center gap-2 lg:hidden">
             <Activity className="h-6 w-6 text-[#4F46E5]" />
-            <span className="text-lg font-bold text-[#181B20] font-display">Archflow</span>
+            <span className="text-lg font-bold text-[#181B20] font-display">
+              Archflow
+            </span>
           </div>
 
           <div>
@@ -130,7 +152,10 @@ export default function SignInPage() {
             </h1>
             <p className="mt-1.5 text-sm text-[#6B7280]">
               Don&apos;t have an account?{' '}
-              <Link href="/signup" className="font-semibold text-[#4F46E5] hover:underline">
+              <Link
+                href="/signup"
+                className="font-semibold text-[#4F46E5] hover:underline"
+              >
                 Sign up free
               </Link>
             </p>
@@ -139,7 +164,10 @@ export default function SignInPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Email */}
             <div className="space-y-1.5">
-              <label htmlFor="email-address" className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+              <label
+                htmlFor="email-address"
+                className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
+              >
                 Email Address
               </label>
               <input
@@ -148,16 +176,24 @@ export default function SignInPage() {
                 placeholder="you@example.com"
                 {...register('email', {
                   required: 'Email is required',
-                  pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: 'Invalid email address' },
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email address',
+                  },
                 })}
                 className="w-full rounded-xl border border-[#E1E4EA] bg-[#F1F3F6]/50 px-4 py-2.5 text-sm text-[#181B20] placeholder-[#6B7280] transition-colors focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20"
               />
-              {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-xs text-red-500">{errors.email.message}</p>
+              )}
             </div>
 
             {/* Password */}
             <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+              <label
+                htmlFor="password"
+                className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
+              >
                 Password
               </label>
               <div className="relative">
@@ -165,7 +201,9 @@ export default function SignInPage() {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
-                  {...register('password', { required: 'Password is required' })}
+                  {...register('password', {
+                    required: 'Password is required',
+                  })}
                   className="w-full rounded-xl border border-[#E1E4EA] bg-[#F1F3F6]/50 px-4 py-2.5 pr-10 text-sm text-[#181B20] placeholder-[#6B7280] transition-colors focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20"
                 />
                 <button
@@ -173,10 +211,18 @@ export default function SignInPage() {
                   onClick={() => setShowPassword(p => !p)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#181B20] transition-colors"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
-              {errors.password && <p className="text-xs text-red-500">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-xs text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* Submit */}
@@ -191,7 +237,9 @@ export default function SignInPage() {
             {/* Divider */}
             <div className="relative flex items-center">
               <div className="flex-1 border-t border-[#E1E4EA]" />
-              <span className="mx-3 text-xs uppercase tracking-wider text-[#6B7280]">Or</span>
+              <span className="mx-3 text-xs uppercase tracking-wider text-[#6B7280]">
+                Or
+              </span>
               <div className="flex-1 border-t border-[#E1E4EA]" />
             </div>
 
