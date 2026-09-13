@@ -10,14 +10,15 @@
   },
   "dependencies": {
     "@better-auth/mongo-adapter": "^1.6.23",
-    "@stripe/stripe-js": "^9.12.0",
+    "@stripe/stripe-js": "^9.16.0",
     "better-auth": "^1.6.23",
     "dotenv": "^17.4.2",
     "framer-motion": "^12.42.2",
     "jose-cjs": "^6.2.3",
+    "jszip": "^3.10.2",
     "lucide-react": "^0.475.0",
     "mongodb": "^7.5.0",
-    "next": "^16.2.10",
+    "next": "^16.3.5",
     "openai": "^6.48.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -25,10 +26,11 @@
     "react-hot-toast": "^2.6.0",
     "react-is": "^18.3.1",
     "recharts": "^2.12.7",
-    "stripe": "^22.3.2"
+    "stripe": "^22.6.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/jszip": "^3.4.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

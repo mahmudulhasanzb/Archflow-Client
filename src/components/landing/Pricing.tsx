@@ -21,10 +21,10 @@ export default function Pricing() {
       return;
     }
 
-    if (isProUser) {
-      router.push('/add-blueprint');
-      return;
-    }
+    // if (isProUser) {
+    //   router.push('/add-blueprint');
+    //   return;
+    // }
 
     try {
       setLoadingCheckout(true);

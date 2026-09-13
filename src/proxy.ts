@@ -5,11 +5,12 @@ import type { NextRequest } from 'next/server';
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Only protect dashboard/blueprint routes
+  // Only protect dashboard routes and individual blueprint details
   const isProtectedRoute =
     pathname.startsWith('/workspace') ||
     pathname.startsWith('/add-blueprint') ||
-    pathname.startsWith('/manage-blueprints');
+    pathname.startsWith('/manage-blueprints') ||
+    (pathname.startsWith('/blueprints/') && pathname !== '/blueprints');
 
   if (!isProtectedRoute) {
     return NextResponse.next();
@@ -34,5 +35,6 @@ export const config = {
     '/workspace/:path*',
     '/add-blueprint',
     '/manage-blueprints',
+    '/blueprints/:id*',
   ],
 };

@@ -1,60 +1,38 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { stripe } from '@/lib/stripe';
-import { auth } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
     const headersList = await headers();
     const origin = headersList.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
-    // Verify logged in user session
-    const authSession = await auth.api.getSession({
-      headers: headersList,
-    });
+    const PRICE_ID = 'prod_VFgVb69rUMaIHL';
 
-    if (!authSession || !authSession.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized: Please sign in before upgrading to Pro' },
-        { status: 401 }
-      );
-    }
-
-    const user = authSession.user;
-
-    // Create Checkout Session
+    // Create Checkout Sessions
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
       line_items: [
         {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'Archflow Developer Pro Plan',
-              description: 'Unlimited AI agent blueprint generations and custom LLM keys access.',
-            },
-            unit_amount: 2900, // $29.00 USD
-          },
+          price: PRICE_ID,
           quantity: 1,
         },
       ],
-      mode: 'payment',
-      customer_email: user.email,
-      client_reference_id: user.id,
-      metadata: {
-        userId: user.id,
-        userEmail: user.email,
-      },
+      mode: 'subscription',
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/#pricing`,
     });
 
-    return NextResponse.json({ url: session.url }, { status: 200 });
+    const isJson = req.headers.get('content-type')?.includes('application/json') || req.headers.get('accept')?.includes('application/json');
+
+    if (!isJson && session.url) {
+      return NextResponse.redirect(session.url, 303);
+    }
+
+    return NextResponse.json({ url: session.url });
   } catch (err: any) {
-    console.error('Stripe checkout session error:', err);
     return NextResponse.json(
-      { error: err.message || 'Internal Server Error' },
-      { status: err.statusCode || 500 }
+      { error: err?.message || 'Stripe checkout error' },
+      { status: err?.statusCode || 500 }
     );
   }
 }

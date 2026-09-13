@@ -3,345 +3,676 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { serverMutation } from '@/lib/api/mutation';
+import { getUserQuota } from '@/lib/api/blueprint/data';
+import {
+  generateProjectOverview,
+  generateRequirements,
+  generateArchitecture,
+  generateDesign,
+  generateExecutionPlan,
+  extractBlueprintMetadata,
+  GeneratedBlueprintFiles,
+} from '@/lib/api/blueprintGenerator';
 import { authClient } from '@/lib/auth-client';
 import toast from 'react-hot-toast';
-import { Cpu, Layers, BookOpen, ArrowLeft } from 'lucide-react';
+import {
+  Sparkles,
+  Layers,
+  ArrowLeft,
+  Lock,
+  Globe,
+  ShieldCheck,
+  CheckCircle2,
+  Loader2,
+  FileText,
+  Code2,
+  Palette,
+  ListTodo,
+  Zap,
+  ArrowRight,
+} from 'lucide-react';
 import Link from 'next/link';
+
+interface StarterTemplate {
+  label: string;
+  badge: string;
+  prompt: string;
+  techStack: string;
+  exclusions: string;
+  complexity: string;
+}
+
+const STARTER_TEMPLATES: StarterTemplate[] = [
+  {
+    label: 'SaaS Subscription Platform',
+    badge: 'SaaS',
+    prompt: 'Build a multi-tenant B2B SaaS platform with team workspaces, Stripe billing, granular user role permissions, audit logging, and modern analytics dashboards.',
+    techStack: 'Next.js 16, Tailwind CSS v4, Express 5, MongoDB, Stripe, Better Auth',
+    exclusions: 'No heavy Redux/Zustand, no Mongoose schemas, no Prisma ORM',
+    complexity: 'medium',
+  },
+  {
+    label: 'AI Agent Execution Engine',
+    badge: 'AI Swarm',
+    prompt: 'Build an autonomous multi-agent task runner where users define high-level goals, and orchestrator agents decompose tasks into sub-tasks executed by specialized worker agents with live telemetry streaming.',
+    techStack: 'Next.js 16, TypeScript, Tailwind CSS v4, OpenRouter, Node.js, MongoDB',
+    exclusions: 'No Python dependencies, no LangChain abstractions, pure deterministic TypeScript',
+    complexity: 'high',
+  },
+  {
+    label: 'E-Commerce Marketplace',
+    badge: 'Store',
+    prompt: 'Build a high-performance multi-vendor marketplace with product discovery, cart state, merchant storefronts, Stripe split payouts, and automated customer order notifications.',
+    techStack: 'Next.js 16 App Router, Tailwind CSS v4, Express 5, MongoDB, Stripe',
+    exclusions: 'No GraphQL, no microservices overhead, clean single-file backend',
+    complexity: 'medium',
+  },
+  {
+    label: 'Developer Productivity Hub',
+    badge: 'Dev Tool',
+    prompt: 'Build an interactive developer dashboard for tracking GitHub PR reviews, CI/CD deployment pipelines, code snippets, and automated daily changelog generation.',
+    techStack: 'Next.js 16, Tailwind CSS, Better Auth, Express 5, Native MongoDB Driver',
+    exclusions: 'No complex Docker setup for MVP, client-side caching only',
+    complexity: 'low',
+  },
+];
+
+interface StepState {
+  id: number;
+  name: string;
+  file: string;
+  icon: React.ComponentType<{ className?: string }>;
+  status: 'waiting' | 'generating' | 'completed';
+}
 
 export default function AddBlueprintPage() {
   const router = useRouter();
   const { data: session } = authClient.useSession();
-  const [loading, setLoading] = useState(false);
+  const userEmail = session?.user?.email;
 
   // Form states
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [techStackInput, setTechStackInput] = useState('');
-  const [complexcity, setComplexcity] = useState('medium');
-  const [status, setStatus] = useState('ready');
-  const [rating, setRating] = useState(5);
-  const [author, setAuthor] = useState('hasan@gmail.com');
+  const [prompt, setPrompt] = useState('');
+  const [techStackInput, setTechStackInput] = useState('Next.js 16, Tailwind CSS v4, Express 5, MongoDB');
+  const [exclusions, setExclusions] = useState('');
+  const [complexity, setComplexity] = useState('medium');
+  const [visibility, setVisibility] = useState<'public' | 'private'>('public');
 
+  // Quota & Tier State
+  const [quota, setQuota] = useState<{
+    role: string;
+    count: number;
+    max: number;
+    remaining: number;
+    canGenerate: boolean;
+    isPro: boolean;
+  } | null>(null);
+  const [loadingQuota, setLoadingQuota] = useState(true);
+  const [upgradingStripe, setUpgradingStripe] = useState(false);
+
+  // Generation States
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [steps, setSteps] = useState<StepState[]>([
+    { id: 1, name: 'Project Overview', file: 'projectOverview.md', icon: FileText, status: 'waiting' },
+    { id: 2, name: 'System Requirements', file: 'requirements.md', icon: ListTodo, status: 'waiting' },
+    { id: 3, name: 'Architecture & Schemas', file: 'architecture.md', icon: Code2, status: 'waiting' },
+    { id: 4, name: 'Design System & UI', file: 'design.md', icon: Palette, status: 'waiting' },
+    { id: 5, name: 'Agentic Execution Plan', file: 'executionPlan.md', icon: CheckCircle2, status: 'waiting' },
+  ]);
+
+  // Load quota status on mount
   useEffect(() => {
-    if (session?.user?.email) {
-      setAuthor(session.user.email);
+    async function loadQuota() {
+      if (!userEmail) return;
+      try {
+        setLoadingQuota(true);
+        const data = await getUserQuota(userEmail);
+        setQuota(data);
+        if (data && !data.isPro) {
+          setVisibility('public');
+        }
+      } catch (err) {
+        console.error('Error fetching quota in add-blueprint:', err);
+      } finally {
+        setLoadingQuota(false);
+      }
     }
-  }, [session]);
+    loadQuota();
+  }, [userEmail]);
 
-  // Architecture Flow states
-  const [archTitle, setArchTitle] = useState('');
-  const [archDesc, setArchDesc] = useState('');
-  const [featureTitle, setFeatureTitle] = useState('');
-  const [featureDesc, setFeatureDesc] = useState('');
-  const [planTitle, setPlanTitle] = useState('');
-  const [planDesc, setPlanDesc] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim() || !description.trim()) {
-      toast.error('Title and Description are required.');
-      return;
-    }
-
-    setLoading(true);
-
-    // Parse techStack
-    const teckStack = techStackInput
-      .split(',')
-      .map(item => item.trim())
-      .filter(item => item.length > 0);
-
-    const payload = {
-      title,
-      description,
-      teckStack: teckStack.length > 0 ? teckStack : ['React', 'Node.js'],
-      complexcity,
-      architectureFlow: {
-        architecture: {
-          title: archTitle || 'Architecture details',
-          description: archDesc || 'Architecture description details.',
-        },
-        features: {
-          title: featureTitle || 'Key features',
-          description: featureDesc || 'Feature checklist details.',
-        },
-        plan: {
-          title: planTitle || 'Implementation roadmap',
-          description: planDesc || 'Roadmap blueprint plan details.',
-        },
-      },
-      status,
-      rating: Number(rating) || 5,
-      author,
-      email: author,
-      creatorId: session?.user?.id || '',
-      userId: session?.user?.id || '',
-      createdAt: new Date().toISOString(),
-    };
-
+  // Handle Stripe Upgrade Redirect
+  const handleUpgradeClick = async () => {
     try {
-      const res = await serverMutation('/api/blueprints', 'POST', payload);
-      if (res) {
-        toast.success('Blueprint successfully created!');
-        router.push('/manage-blueprints');
+      setUpgradingStripe(true);
+      const res = await fetch('/api/checkout_sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
       } else {
-        throw new Error('No response from server');
+        toast.error(data.error || 'Failed to start checkout');
+        setUpgradingStripe(false);
       }
     } catch (err: any) {
       console.error(err);
-      toast.error(
-        'Failed to create blueprint: ' + (err.message || 'Server error'),
+      toast.error('Payment checkout failed');
+      setUpgradingStripe(false);
+    }
+  };
+
+  // Select starter template
+  const applyTemplate = (t: StarterTemplate) => {
+    setPrompt(t.prompt);
+    setTechStackInput(t.techStack);
+    setExclusions(t.exclusions);
+    setComplexity(t.complexity);
+    toast.success(`Applied "${t.label}" template`);
+  };
+
+  const updateStepStatus = (stepId: number, status: 'waiting' | 'generating' | 'completed') => {
+    setSteps(prev => prev.map(s => (s.id === stepId ? { ...s, status } : s)));
+  };
+
+  // Main 5-Step Generator Execution
+  const handleGenerate = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!prompt.trim()) {
+      toast.error('Please enter a project description or requirements prompt.');
+      return;
+    }
+
+    if (quota && !quota.canGenerate) {
+      toast.error(`Blueprint limit reached (${quota.count}/${quota.max}). Upgrade to Pro to continue.`);
+      return;
+    }
+
+    const techStack = techStackInput
+      .split(',')
+      .map(item => item.trim())
+      .filter(Boolean);
+
+    setIsGenerating(true);
+    // Reset steps
+    setSteps(prev => prev.map(s => ({ ...s, status: 'waiting' })));
+
+    try {
+      // Step 1: Project Overview
+      updateStepStatus(1, 'generating');
+      const projectOverview = await generateProjectOverview({
+        prompt,
+        techStack,
+        exclusions,
+        complexity,
+      });
+      updateStepStatus(1, 'completed');
+
+      // Step 2: Requirements Specification
+      updateStepStatus(2, 'generating');
+      const requirements = await generateRequirements(
+        { prompt, exclusions, complexity },
+        projectOverview
       );
+      updateStepStatus(2, 'completed');
+
+      // Step 3: Architecture & Schemas
+      updateStepStatus(3, 'generating');
+      const architecture = await generateArchitecture(
+        { prompt, techStack },
+        projectOverview,
+        requirements
+      );
+      updateStepStatus(3, 'completed');
+
+      // Step 4: Design System & UI
+      updateStepStatus(4, 'generating');
+      const design = await generateDesign(
+        { prompt, techStack },
+        projectOverview,
+        architecture
+      );
+      updateStepStatus(4, 'completed');
+
+      // Step 5: Agentic Execution Plan
+      updateStepStatus(5, 'generating');
+      const executionPlan = await generateExecutionPlan(
+        { prompt, techStack, exclusions, complexity },
+        projectOverview,
+        requirements,
+        architecture,
+        design
+      );
+      updateStepStatus(5, 'completed');
+
+      const markdownFiles: GeneratedBlueprintFiles = {
+        projectOverview,
+        requirements,
+        architecture,
+        design,
+        executionPlan,
+      };
+
+      const metadata = await extractBlueprintMetadata(projectOverview, 'New Software Blueprint');
+
+      // Save to MongoDB via Express Backend
+      const payload = {
+        title: metadata.title,
+        description: metadata.description,
+        prompt,
+        teckStack: techStack.length ? techStack : ['Next.js', 'Express', 'MongoDB'],
+        complexcity: complexity,
+        visibility,
+        markdownFiles,
+        architectureFlow: {
+          architecture: {
+            title: 'System Architecture',
+            description: architecture.slice(0, 320) + '...',
+          },
+          features: {
+            title: 'Requirements & Scope',
+            description: requirements.slice(0, 320) + '...',
+          },
+          plan: {
+            title: 'Execution Roadmap',
+            description: executionPlan.slice(0, 320) + '...',
+          },
+        },
+        status: 'ready',
+        rating: 5,
+        author: userEmail,
+        email: userEmail,
+        creatorId: session?.user?.id || '',
+        createdAt: new Date().toISOString(),
+      };
+
+      const res = await serverMutation('/api/blueprints', 'POST', payload);
+
+      if (res && (res.insertedId || res._id || res.blueprintId)) {
+        const id = res.insertedId || res._id || res.blueprintId;
+        toast.success('Blueprint generated successfully!');
+        router.push(`/blueprints/${id}`);
+      } else if (res?.error) {
+        throw new Error(res.error);
+      } else {
+        throw new Error('Server did not return a valid blueprint ID');
+      }
+    } catch (err: any) {
+      console.error('Generation failure:', err);
+      toast.error(err.message || 'Blueprint generation failed. Please try again.');
     } finally {
-      setLoading(false);
+      setIsGenerating(false);
     }
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8 flex-grow">
-      {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8 flex-grow">
+      {/* Top Breadcrumb & Header */}
+      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#E1E4EA] dark:border-[#222C43] pb-6">
         <div>
           <Link
-            href="/blueprints"
-            className="inline-flex items-center gap-1 text-xs font-semibold text-[#6B7280] hover:text-[#181B20] transition-colors mb-2"
+            href="/manage-blueprints"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6B7280] hover:text-[#181B20] dark:text-[#9CA3AF] dark:hover:text-white transition-colors mb-2"
           >
-            <ArrowLeft className="h-3.5 w-3.5" /> Back to Explore
+            <ArrowLeft className="h-3.5 w-3.5" /> Back to My Blueprints
           </Link>
-          <h1 className="text-3xl font-extrabold tracking-tight text-[#181B20] font-display">
-            Create Architecture Blueprint
-          </h1>
-          <p className="text-sm text-[#6B7280] mt-1">
-            Specify technical details, architecture phases, and target tech
-            stack.
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#181B20] dark:text-[#F3F4F6] font-display">
+              AI Blueprint Studio
+            </h1>
+            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 px-2.5 py-0.5 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">
+              <Sparkles className="h-3 w-3" /> MVP Generator
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-[#6B7280] dark:text-[#9CA3AF] mt-1">
+            Generate 5 deterministic, Agentic-IDE-ready markdown specifications with checkable phased tasks.
           </p>
+        </div>
+
+        {/* Quota Badge Header */}
+        <div className="flex items-center gap-3">
+          {loadingQuota ? (
+            <div className="flex items-center gap-1.5 text-xs text-[#6B7280]">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Checking quota...
+            </div>
+          ) : quota ? (
+            <div className="flex items-center gap-2">
+              <div
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold ${
+                  quota.isPro
+                    ? 'bg-indigo-50/70 border-indigo-200 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-300'
+                    : quota.remaining === 0
+                    ? 'bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-300'
+                    : 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300'
+                }`}
+              >
+                {quota.isPro ? (
+                  <Zap className="h-3.5 w-3.5 fill-current text-indigo-500" />
+                ) : (
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                )}
+                <span>
+                  {quota.isPro ? 'Developer Pro' : 'Free Tier'}:{' '}
+                  <strong className="font-bold">
+                    {quota.remaining} of {quota.max}
+                  </strong>{' '}
+                  remaining
+                </span>
+              </div>
+
+              {!quota.isPro && (
+                <button
+                  type="button"
+                  onClick={handleUpgradeClick}
+                  disabled={upgradingStripe}
+                  className="inline-flex items-center gap-1 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:opacity-95 transition-opacity cursor-pointer disabled:opacity-60"
+                >
+                  {upgradingStripe ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <>
+                      Upgrade
+                      <ArrowRight className="h-3 w-3" />
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          ) : null}
         </div>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-8 bg-white border border-[#E1E4EA] rounded-xl p-6 sm:p-8 shadow-sm"
-      >
-        {/* Core Metadata Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-[#E1E4EA]">
-          <div className="md:col-span-2">
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#181B20] mb-2">
-              Blueprint Title
-            </label>
-            <input
-              type="text"
-              required
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              placeholder="e.g. Realtime Collaborative Workspace"
-              className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
-            />
-          </div>
-
-          <div className="md:col-span-2">
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#181B20] mb-2">
-              Short Description
-            </label>
-            <textarea
-              required
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              placeholder="Overview description of the system architecture design..."
-              rows={3}
-              className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
-            />
-          </div>
-
+      {/* Quota Limit Reached Warning Banner */}
+      {quota && !quota.canGenerate && (
+        <div className="mb-8 rounded-2xl border border-rose-200 bg-rose-50/80 p-5 text-rose-900 dark:border-rose-900/40 dark:bg-rose-950/30 dark:text-rose-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#181B20] mb-2">
-              Tech Stack (Comma Separated)
-            </label>
-            <input
-              type="text"
-              value={techStackInput}
-              onChange={e => setTechStackInput(e.target.value)}
-              placeholder="Nextjs, React, MongoDB, WebSockets"
-              className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
-            />
+            <h3 className="font-bold text-sm">Generation Quota Limit Reached</h3>
+            <p className="text-xs text-rose-700 dark:text-rose-300 mt-0.5">
+              You have created {quota.count} of {quota.max} blueprints allowed on the Free plan. Upgrade to Developer Pro for 10 daily blueprints and private workspaces.
+            </p>
           </div>
-
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#181B20] mb-2">
-              Complexity Level
-            </label>
-            <select
-              value={complexcity}
-              onChange={e => setComplexcity(e.target.value)}
-              className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800 appearance-none cursor-pointer"
-            >
-              <option value="low">Low Complexity</option>
-              <option value="medium">Medium Complexity</option>
-              <option value="high">High Complexity</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#181B20] mb-2">
-              Author Email
-            </label>
-            <input
-              type="email"
-              required
-              value={author}
-              readOnly
-              className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm bg-slate-50 text-slate-500 cursor-not-allowed"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#181B20] mb-2">
-              Rating
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="5"
-              step="0.1"
-              required
-              value={rating}
-              onChange={e => setRating(Number(e.target.value))}
-              className="w-full rounded-lg border border-[#E1E4EA] px-4 py-2 text-sm focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
-            />
-          </div>
-        </div>
-
-        {/* Architecture Flow Details */}
-        <div className="space-y-6 pb-6 border-b border-[#E1E4EA]">
-          <h3 className="text-sm font-bold text-[#181B20] uppercase tracking-wider">
-            Architecture Flow Steps
-          </h3>
-
-          {/* Step 1: Architecture */}
-          <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl space-y-4">
-            <div className="flex items-center gap-2 text-[#4F46E5]">
-              <Cpu className="h-5 w-5" />
-              <span className="font-bold text-xs uppercase tracking-wider">
-                Step 1: System Architecture
-              </span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6B7280] mb-1">
-                  Step Title
-                </label>
-                <input
-                  type="text"
-                  value={archTitle}
-                  onChange={e => setArchTitle(e.target.value)}
-                  placeholder="System Layout & Topology"
-                  className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6B7280] mb-1">
-                  Step Description
-                </label>
-                <input
-                  type="text"
-                  value={archDesc}
-                  onChange={e => setArchDesc(e.target.value)}
-                  placeholder="Details of gateways, microservices routing, or database structure..."
-                  className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Step 2: Features */}
-          <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl space-y-4">
-            <div className="flex items-center gap-2 text-[#0D9488]">
-              <Layers className="h-5 w-5" />
-              <span className="font-bold text-xs uppercase tracking-wider">
-                Step 2: Core Features
-              </span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6B7280] mb-1">
-                  Step Title
-                </label>
-                <input
-                  type="text"
-                  value={featureTitle}
-                  onChange={e => setFeatureTitle(e.target.value)}
-                  placeholder="Functional Scope"
-                  className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6B7280] mb-1">
-                  Step Description
-                </label>
-                <input
-                  type="text"
-                  value={featureDesc}
-                  onChange={e => setFeatureDesc(e.target.value)}
-                  placeholder="Detail user authentication, sync engine, real-time channels..."
-                  className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Step 3: Plan */}
-          <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl space-y-4">
-            <div className="flex items-center gap-2 text-[#EA5C34]">
-              <BookOpen className="h-5 w-5" />
-              <span className="font-bold text-xs uppercase tracking-wider">
-                Step 3: Roadmap & Plan
-              </span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6B7280] mb-1">
-                  Step Title
-                </label>
-                <input
-                  type="text"
-                  value={planTitle}
-                  onChange={e => setPlanTitle(e.target.value)}
-                  placeholder="Execution Phases"
-                  className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#6B7280] mb-1">
-                  Step Description
-                </label>
-                <input
-                  type="text"
-                  value={planDesc}
-                  onChange={e => setPlanDesc(e.target.value)}
-                  placeholder="Phase 1 setup, Phase 2 migration, Phase 3 validation checklist..."
-                  className="w-full rounded-lg border border-[#E1E4EA] px-3 py-1.5 text-xs focus:border-[#4F46E5] focus:outline-none bg-white text-slate-800"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Submit Actions */}
-        <div className="flex justify-end gap-3">
-          <Link
-            href="/blueprints"
-            className="inline-flex items-center rounded-lg border border-[#E1E4EA] bg-white px-5 py-2.5 text-sm font-semibold text-[#181B20] hover:bg-[#F1F3F6] transition-colors"
-          >
-            Cancel
-          </Link>
           <button
-            type="submit"
-            disabled={loading}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#4F46E5] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[#4338CA] disabled:bg-[#EEF0FF] disabled:text-[#4F46E5] transition-colors cursor-pointer"
+            onClick={handleUpgradeClick}
+            disabled={upgradingStripe}
+            className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-indigo-700 transition-colors cursor-pointer"
           >
-            {loading ? 'Creating...' : 'Create Blueprint'}
+            {upgradingStripe ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5 fill-current" />}
+            Upgrade to Pro ($29/mo)
           </button>
         </div>
-      </form>
+      )}
+
+      {/* Starter Templates Carousel / Grid */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#9CA3AF] flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
+            1-Click Starter Prompts
+          </span>
+          <span className="text-[11px] text-[#9CA3AF]">Click any template to autopopulate</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {STARTER_TEMPLATES.map((tpl, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => applyTemplate(tpl)}
+              disabled={isGenerating}
+              className="text-left p-3.5 rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] hover:border-indigo-500 hover:shadow-md transition-all cursor-pointer group disabled:opacity-50"
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
+                  {tpl.badge}
+                </span>
+                <span className="text-[10px] text-[#9CA3AF] uppercase font-semibold">{tpl.complexity}</span>
+              </div>
+              <h4 className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
+                {tpl.label}
+              </h4>
+              <p className="text-[11px] text-[#6B7280] dark:text-[#9CA3AF] line-clamp-2 mt-1 leading-relaxed">
+                {tpl.prompt}
+              </p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Generator Form & Live Stepper Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        
+        {/* Left 2 Cols: Form */}
+        <form onSubmit={handleGenerate} className="lg:col-span-2 space-y-6">
+          <div className="rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] p-6 shadow-sm space-y-5">
+            
+            {/* Project Requirements Prompt */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] uppercase tracking-wider">
+                  Project Prompt & Requirements <span className="text-rose-500">*</span>
+                </label>
+                <span className="text-[11px] text-[#9CA3AF]">Paste any prompt, notes, or discovery specs</span>
+              </div>
+              <textarea
+                required
+                rows={5}
+                disabled={isGenerating}
+                value={prompt}
+                onChange={e => setPrompt(e.target.value)}
+                placeholder="Example: Build a B2B project management platform with real-time kanban boards, role permissions, activity audit logs, and Stripe billing. Include user stories and folder architecture..."
+                className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15] p-3.5 text-xs text-[#181B20] dark:text-[#F3F4F6] placeholder-[#9CA3AF] focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all font-sans leading-relaxed resize-y disabled:opacity-60"
+              />
+            </div>
+
+            {/* Tech Stack Preferences */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] uppercase tracking-wider">
+                  Tech Stack Preferences
+                </label>
+                <span className="text-[11px] text-[#9CA3AF]">Comma-separated</span>
+              </div>
+              <input
+                type="text"
+                disabled={isGenerating}
+                value={techStackInput}
+                onChange={e => setTechStackInput(e.target.value)}
+                placeholder="e.g. Next.js 16, Tailwind CSS v4, Express 5, MongoDB, Stripe"
+                className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15] px-3.5 py-2.5 text-xs text-[#181B20] dark:text-[#F3F4F6] placeholder-[#9CA3AF] focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all disabled:opacity-60"
+              />
+            </div>
+
+            {/* Scope Exclusions (What NOT to build) */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] uppercase tracking-wider">
+                  Scope Exclusions (What NOT to build)
+                </label>
+                <span className="text-[11px] text-[#9CA3AF]">Optional boundaries</span>
+              </div>
+              <input
+                type="text"
+                disabled={isGenerating}
+                value={exclusions}
+                onChange={e => setExclusions(e.target.value)}
+                placeholder="e.g. No microservices, no Redux, no Mongoose, no heavy Docker orchestration"
+                className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15] px-3.5 py-2.5 text-xs text-[#181B20] dark:text-[#F3F4F6] placeholder-[#9CA3AF] focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all disabled:opacity-60"
+              />
+            </div>
+
+            {/* Settings Row: Complexity & Visibility */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              {/* Complexity */}
+              <div>
+                <label className="block text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] uppercase tracking-wider mb-1.5">
+                  Target Complexity
+                </label>
+                <select
+                  disabled={isGenerating}
+                  value={complexity}
+                  onChange={e => setComplexity(e.target.value)}
+                  className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15] px-3 py-2.5 text-xs text-[#181B20] dark:text-[#F3F4F6] focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer disabled:opacity-60"
+                >
+                  <option value="low">Low (Minimal viable prototype)</option>
+                  <option value="medium">Medium (Standard full-stack product)</option>
+                  <option value="high">High (Enterprise scale & multi-tier)</option>
+                </select>
+              </div>
+
+              {/* Visibility (Role Gated) */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] uppercase tracking-wider">
+                    Blueprint Visibility
+                  </label>
+                  {!quota?.isPro && (
+                    <span className="text-[10px] text-amber-600 font-semibold flex items-center gap-1">
+                      <Lock className="h-2.5 w-2.5" /> Private is Pro
+                    </span>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    disabled={isGenerating}
+                    onClick={() => setVisibility('public')}
+                    className={`flex items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-semibold transition-all cursor-pointer ${
+                      visibility === 'public'
+                        ? 'border-indigo-600 bg-indigo-50/50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-300'
+                        : 'border-[#E1E4EA] dark:border-[#222C43] text-[#6B7280] hover:bg-[#F1F3F6] dark:hover:bg-[#171E30]'
+                    }`}
+                  >
+                    <Globe className="h-3.5 w-3.5" /> Public
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={isGenerating || !quota?.isPro}
+                    onClick={() => {
+                      if (quota?.isPro) {
+                        setVisibility('private');
+                      } else {
+                        toast.error('Upgrade to Pro to create private blueprints.');
+                      }
+                    }}
+                    className={`flex items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-semibold transition-all cursor-pointer ${
+                      visibility === 'private'
+                        ? 'border-indigo-600 bg-indigo-50/50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-300'
+                        : !quota?.isPro
+                        ? 'border-dashed border-[#E1E4EA] dark:border-[#222C43] opacity-60 text-[#9CA3AF] cursor-not-allowed'
+                        : 'border-[#E1E4EA] dark:border-[#222C43] text-[#6B7280] hover:bg-[#F1F3F6] dark:hover:bg-[#171E30]'
+                    }`}
+                  >
+                    <Lock className="h-3.5 w-3.5" /> Private
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit Action CTA */}
+            <div className="pt-4 border-t border-[#E1E4EA] dark:border-[#222C43]">
+              <button
+                type="submit"
+                disabled={isGenerating || (quota !== null && !quota.canGenerate)}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 text-xs font-bold text-white shadow-lg shadow-indigo-500/25 hover:bg-indigo-500 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Generating 5-File Architecture Suite...
+                  </>
+                ) : quota && !quota.canGenerate ? (
+                  <>
+                    <Lock className="h-4 w-4" />
+                    Blueprint Quota Exhausted (Upgrade to Pro)
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Generate Architecture & Execution Blueprint
+                  </>
+                )}
+              </button>
+            </div>
+
+          </div>
+        </form>
+
+        {/* Right 1 Col: Live 5-Step Progress Stepper */}
+        <div className="rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] p-5 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-[#E1E4EA] dark:border-[#222C43] pb-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#181B20] dark:text-[#F3F4F6] flex items-center gap-1.5">
+              <Layers className="h-3.5 w-3.5 text-indigo-500" />
+              Blueprint Generation Pipeline
+            </h3>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[#6B7280]">
+              5 Files
+            </span>
+          </div>
+
+          <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
+            Archflow generates a deterministic 5-file suite optimized for direct prompt commands in Agentic IDEs (Cursor, Antigravity, Claude Code).
+          </p>
+
+          <div className="space-y-2.5 pt-2">
+            {steps.map(step => {
+              const Icon = step.icon;
+              return (
+                <div
+                  key={step.id}
+                  className={`p-3 rounded-xl border transition-all flex items-center justify-between ${
+                    step.status === 'completed'
+                      ? 'border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/40 dark:bg-emerald-950/20'
+                      : step.status === 'generating'
+                      ? 'border-indigo-300 bg-indigo-50/70 dark:border-indigo-800 dark:bg-indigo-950/40 shadow-sm animate-pulse'
+                      : 'border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15] opacity-80'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div
+                      className={`flex h-7 w-7 items-center justify-center rounded-lg ${
+                        step.status === 'completed'
+                          ? 'bg-emerald-500 text-white'
+                          : step.status === 'generating'
+                          ? 'bg-indigo-600 text-white'
+                          : 'bg-slate-200 dark:bg-slate-800 text-[#6B7280]'
+                      }`}
+                    >
+                      <Icon className="h-3.5 w-3.5" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] line-clamp-1">
+                        {step.name}
+                      </div>
+                      <div className="text-[10px] font-mono text-[#6B7280] dark:text-[#9CA3AF]">
+                        {step.file}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    {step.status === 'completed' ? (
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    ) : step.status === 'generating' ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-indigo-600 dark:text-indigo-400" />
+                    ) : (
+                      <span className="text-[10px] font-semibold text-[#9CA3AF] uppercase">Queued</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* IDE Tip Box */}
+          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] text-[#6B7280] dark:text-[#9CA3AF] space-y-1">
+            <span className="font-bold text-[#181B20] dark:text-[#F3F4F6] block">Agentic IDE Compatibility:</span>
+            <span>
+              Generated <code className="text-indigo-600 font-mono">executionPlan.md</code> uses strict <code className="font-mono">[ ]</code> syntax with explicit verification commands for AI coding assistants.
+            </span>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }

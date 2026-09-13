@@ -4,7 +4,7 @@ export const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000
 
 export const getAuthHeaders = async (): Promise<Record<string, string>> => {
   try {
-    const res = await authClient.$fetch<{ token?: string }>('/api/auth/token');
+    const res = await authClient.$fetch<{ token?: string }>('/token');
     const token = res?.data?.token || (res as any)?.token;
     if (token) {
       return {
