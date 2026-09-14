@@ -16,20 +16,32 @@ import {
   Sparkles,
   Layers,
   ArrowRight,
+  Lock,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getBlueprintsByUserEmail } from '@/lib/api/blueprint/data';
+import { getBlueprintsByUserEmail, getUserQuota } from '@/lib/api/blueprint/data';
 import PaginationControls from '@/components/Pagination';
+
+interface MarkdownFiles {
+  projectOverview?: string;
+  requirements?: string;
+  architecture?: string;
+  design?: string;
+  executionPlan?: string;
+}
 
 interface Blueprint {
   _id: string;
   title: string;
   description: string;
+  prompt?: string;
   teckStack?: string | string[];
   complexcity?: string;
   complexity?: string;
+  visibility?: 'public' | 'private';
   status: string;
   createdAt?: string;
+  markdownFiles?: MarkdownFiles;
 }
 
 export default function ManageBlueprintsPage() {
@@ -39,6 +51,7 @@ export default function ManageBlueprintsPage() {
   const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isPro, setIsPro] = useState<boolean>(false);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,7 +69,10 @@ export default function ManageBlueprintsPage() {
     if (!userEmail) return;
     setLoading(true);
     try {
-      const userData = await getBlueprintsByUserEmail(userEmail, query);
+      const [userData, quotaData] = await Promise.all([
+        getBlueprintsByUserEmail(userEmail, query),
+        getUserQuota(userEmail),
+      ]);
       if (userData) {
         const sorted = [...userData].sort((a, b) => {
           const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
@@ -66,13 +82,19 @@ export default function ManageBlueprintsPage() {
         });
         setBlueprints(sorted);
       }
+      const proUser =
+        quotaData?.isPro ||
+        (session?.user as any)?.role?.toLowerCase() === 'pro' ||
+        (session?.user as any)?.role?.toLowerCase() === 'admin' ||
+        (session?.user as any)?.plan?.toLowerCase() === 'pro';
+      setIsPro(Boolean(proUser));
     } catch (err) {
       console.error('Error fetching own blueprints:', err);
       toast.error('Failed to load blueprints.');
     } finally {
       setLoading(false);
     }
-  }, [userEmail]);
+  }, [userEmail, session]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -85,6 +107,13 @@ export default function ManageBlueprintsPage() {
 
   // Handle Edit Action Click
   const handleEditClick = (bp: Blueprint) => {
+    if (!isPro) {
+      toast.error('Editing blueprints is exclusive to Pro members. Upgrade to unlock full blueprint editing.', {
+        icon: '🔒',
+        duration: 4000,
+      });
+      return;
+    }
     setSelectedBlueprint(bp);
     setIsEditOpen(true);
   };
@@ -219,13 +248,25 @@ export default function ManageBlueprintsPage() {
           />
         </div>
 
-        <div className="text-xs text-[#6B7280] font-semibold flex items-center gap-1.5">
-          <Sparkles className="h-4 w-4 text-amber-500" />
-          <span>
-            Active user:{' '}
-            <span className="text-slate-900 font-bold">
-              {session.user.email}
+        <div className="flex items-center gap-2">
+          {isPro ? (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+              <Sparkles className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span>Pro Member</span>
             </span>
+          ) : (
+            <Link
+              href="/#pricing"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 transition-colors"
+              title="Upgrade to Developer Pro to unlock blueprint editing"
+            >
+              <Lock className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+              <span>Free Plan • Upgrade to Edit</span>
+            </Link>
+          )}
+
+          <span className="text-xs font-semibold text-[#6B7280] dark:text-[#9CA3AF] px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800">
+            {blueprints.length} {blueprints.length === 1 ? 'Blueprint' : 'Blueprints'}
           </span>
         </div>
       </div>
@@ -372,10 +413,23 @@ export default function ManageBlueprintsPage() {
                           {/* Edit button */}
                           <button
                             onClick={() => handleEditClick(bp)}
-                            className="p-2 rounded-lg border border-[#E1E4EA] text-slate-500 hover:text-emerald-600 hover:border-emerald-500/40 hover:bg-white transition-all duration-200"
-                            title="Edit Blueprint parameters"
+                            disabled={!isPro}
+                            className={`p-2 rounded-lg border transition-all duration-200 ${
+                              isPro
+                                ? 'border-[#E1E4EA] dark:border-[#222C43] text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 hover:bg-white dark:hover:bg-[#141A29] cursor-pointer'
+                                : 'border-slate-200/50 dark:border-slate-800/50 text-slate-300 dark:text-slate-600 bg-slate-50/50 dark:bg-slate-900/30 cursor-not-allowed opacity-60'
+                            }`}
+                            title={
+                              isPro
+                                ? 'Edit Blueprint specifications (Pro feature)'
+                                : 'Editing is locked on Free Tier. Upgrade to Pro to edit.'
+                            }
                           >
-                            <Edit2 className="h-3.5 w-3.5" />
+                            {isPro ? (
+                              <Edit2 className="h-3.5 w-3.5" />
+                            ) : (
+                              <Lock className="h-3.5 w-3.5" />
+                            )}
                           </button>
 
                           {/* Delete button */}
