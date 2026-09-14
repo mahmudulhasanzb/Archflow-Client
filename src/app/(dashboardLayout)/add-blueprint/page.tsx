@@ -141,22 +141,24 @@ export default function AddBlueprintPage() {
 
   // Handle Stripe Upgrade Redirect
   const handleUpgradeClick = async () => {
+    const toastId = toast.loading('Initiating secure Stripe payment...');
     try {
       setUpgradingStripe(true);
-      const res = await fetch('/api/checkout_sessions', {
+      const res = await fetch('/api/checkout_session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await res.json();
       if (data.url) {
+        toast.success('Redirecting to Stripe...', { id: toastId });
         window.location.href = data.url;
       } else {
-        toast.error(data.error || 'Failed to start checkout');
+        toast.error(data.error || 'Failed to start checkout', { id: toastId });
         setUpgradingStripe(false);
       }
     } catch (err: any) {
       console.error(err);
-      toast.error('Payment checkout failed');
+      toast.error('Payment checkout failed', { id: toastId });
       setUpgradingStripe(false);
     }
   };

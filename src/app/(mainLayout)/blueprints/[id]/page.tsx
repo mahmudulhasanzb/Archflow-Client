@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { ArrowLeft, Calendar, Star, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Calendar, CheckCircle2, ShieldCheck, User } from 'lucide-react';
 import { serverFetch } from '@/lib/api/server';
 import BlueprintViewer from '@/components/blueprint/BlueprintViewer';
+import RatingWidget from '@/components/blueprint/RatingWidget';
 
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
@@ -24,7 +25,13 @@ export default async function BlueprintDetailsPage({ params }: PageProps) {
     redirect(`/signin?callbackUrl=/blueprints/${resolvedParams.id}`);
   }
 
-  const blueprint = await serverFetch(`/api/blueprints/${resolvedParams.id}`);
+  // Forward user session headers to backend so owner can view their private blueprints
+  const blueprint = await serverFetch(`/api/blueprints/${resolvedParams.id}`, {
+    headers: {
+      'x-user-email': session.user.email || '',
+      'x-user-id': session.user.id || '',
+    },
+  });
 
   if (!blueprint || blueprint.error) {
     return (
@@ -33,7 +40,7 @@ export default async function BlueprintDetailsPage({ params }: PageProps) {
           {blueprint?.error || 'Blueprint not found'}
         </h2>
         <p className="text-xs text-[#6B7280]">
-          The requested blueprint may be private or deleted.
+          The requested blueprint may be private to another account or deleted.
         </p>
         <Link
           href="/blueprints"
@@ -48,6 +55,13 @@ export default async function BlueprintDetailsPage({ params }: PageProps) {
   const stackString = Array.isArray(blueprint.teckStack)
     ? blueprint.teckStack.join(' + ')
     : blueprint.teckStack || 'Full-Stack';
+
+  // Mask or clean author display
+  const authorName = blueprint.author
+    ? blueprint.author.includes('@')
+      ? blueprint.author.split('@')[0]
+      : blueprint.author
+    : 'Verified Architect';
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 flex-grow space-y-8">
@@ -82,27 +96,35 @@ export default async function BlueprintDetailsPage({ params }: PageProps) {
           </div>
         </div>
 
+        {/* Metadata & Interactive Rating Bar */}
         <div className="flex flex-wrap items-center gap-6 mt-6 text-xs text-[#6B7280] dark:text-[#9CA3AF] font-medium">
           <span className="flex items-center gap-1.5">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-4 w-4 text-slate-400" />
             Created:{' '}
             {blueprint.createdAt
               ? new Date(blueprint.createdAt).toLocaleDateString()
               : 'N/A'}
           </span>
-          <span className="flex items-center gap-1.5">
-            <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-            Rating: {blueprint.rating || 5}
-          </span>
+
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 text-emerald-600" />
             Status: {blueprint.status || 'ready'}
           </span>
-          {blueprint.author && (
-            <span className="flex items-center gap-1.5">
-              Creator: {blueprint.author}
-            </span>
-          )}
+
+          <span className="flex items-center gap-1.5">
+            <User className="h-4 w-4 text-slate-400" />
+            Architect: <strong className="text-[#181B20] dark:text-white capitalize">{authorName}</strong>
+          </span>
+
+          {/* Dynamic Interactive Rating */}
+          <div className="flex items-center gap-1.5 pl-2 border-l border-slate-200 dark:border-slate-800">
+            <span className="text-[11px] font-semibold text-slate-400">Rating:</span>
+            <RatingWidget
+              blueprintId={String(blueprint._id)}
+              initialRating={typeof blueprint.rating === 'number' ? blueprint.rating : 5}
+              initialCount={blueprint.ratingsCount || (blueprint.ratings?.length) || 1}
+            />
+          </div>
         </div>
       </div>
 

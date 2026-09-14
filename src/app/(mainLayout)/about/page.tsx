@@ -1,80 +1,97 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, Cpu, Database, Shield, Terminal, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Cpu, Database, Shield, Terminal, CheckCircle2, FileCode2, Sparkles } from 'lucide-react';
+
+export const metadata = {
+  title: 'About - Archflow',
+  description: 'Learn about Archflow, the autonomous architecture pipeline delivering production-grade Agentic-IDE specifications for modern developers.',
+};
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#FAFBFC] dark:bg-[#090C15] text-[#181B20] dark:text-[#F3F4F6] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAFBFC] dark:bg-[#090C15] text-[#181B20] dark:text-[#F3F4F6] py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-12">
         
-        {/* Page Title & Intro (Minimalist Header, No Hero Banner) */}
+        {/* Page Title & Intro */}
         <div className="space-y-4 border-b border-[#E1E4EA] dark:border-[#222C43] pb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold font-display text-[#181B20] dark:text-white tracking-tight">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#4F46E5]/30 bg-[#EEF0FF] dark:bg-[#4F46E5]/15 px-3.5 py-1 text-xs font-semibold text-[#4F46E5] dark:text-[#818CF8]">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Autonomous Architecture Engineering</span>
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-extrabold font-display text-[#181B20] dark:text-[#F3F4F6] tracking-tight">
             About Archflow
           </h1>
           <p className="text-base sm:text-lg text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed max-w-3xl">
-            Archflow is an AI-driven system architecture platform designed to transform high-level software requirements into production-ready database schemas, visual system topologies, security audits, and setup scripts.
+            Archflow is an AI-driven system architecture platform designed to transform software concepts into complete, production-ready specification suites for modern agentic IDEs like Cursor, Windsurf, and Claude Code.
           </p>
         </div>
 
         {/* Section 1: Our Mission */}
         <section className="space-y-4">
-          <h2 className="text-xl font-bold font-display text-[#181B20] dark:text-white">
+          <h2 className="text-2xl font-bold font-display text-[#181B20] dark:text-[#F3F4F6]">
             Our Mission
           </h2>
           <div className="space-y-4 text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed text-sm sm:text-base">
             <p>
-              Starting a new software project often involves dozens of hours spent designing database schemas, mapping API endpoints, configuring containerized development environments, and verifying security compliance.
+              Starting modern full-stack software often involves dozens of tedious hours designing schemas, defining REST and WebSocket contracts, tuning indices, structuring folders, and writing task checklists.
             </p>
             <p>
-              Archflow was created to eliminate this setup friction. By leveraging specialized AI agent swarms, Archflow enables software engineers, tech leads, and founders to generate complete, enterprise-grade technical blueprints in minutes — allowing teams to focus on shipping core product features.
+              Archflow was engineered to remove this friction. Instead of prompt-engineering AI models from scratch, Archflow runs a deterministic pipeline to produce an enterprise-grade 5-file specification bundle: <code className="px-1.5 py-0.5 rounded bg-[#F1F3F6] dark:bg-[#171E30] text-[#4F46E5] dark:text-[#818CF8] font-mono text-xs">PROJECT_SPEC.md</code>, <code className="px-1.5 py-0.5 rounded bg-[#F1F3F6] dark:bg-[#171E30] text-[#4F46E5] dark:text-[#818CF8] font-mono text-xs">ARCHITECTURE.md</code>, <code className="px-1.5 py-0.5 rounded bg-[#F1F3F6] dark:bg-[#171E30] text-[#4F46E5] dark:text-[#818CF8] font-mono text-xs">DATABASE.md</code>, <code className="px-1.5 py-0.5 rounded bg-[#F1F3F6] dark:bg-[#171E30] text-[#4F46E5] dark:text-[#818CF8] font-mono text-xs">API_SPEC.md</code>, and <code className="px-1.5 py-0.5 rounded bg-[#F1F3F6] dark:bg-[#171E30] text-[#4F46E5] dark:text-[#818CF8] font-mono text-xs">TASKS.md</code>.
             </p>
           </div>
         </section>
 
         {/* Section 2: Core Capabilities */}
         <section className="space-y-6">
-          <h2 className="text-xl font-bold font-display text-[#181B20] dark:text-white">
-            Core Capabilities
+          <h2 className="text-2xl font-bold font-display text-[#181B20] dark:text-[#F3F4F6]">
+            What We Deliver
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-5 rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321]">
-              <div className="flex items-center gap-3 mb-2">
-                <Cpu className="h-5 w-5 text-[#4F46E5]" />
-                <h3 className="font-semibold text-base text-[#181B20] dark:text-white">System Topology</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="p-5 rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-[#4F46E5]/10 text-[#4F46E5]">
+                  <Cpu className="h-5 w-5" />
+                </div>
+                <h3 className="font-bold text-base text-[#181B20] dark:text-[#F3F4F6]">Distributed Topologies</h3>
               </div>
-              <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
-                Generates microservice architecture maps, API endpoint routing, and visual system topology flowcharts.
+              <p className="text-xs sm:text-sm text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
+                Clear component boundaries, gateway routing, caching layers, and real-time state synchronization architectures.
               </p>
             </div>
 
-            <div className="p-5 rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321]">
-              <div className="flex items-center gap-3 mb-2">
-                <Database className="h-5 w-5 text-teal-600 dark:text-teal-400" />
-                <h3 className="font-semibold text-base text-[#181B20] dark:text-white">Database Engineering</h3>
+            <div className="p-5 rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-[#0D9488]/10 text-[#0D9488]">
+                  <Database className="h-5 w-5" />
+                </div>
+                <h3 className="font-bold text-base text-[#181B20] dark:text-[#F3F4F6]">Data Schemas & Indices</h3>
               </div>
-              <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
-                Engineers relational & NoSQL schemas, entity-relationship diagrams (ERDs), indexes, and Prisma models.
+              <p className="text-xs sm:text-sm text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
+                Production MongoDB and PostgreSQL document models with compound indices and referential integrity rules.
               </p>
             </div>
 
-            <div className="p-5 rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321]">
-              <div className="flex items-center gap-3 mb-2">
-                <Shield className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                <h3 className="font-semibold text-base text-[#181B20] dark:text-white">Security & Compliance</h3>
+            <div className="p-5 rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500">
+                  <Shield className="h-5 w-5" />
+                </div>
+                <h3 className="font-bold text-base text-[#181B20] dark:text-[#F3F4F6]">Stateless Security Contracts</h3>
               </div>
-              <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
-                Audits designs against OWASP standards, establishes RBAC access policies, and highlights vulnerability risks.
+              <p className="text-xs sm:text-sm text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
+                Better Auth integrations with JWKS public key verification to protect Express and Next.js microservices.
               </p>
             </div>
 
-            <div className="p-5 rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321]">
-              <div className="flex items-center gap-3 mb-2">
-                <Terminal className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                <h3 className="font-semibold text-base text-[#181B20] dark:text-white">DevOps & Infrastructure</h3>
+            <div className="p-5 rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500">
+                  <FileCode2 className="h-5 w-5" />
+                </div>
+                <h3 className="font-bold text-base text-[#181B20] dark:text-[#F3F4F6]">Phased Execution Roadmaps</h3>
               </div>
-              <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
-                Produces production Dockerfiles, Docker-Compose stack files, CI/CD pipelines, and local startup shell scripts.
+              <p className="text-xs sm:text-sm text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
+                Step-by-step checklists categorized by foundation, core APIs, UI views, and verification testing.
               </p>
             </div>
           </div>
@@ -82,31 +99,31 @@ export default function AboutPage() {
 
         {/* Section 3: Core Values */}
         <section className="space-y-4">
-          <h2 className="text-xl font-bold font-display text-[#181B20] dark:text-white">
-            Core Principles
+          <h2 className="text-2xl font-bold font-display text-[#181B20] dark:text-[#F3F4F6]">
+            Architectural Principles
           </h2>
           <ul className="space-y-3 text-sm text-[#6B7280] dark:text-[#9CA3AF]">
             <li className="flex items-start gap-3">
-              <CheckCircle2 className="h-4 w-4 text-[#4F46E5] shrink-0 mt-0.5" />
-              <span><strong className="text-[#181B20] dark:text-white">Architectural Rigor:</strong> Every output follows enterprise standards for scalability, data integrity, and separation of concerns.</span>
+              <CheckCircle2 className="h-4 w-4 text-[#4F46E5] shrink-0 mt-1" />
+              <span><strong className="text-[#181B20] dark:text-[#F3F4F6]">Production Standards:</strong> Every output follows enterprise standards for separation of concerns, strict type-safety, and minimal dependency overhead.</span>
             </li>
             <li className="flex items-start gap-3">
-              <CheckCircle2 className="h-4 w-4 text-[#4F46E5] shrink-0 mt-0.5" />
-              <span><strong className="text-[#181B20] dark:text-white">Developer Autonomy:</strong> Clean, portable exports with zero vendor lock-in — standard SQL, Dockerfiles, and TypeScript code.</span>
+              <CheckCircle2 className="h-4 w-4 text-[#4F46E5] shrink-0 mt-1" />
+              <span><strong className="text-[#181B20] dark:text-[#F3F4F6]">Vendor Agnostic:</strong> Zero proprietary lock-in. Blueprints export as clean markdown, pure JSON schemas, and universal TypeScript signatures.</span>
             </li>
             <li className="flex items-start gap-3">
-              <CheckCircle2 className="h-4 w-4 text-[#4F46E5] shrink-0 mt-0.5" />
-              <span><strong className="text-[#181B20] dark:text-white">Proactive Security:</strong> Threat modeling and access controls are integrated directly into blueprint generation.</span>
+              <CheckCircle2 className="h-4 w-4 text-[#4F46E5] shrink-0 mt-1" />
+              <span><strong className="text-[#181B20] dark:text-[#F3F4F6]">Agentic-First:</strong> Designed specifically for AI pair programmers to read and write without hallucination or context window overflow.</span>
             </li>
           </ul>
         </section>
 
         {/* Minimal Footer Navigation */}
         <div className="pt-8 border-t border-[#E1E4EA] dark:border-[#222C43] flex items-center justify-between">
-          <span className="text-xs text-[#6B7280] dark:text-[#9CA3AF]">Archflow Platform</span>
+          <span className="text-xs text-[#6B7280] dark:text-[#9CA3AF]">Archflow Architecture Platform</span>
           <Link
             href="/blueprints"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#4F46E5] dark:text-indigo-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#4F46E5] dark:text-[#818CF8] hover:underline"
           >
             Explore Blueprints
             <ArrowRight className="h-4 w-4" />

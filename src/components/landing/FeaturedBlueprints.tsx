@@ -84,10 +84,10 @@ export default async function FeaturedBlueprints() {
   let isFromApi = false;
 
   try {
-    const apiBlueprints = await getAllBlueprints();
-    if (apiBlueprints && apiBlueprints.length > 0) {
-      // Show ONLY latest 3 blueprints from backend API
-      displayBlueprints = apiBlueprints.slice(0, 3);
+    const res = await getAllBlueprints({ limit: 3, sort: 'newest' });
+    const list = res?.blueprints || (Array.isArray(res) ? res : []);
+    if (list && list.length > 0) {
+      displayBlueprints = list.slice(0, 3);
       isFromApi = true;
     }
   } catch (error) {

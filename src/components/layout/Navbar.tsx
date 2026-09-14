@@ -1,22 +1,70 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import {
+  Menu,
+  X,
+  ChevronDown,
+  Activity,
+  Sun,
+  Moon,
+  LayoutDashboard,
+  LogOut,
+} from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
-import { Menu, X, ArrowRight, Activity, Sun, Moon } from 'lucide-react';
+import toast from 'react-hot-toast';
+import Image from 'next/image';
 
-const Navbar = () => {
+function getInitials(name?: string | null) {
+  if (!name) return 'U';
+  return name
+    .split(' ')
+    .map(w => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+export default function Navbar() {
   const router = useRouter();
-  const { data: session, isPending } = authClient.useSession();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [mounted, setMounted] = useState(false);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
 
   useEffect(() => {
     setMounted(true);
     const activeTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
     setTheme(activeTheme);
+  }, []);
+
+  useEffect(() => {
+    setIsOpen(false);
+    setIsUserDropdownOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, []);
 
   const toggleTheme = () => {
@@ -30,196 +78,356 @@ const Navbar = () => {
     }
   };
 
-  const handleSignOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push('/');
-        },
-      },
-    });
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsUserDropdownOpen(true);
   };
 
-  const navLinks = session?.user
-    ? [
-        { name: 'Explore', href: '/blueprints' },
-        { name: 'Workspace', href: '/workspace' },
-        { name: 'Add Blueprint', href: '/add-blueprint' },
-        { name: 'Manage', href: '/manage-blueprints' },
-        { name: 'Docs', href: '/docs' },
-      ]
-    : [
-        { name: 'Explore', href: '/blueprints' },
-        { name: 'Docs', href: '/docs' },
-        { name: 'About', href: '/about' },
-      ];
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsUserDropdownOpen(false);
+    }, 150);
+  };
+
+  const handleDropdownClick = () => {
+    setIsUserDropdownOpen(!isUserDropdownOpen);
+  };
+
+  const handleSignOut = async () => {
+    const toastId = toast.loading('Signing out...');
+    try {
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success('Signed out successfully!', { id: toastId });
+            router.push('/signin');
+          },
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error('Sign out failed.', { id: toastId });
+    }
+  };
+
+  const navLinks = [
+    { label: 'Explore', href: '/blueprints' },
+    { label: 'Docs', href: '/docs' },
+    { label: 'About', href: '/about' },
+    { label: 'Pricing', href: '/#pricing' },
+  ];
+
+  if (user) {
+    navLinks.push({ label: 'Dashboard', href: '/workspace' });
+  }
+
+  const isLinkActive = (href: string) => pathname === href;
+
+  const isPro =
+    (user as any)?.role?.toLowerCase() === 'pro' ||
+    (user as any)?.role?.toLowerCase() === 'admin' ||
+    (user as any)?.plan?.toLowerCase() === 'pro';
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-[#E1E4EA] bg-white/80 backdrop-blur-md">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 justify-between items-center">
+    <nav className="w-full bg-white/95 dark:bg-[#090C15]/95 border-b border-[#E1E4EA] dark:border-[#1E2638] sticky top-0 z-50 backdrop-blur-md transition-all duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <div className="flex items-center">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-xl font-bold text-[#181B20] font-display"
-            >
-              <Activity className="h-6 w-6 text-[#4F46E5]" />
-              <span>Archflow</span>
+          <div className="flex-shrink-0">
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-800/60 group-hover:scale-105 transition-transform duration-200">
+                <Activity className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <span className="text-[#181B20] dark:text-white font-extrabold text-xl tracking-wider select-none font-display">
+                ARCHFLOW
+              </span>
             </Link>
           </div>
 
-          {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center gap-6">
-            {navLinks.map(link => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="text-sm font-medium text-[#6B7280] hover:text-[#181B20] transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center space-x-8 transition-all duration-300">
+            {navLinks.map(link => {
+              const active = isLinkActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative text-[14px] font-medium transition-all duration-200 py-2 ${
+                    active
+                      ? 'text-indigo-600 dark:text-white font-semibold'
+                      : 'text-[#6B7280] dark:text-[#9CA3AF]/80 hover:text-[#181B20] dark:hover:text-white'
+                  }`}
+                >
+                  {link.label}
+                  {active && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-indigo-600 dark:bg-indigo-400 rounded-full transition-all duration-300" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
 
-            {/* Desktop Theme Toggle */}
+          {/* Actions & Profile */}
+          <div className="hidden md:flex items-center space-x-3.5">
+            {/* Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
               aria-label="Toggle dark mode"
-              className="rounded-lg p-2 text-[#6B7280] hover:bg-[#F1F3F6] hover:text-[#181B20] transition-colors focus:outline-none cursor-pointer"
+              className="p-2 rounded-full bg-[#FAFBFC] dark:bg-[#141A29] border border-[#E1E4EA] dark:border-[#222C43] hover:border-indigo-500/50 text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white transition-colors cursor-pointer"
             >
               {!mounted ? (
-                <div className="h-4.5 w-4.5" />
+                <div className="h-4 w-4" />
               ) : theme === 'dark' ? (
-                <Sun className="h-4.5 w-4.5 text-amber-500" />
+                <Sun className="h-4 w-4 text-amber-400" />
               ) : (
-                <Moon className="h-4.5 w-4.5" />
+                <Moon className="h-4 w-4" />
               )}
             </button>
 
+            {/* Auth Section */}
             {isPending ? (
-              <div className="h-8 w-20 animate-pulse rounded-lg bg-[#F1F3F6]" />
-            ) : session ? (
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 bg-[#F1F3F6] dark:bg-[#171E30] px-2.5 py-1 rounded-full text-xs font-medium">
-                  <span className="text-[#181B20] dark:text-[#F3F4F6] font-semibold">
-                    {session.user?.name || 'User'}
+              <div className="h-9 w-24 animate-pulse rounded-full bg-[#F1F3F6] dark:bg-[#171E30]" />
+            ) : user ? (
+              /* Profile Dropdown */
+              <div className="relative" ref={dropdownRef}>
+                <div
+                  className="flex items-center space-x-2 cursor-pointer bg-[#FAFBFC] dark:bg-[#141A29] border border-[#E1E4EA] dark:border-[#222C43] hover:border-indigo-500/50 hover:bg-slate-100 dark:hover:bg-[#1C2234] p-1.5 pr-3 rounded-full transition-all duration-200"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  onClick={handleDropdownClick}
+                >
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-indigo-600 flex items-center justify-center border border-indigo-400/40 text-white text-xs font-bold shrink-0">
+                    {user?.image ? (
+                      <Image
+                        src={user.image}
+                        alt="User avatar"
+                        width={32}
+                        height={32}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span>{getInitials(user?.name)}</span>
+                    )}
+                  </div>
+                  <span className="text-xs font-semibold text-[#181B20] dark:text-white/90 hidden sm:block truncate max-w-[85px]">
+                    {user?.name || 'Account'}
                   </span>
-                  {((session.user as any)?.role?.toLowerCase() === 'pro' || (session.user as any)?.role?.toLowerCase() === 'admin') && (
-                    <span className="text-[10px] font-bold text-white bg-[#4F46E5] px-1.5 py-0.2 rounded-full uppercase tracking-wider">
+                  {isPro ? (
+                    <span className="text-[9px] font-extrabold text-white bg-indigo-600 px-1.5 py-0.5 rounded uppercase tracking-wider">
                       PRO
                     </span>
+                  ) : (
+                    <span className="text-[9px] font-bold text-[#6B7280] dark:text-[#9CA3AF] bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded uppercase">
+                      FREE
+                    </span>
                   )}
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 text-[#6B7280] dark:text-[#9CA3AF] transition-transform duration-300 ${
+                      isUserDropdownOpen ? 'rotate-180 text-indigo-600 dark:text-indigo-400' : ''
+                    }`}
+                  />
                 </div>
-                <button
-                  onClick={handleSignOut}
-                  className="rounded-lg border border-[#E1E4EA] dark:border-[#222C43] px-3.5 py-1.5 text-xs font-semibold text-[#181B20] dark:text-[#F3F4F6] hover:bg-[#F1F3F6] dark:hover:bg-[#171E30] transition-colors"
-                >
-                  Sign Out
-                </button>
+
+                {isUserDropdownOpen && (
+                  <div
+                    className="absolute right-0 mt-2.5 w-60 bg-white dark:bg-[#0E1321] border border-[#E1E4EA] dark:border-[#1E2638] rounded-2xl shadow-2xl py-3 z-50 animate-in fade-in zoom-in-95 backdrop-blur-md"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    {/* User Info Header */}
+                    <div className="px-4 pb-3 border-b border-[#E1E4EA] dark:border-[#1E2638]">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-indigo-600 flex items-center justify-center border border-indigo-400/40 text-white text-xs font-bold shrink-0">
+                          {user?.image ? (
+                            <Image
+                              src={user.image}
+                              width={40}
+                              height={40}
+                              alt="User avatar"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span>{getInitials(user?.name)}</span>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[#181B20] dark:text-white font-bold truncate text-sm">
+                            {user?.name}
+                          </p>
+                          <p className="text-[#6B7280] dark:text-[#9CA3AF] text-xs truncate">
+                            {user?.email}
+                          </p>
+                          <span
+                            className={`inline-block mt-1 text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                              isPro
+                                ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20'
+                                : 'bg-slate-100 dark:bg-slate-800 text-[#6B7280] dark:text-[#9CA3AF] border-slate-200 dark:border-slate-700'
+                            }`}
+                          >
+                            {isPro ? 'Pro Developer' : 'Free Tier'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Dropdown Navigation - Workspace Only */}
+                    <div className="p-1.5 space-y-0.5">
+                      <Link
+                        href="/workspace"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#181B20] dark:text-[#9CA3AF] hover:text-indigo-600 dark:hover:text-white hover:bg-[#EEF0FF] dark:hover:bg-[#141A29] transition-all duration-200"
+                        onClick={() => setIsUserDropdownOpen(false)}
+                      >
+                        <LayoutDashboard className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                        <span>Workspace / Dashboard</span>
+                      </Link>
+                    </div>
+
+                    {/* Sign Out Action */}
+                    <div className="border-t border-[#E1E4EA] dark:border-[#1E2638] p-1.5 mt-1">
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all duration-200 cursor-pointer"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center space-x-3">
                 <Link
                   href="/signin"
-                  className="text-xs font-semibold text-[#181B20] hover:text-[#4F46E5] transition-colors"
+                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs uppercase px-5 py-2.5 rounded-full shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 hover:scale-[1.02] active:scale-95 transition-all duration-200"
                 >
                   Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center gap-1 rounded-lg bg-[#4F46E5] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#3f37c9] transition-colors"
-                >
-                  Get Started
-                  <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Mobile Menu Button & Theme Toggle */}
-          <div className="flex md:hidden items-center gap-2">
+          {/* Mobile Menu Button */}
+          <div className="flex md:hidden items-center space-x-2">
             <button
               onClick={toggleTheme}
               aria-label="Toggle dark mode"
-              className="rounded-lg p-2 text-[#6B7280] hover:bg-[#F1F3F6] hover:text-[#181B20] transition-colors focus:outline-none cursor-pointer"
+              className="p-2 rounded-lg text-[#6B7280] dark:text-[#9CA3AF] hover:bg-[#F1F3F6] dark:hover:bg-[#171E30] transition-colors cursor-pointer"
             >
               {!mounted ? (
-                <div className="h-4.5 w-4.5" />
+                <div className="h-4 w-4" />
               ) : theme === 'dark' ? (
-                <Sun className="h-4.5 w-4.5 text-amber-500" />
+                <Sun className="h-4 w-4 text-amber-400" />
               ) : (
-                <Moon className="h-4.5 w-4.5" />
+                <Moon className="h-4 w-4" />
               )}
             </button>
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="inline-flex items-center justify-center rounded-lg p-2 text-[#6B7280] hover:bg-[#F1F3F6] hover:text-[#181B20] focus:outline-none"
+              onClick={() => setIsOpen(!isOpen)}
+              type="button"
+              className="inline-flex items-center justify-center p-2 rounded-md text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1C210E] focus:outline-none transition-all duration-200"
+              aria-controls="mobile-menu"
+              aria-expanded={isOpen}
             >
-              {mobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              <span className="sr-only">Open main menu</span>
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="border-b border-[#E1E4EA] bg-white px-4 py-3 md:hidden space-y-1">
-          {navLinks.map(link => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block rounded-lg px-3 py-2 text-base font-medium text-[#6B7280] hover:bg-[#F1F3F6] hover:text-[#181B20] transition-colors"
-            >
-              {link.name}
-            </Link>
-          ))}
-          <div className="pt-4 border-t border-[#E1E4EA] mt-2 space-y-2">
-            {session ? (
-              <div className="flex flex-col gap-2">
-                <div className="px-3 text-xs text-[#6B7280]">
-                  Signed in as{' '}
-                  <span className="font-semibold text-[#181B20]">
-                    {session.user?.name}
-                  </span>
-                </div>
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    handleSignOut();
-                  }}
-                  className="w-full text-left rounded-lg px-3 py-2 text-base font-medium text-[#EA5C34] hover:bg-[#FFF0EA] transition-colors"
+      {/* Mobile Menu Drawer */}
+      <div
+        className={`md:hidden transition-all duration-300 ease-in-out ${
+          isOpen
+            ? 'max-h-screen opacity-100 border-b border-[#E1E4EA] dark:border-[#1E2638]'
+            : 'max-h-0 opacity-0 overflow-hidden'
+        }`}
+        id="mobile-menu"
+      >
+        <div className="px-4 pt-2 pb-6 space-y-4 bg-white/98 dark:bg-[#090C15]/98 backdrop-blur-lg">
+          {/* Mobile Links */}
+          <div className="flex flex-col space-y-1">
+            {navLinks.map(link => {
+              const active = isLinkActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`block px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                    active
+                      ? 'bg-indigo-50 dark:bg-[#141A29] text-indigo-600 dark:text-white border-l-2 border-indigo-600 dark:border-indigo-400'
+                      : 'text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#141A29]/50'
+                  }`}
                 >
-                  Sign Out
-                </button>
+                  {link.label}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* User Section in Drawer */}
+          <div className="px-1 pt-2 border-t border-[#E1E4EA] dark:border-[#1E2638]">
+            {user ? (
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3 p-2 rounded-xl bg-slate-50 dark:bg-[#141A29] border border-[#E1E4EA] dark:border-[#222C43]">
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                    {user.image ? (
+                      <Image
+                        src={user.image}
+                        alt="User avatar"
+                        width={40}
+                        height={40}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span>{getInitials(user.name)}</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[#181B20] dark:text-white font-bold truncate text-sm">
+                      {user.name}
+                    </p>
+                    <p className="text-[#6B7280] dark:text-[#9CA3AF] text-xs truncate">
+                      {user.email}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <Link
+                    href="/workspace"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center gap-1.5 w-full bg-[#FAFBFC] dark:bg-[#141A29] border border-[#E1E4EA] dark:border-[#222C43] text-[#181B20] dark:text-white text-xs font-semibold py-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-[#1A2236] transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      handleSignOut();
+                    }}
+                    className="flex items-center justify-center gap-1.5 w-full bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold py-2.5 rounded-full hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors cursor-pointer"
+                  >
+                    Sign Out
+                  </button>
+                </div>
               </div>
             ) : (
-              <div className="flex flex-col gap-2">
-                <Link
-                  href="/signin"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block rounded-lg px-3 py-2 text-base font-medium text-[#181B20] hover:bg-[#F1F3F6] transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-center rounded-lg bg-[#4F46E5] px-3 py-2 text-base font-medium text-white hover:bg-[#3f37c9] transition-colors"
-                >
-                  Get Started
-                </Link>
-              </div>
+              <Link
+                href="/signin"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center justify-center gap-2 w-full bg-indigo-600 text-white font-semibold py-3 rounded-full hover:bg-indigo-500 transition-colors duration-200 shadow-md"
+              >
+                Sign In
+              </Link>
             )}
           </div>
         </div>
-      )}
+      </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

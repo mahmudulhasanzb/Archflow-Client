@@ -1,29 +1,55 @@
-// Next.js 16 proxy auth guard
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { headers } from 'next/headers';
+import { auth } from './lib/auth';
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Only protect dashboard routes and individual blueprint details
   const isProtectedRoute =
     pathname.startsWith('/workspace') ||
     pathname.startsWith('/add-blueprint') ||
     pathname.startsWith('/manage-blueprints') ||
     (pathname.startsWith('/blueprints/') && pathname !== '/blueprints');
 
-  if (!isProtectedRoute) {
-    return NextResponse.next();
+  const isAuthRoute = pathname === '/signin' || pathname === '/signup';
+
+  let session: any = null;
+
+  try {
+    session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  } catch {
+    const sessionCookie =
+      request.cookies.get('better-auth.session_token') ||
+      request.cookies.get('__Secure-better-auth.session_token');
+
+    if (!sessionCookie && isProtectedRoute) {
+      const loginUrl = new URL('/signin', request.url);
+      loginUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
-  const sessionToken = request.cookies.get('better-auth.session_token')?.value;
+  const user = session?.user;
 
-  // Protect dashboard and blueprint management routes
-  if (!sessionToken) {
-    const loginUrl = new URL('/signin', request.url);
-    // Optional: save current path to redirect back
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
+  // 1. Unauthenticated -> redirect to /signin
+  if (isProtectedRoute && !user) {
+    const sessionCookie =
+      request.cookies.get('better-auth.session_token') ||
+      request.cookies.get('__Secure-better-auth.session_token');
+
+    if (!sessionCookie) {
+      const loginUrl = new URL('/signin', request.url);
+      loginUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // 2. Already logged in -> redirect away from /signin & /signup
+  if (isAuthRoute && user) {
+    return NextResponse.redirect(new URL('/workspace', request.url));
   }
 
   return NextResponse.next();
@@ -36,5 +62,7 @@ export const config = {
     '/add-blueprint',
     '/manage-blueprints',
     '/blueprints/:id*',
+    '/signin',
+    '/signup',
   ],
 };

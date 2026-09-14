@@ -10,7 +10,7 @@ if (!uri) {
 }
 const client = new MongoClient(uri);
 
-const db = client.db('archflow');
+export const db = client.db('archflow');
 
 export const auth = betterAuth({
   database: mongodbAdapter(db, {

@@ -1,54 +1,140 @@
-import React from 'react';
+'use client';
+
+import React, { useCallback } from 'react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+
+function getPageNumbers(current: number, total: number) {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+
+  const pages: (number | string)[] = [];
+
+  if (current <= 4) {
+    pages.push(1, 2, 3, 4, 5, '...', total);
+  } else if (current >= total - 3) {
+    pages.push(1, '...', total - 4, total - 3, total - 2, total - 1, total);
+  } else {
+    pages.push(1, '...', current - 1, current, current + 1, '...', total);
+  }
+
+  return pages;
+}
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
+  paramName?: string;
+  onPageChange?: (page: number) => void;
 }
 
-export default function Pagination({
+export default function PaginationControls({
   currentPage,
   totalPages,
+  paramName = 'page',
   onPageChange,
 }: PaginationProps) {
-  if (totalPages <= 1) return null;
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const navigateTo = useCallback(
+    (page: number) => {
+      if (onPageChange) {
+        onPageChange(page);
+        return;
+      }
+      const params = new URLSearchParams(searchParams ? searchParams.toString() : '');
+      params.set(paramName, String(page));
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [router, pathname, searchParams, paramName, onPageChange],
+  );
+
+  if (!totalPages || totalPages <= 1) return null;
+
+  const pages = getPageNumbers(currentPage, totalPages);
+  const isFirst = currentPage <= 1;
+  const isLast = currentPage >= totalPages;
 
   return (
-    <div className="mt-12 flex justify-center items-center gap-2">
-      <button
-        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-        disabled={currentPage === 1}
-        className="rounded-lg border border-[#E1E4EA] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#181B20] hover:bg-[#F1F3F6] transition-colors disabled:opacity-50"
-      >
-        Prev
-      </button>
+    <nav
+      aria-label="Pagination"
+      className="flex items-center justify-center pt-8 border-t border-[#E1E4EA]/60 dark:border-[#222C43]/60 select-none"
+    >
+      <ul className="flex items-center gap-2">
+        {/* ← Previous */}
+        <li>
+          <button
+            type="button"
+            onClick={() => !isFirst && navigateTo(currentPage - 1)}
+            disabled={isFirst}
+            aria-label="Previous page"
+            className={[
+              'inline-flex h-9 items-center justify-center px-3.5',
+              'text-xs font-bold uppercase tracking-wider',
+              'bg-transparent border-0 rounded-xl',
+              'transition-colors duration-200',
+              isFirst
+                ? 'text-[#6B7280]/40 dark:text-[#9CA3AF]/30 cursor-not-allowed'
+                : 'text-[#4F46E5] dark:text-[#818CF8] hover:underline cursor-pointer',
+            ].join(' ')}
+          >
+            ← Prev
+          </button>
+        </li>
 
-      <div className="flex items-center gap-1.5 text-xs font-semibold text-[#181B20]">
-        {Array.from({ length: totalPages }).map((_, idx) => {
-          const pageNum = idx + 1;
-          return (
-            <button
-              key={pageNum}
-              onClick={() => onPageChange(pageNum)}
-              className={`h-8 w-8 rounded-lg border text-center transition-colors ${
-                currentPage === pageNum
-                  ? 'bg-[#4F46E5] border-[#4F46E5] text-white'
-                  : 'bg-white border-[#E1E4EA] text-[#181B20] hover:bg-[#F1F3F6]'
-              }`}
+        {/* Page numbers */}
+        {pages.map((p, idx) =>
+          p === '...' ? (
+            <li
+              key={`ellipsis-${idx}`}
+              className="text-[#6B7280]/60 dark:text-[#9CA3AF]/60 text-xs font-bold px-1 select-none font-mono"
+              aria-hidden="true"
             >
-              {pageNum}
-            </button>
-          );
-        })}
-      </div>
+              ···
+            </li>
+          ) : (
+            <li key={p}>
+              <button
+                type="button"
+                onClick={() => navigateTo(Number(p))}
+                aria-label={`Page ${p}`}
+                aria-current={p === currentPage ? 'page' : undefined}
+                className={[
+                  'inline-flex h-9 w-9 items-center justify-center',
+                  'text-xs font-bold rounded-xl font-mono',
+                  'transition-all duration-200 cursor-pointer',
+                  p === currentPage
+                    ? 'bg-[#4F46E5] text-white border border-[#4F46E5] shadow-sm shadow-[#4F46E5]/30 font-bold'
+                    : 'bg-white dark:bg-[#0E1321] border border-[#E1E4EA] dark:border-[#222C43] text-[#181B20] dark:text-[#F3F4F6] hover:border-[#4F46E5]/50 hover:text-[#4F46E5] dark:hover:text-[#818CF8]',
+                ].join(' ')}
+              >
+                {p}
+              </button>
+            </li>
+          ),
+        )}
 
-      <button
-        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-        disabled={currentPage === totalPages}
-        className="rounded-lg border border-[#E1E4EA] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#181B20] hover:bg-[#F1F3F6] transition-colors disabled:opacity-50"
-      >
-        Next
-      </button>
-    </div>
+        {/* Next → */}
+        <li>
+          <button
+            type="button"
+            onClick={() => !isLast && navigateTo(currentPage + 1)}
+            disabled={isLast}
+            aria-label="Next page"
+            className={[
+              'inline-flex h-9 items-center justify-center px-3.5',
+              'text-xs font-bold uppercase tracking-wider',
+              'bg-transparent border-0 rounded-xl',
+              'transition-colors duration-200',
+              isLast
+                ? 'text-[#6B7280]/40 dark:text-[#9CA3AF]/30 cursor-not-allowed'
+                : 'text-[#4F46E5] dark:text-[#818CF8] hover:underline cursor-pointer',
+            ].join(' ')}
+          >
+            Next →
+          </button>
+        </li>
+      </ul>
+    </nav>
   );
 }

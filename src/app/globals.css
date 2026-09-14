@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -214,6 +215,10 @@ body {
 
 h1, h2, h3, h4, h5, h6, .disp {
   font-family: var(--font-space-grotesk), sans-serif;
+}
+
+button, [role="button"], select {
+  cursor: pointer;
 }
 
 /* Premium Dark Mode overrides for hardcoded Tailwind hex colors */

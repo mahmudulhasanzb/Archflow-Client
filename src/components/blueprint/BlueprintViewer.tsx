@@ -17,7 +17,10 @@ import {
   Globe,
   Layers,
   Terminal,
+  Eye,
+  Code,
 } from 'lucide-react';
+import MdxRenderer from '@/components/mdx/MdxRenderer';
 
 interface MarkdownFiles {
   projectOverview?: string;
@@ -95,6 +98,7 @@ const TABS: TabDef[] = [
 
 export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
   const [activeTab, setActiveTab] = useState<keyof MarkdownFiles>('projectOverview');
+  const [viewMode, setViewMode] = useState<'mdx' | 'raw'>('mdx');
   const [copiedTab, setCopiedTab] = useState<string | null>(null);
   const [isZipping, setIsZipping] = useState(false);
 
@@ -202,37 +206,36 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
         </div>
       </div>
 
-      {hasMarkdownFiles ? (
-        <div className="space-y-4">
-          {/* Tabs Navigation */}
-          <div className="flex flex-wrap gap-1.5 border-b border-[#E1E4EA] dark:border-[#222C43] pb-2">
-            {TABS.map(tab => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.key;
-              const isPlan = tab.key === 'executionPlan';
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-indigo-600 text-white shadow-sm'
-                      : isPlan
-                      ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 hover:bg-indigo-100'
-                      : 'bg-white dark:bg-[#0E1321] border border-[#E1E4EA] dark:border-[#222C43] text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white'
-                  }`}
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  <span>{tab.filename}</span>
-                  {isPlan && !isActive && (
-                    <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-indigo-600 text-white">
-                      Agent
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+      <div className="space-y-4">
+        {/* Tabs Navigation */}
+        <div className="flex flex-wrap gap-1.5 border-b border-[#E1E4EA] dark:border-[#222C43] pb-2">
+          {TABS.map(tab => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.key;
+            const isPlan = tab.key === 'executionPlan';
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : isPlan
+                    ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 hover:bg-indigo-100'
+                    : 'bg-white dark:bg-[#0E1321] border border-[#E1E4EA] dark:border-[#222C43] text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white'
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span>{tab.filename}</span>
+                {isPlan && !isActive && (
+                  <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-indigo-600 text-white">
+                    Agent
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
 
           {/* Active File Preview Card */}
           <div className="rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] shadow-sm overflow-hidden">
@@ -252,29 +255,63 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
                 </p>
               </div>
 
-              <button
-                onClick={() => handleCopy(currentTabDef.filename, activeContent)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] px-3 py-1.5 text-xs font-semibold text-[#181B20] dark:text-[#F3F4F6] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
-              >
-                {copiedTab === currentTabDef.filename ? (
-                  <>
-                    <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-                    <span className="text-emerald-600 dark:text-emerald-400">Copied</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3.5 w-3.5 text-[#6B7280]" />
-                    <span>Copy Markdown</span>
-                  </>
-                )}
-              </button>
+              <div className="flex items-center gap-2">
+                {/* View Mode Toggle */}
+                <div className="inline-flex items-center p-0.5 rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321]">
+                  <button
+                    onClick={() => setViewMode('mdx')}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                      viewMode === 'mdx'
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white'
+                    }`}
+                    title="Rendered MDX Document with Syntax Highlighting"
+                  >
+                    <Eye className="h-3.5 w-3.5" />
+                    <span>MDX Preview</span>
+                  </button>
+                  <button
+                    onClick={() => setViewMode('raw')}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                      viewMode === 'raw'
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white'
+                    }`}
+                    title="Raw Markdown Code"
+                  >
+                    <Code className="h-3.5 w-3.5" />
+                    <span>Raw Code</span>
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => handleCopy(currentTabDef.filename, activeContent)}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] px-3 py-1.5 text-xs font-semibold text-[#181B20] dark:text-[#F3F4F6] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+                >
+                  {copiedTab === currentTabDef.filename ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-emerald-600 dark:text-emerald-400">Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5 text-[#6B7280]" />
+                      <span>Copy Markdown</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Markdown Document Content Area */}
             <div className="p-6 overflow-x-auto max-h-[700px] overflow-y-auto">
-              <pre className="font-mono text-xs text-[#181B20] dark:text-[#E2E8F0] whitespace-pre-wrap leading-relaxed">
-                {activeContent}
-              </pre>
+              {viewMode === 'mdx' ? (
+                <MdxRenderer content={activeContent} />
+              ) : (
+                <pre className="font-mono text-xs text-[#181B20] dark:text-[#E2E8F0] whitespace-pre-wrap leading-relaxed">
+                  {activeContent}
+                </pre>
+              )}
             </div>
 
             {/* Bottom Card Footer Tip */}
@@ -288,40 +325,6 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
             )}
           </div>
         </div>
-      ) : (
-        /* Legacy Blueprint Fallback */
-        <div className="rounded-2xl border border-[#E1E4EA] bg-white p-8 space-y-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#6B7280] uppercase tracking-wider">
-            <Sparkles className="h-4 w-4 text-indigo-500" /> Legacy Architecture Overview
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 space-y-2">
-              <h4 className="font-bold text-sm text-[#181B20]">
-                {blueprint.architectureFlow?.architecture?.title || 'Architecture'}
-              </h4>
-              <p className="text-xs text-[#6B7280] leading-relaxed">
-                {blueprint.architectureFlow?.architecture?.description || 'N/A'}
-              </p>
-            </div>
-            <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 space-y-2">
-              <h4 className="font-bold text-sm text-[#181B20]">
-                {blueprint.architectureFlow?.features?.title || 'Requirements'}
-              </h4>
-              <p className="text-xs text-[#6B7280] leading-relaxed">
-                {blueprint.architectureFlow?.features?.description || 'N/A'}
-              </p>
-            </div>
-            <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 space-y-2">
-              <h4 className="font-bold text-sm text-[#181B20]">
-                {blueprint.architectureFlow?.plan?.title || 'Roadmap'}
-              </h4>
-              <p className="text-xs text-[#6B7280] leading-relaxed">
-                {blueprint.architectureFlow?.plan?.description || 'N/A'}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      </div>
   );
 }

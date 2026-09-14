@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getBlueprintsByUserEmail } from '@/lib/api/blueprint/data';
+import PaginationControls from '@/components/Pagination';
 
 interface Blueprint {
   _id: string;
@@ -39,6 +40,10 @@ export default function ManageBlueprintsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
   // Modal States
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -47,11 +52,11 @@ export default function ManageBlueprintsPage() {
   );
   const [modalLoading, setModalLoading] = useState(false);
 
-  const fetchMyBlueprints = useCallback(async () => {
+  const fetchMyBlueprints = useCallback(async (query: string = '') => {
     if (!userEmail) return;
     setLoading(true);
     try {
-      const userData = await getBlueprintsByUserEmail(userEmail);
+      const userData = await getBlueprintsByUserEmail(userEmail, query);
       if (userData) {
         const sorted = [...userData].sort((a, b) => {
           const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
@@ -70,10 +75,13 @@ export default function ManageBlueprintsPage() {
   }, [userEmail]);
 
   useEffect(() => {
-    if (userEmail) {
-      fetchMyBlueprints();
-    }
-  }, [session, fetchMyBlueprints]);
+    const timer = setTimeout(() => {
+      if (userEmail) {
+        fetchMyBlueprints(searchQuery);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [userEmail, searchQuery, fetchMyBlueprints]);
 
   // Handle Edit Action Click
   const handleEditClick = (bp: Blueprint) => {
@@ -137,12 +145,6 @@ export default function ManageBlueprintsPage() {
     }
   };
 
-  // Filtered list
-  const filteredBlueprints = blueprints.filter(
-    bp =>
-      bp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      bp.description.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
 
   if (sessionPending) {
     return (
@@ -207,9 +209,12 @@ export default function ManageBlueprintsPage() {
           <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-[#6B7280]" />
           <input
             type="text"
-            placeholder="Filter blueprints by name or description..."
+            placeholder="Search blueprints by name or description..."
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            onChange={e => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
             className="w-full rounded-lg border border-[#E1E4EA] pl-10 pr-4 py-2 text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white text-slate-800"
           />
         </div>
@@ -243,7 +248,7 @@ export default function ManageBlueprintsPage() {
               </div>
             ))}
           </div>
-        ) : filteredBlueprints.length === 0 ? (
+        ) : blueprints.length === 0 ? (
           /* Empty State */
           <div className="p-16 text-center max-w-sm mx-auto space-y-4">
             <div className="mx-auto h-12 w-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
@@ -282,7 +287,7 @@ export default function ManageBlueprintsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E1E4EA]">
-                {filteredBlueprints.map(bp => {
+                {blueprints.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(bp => {
                   const stackList = Array.isArray(bp.teckStack)
                     ? bp.teckStack
                     : bp.teckStack
@@ -388,6 +393,17 @@ export default function ManageBlueprintsPage() {
                 })}
               </tbody>
             </table>
+
+            {/* Pagination Controls */}
+            {Math.ceil(blueprints.length / itemsPerPage) > 1 && (
+              <div className="p-4 border-t border-[#E1E4EA]">
+                <PaginationControls
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(blueprints.length / itemsPerPage)}
+                  onPageChange={page => setCurrentPage(page)}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

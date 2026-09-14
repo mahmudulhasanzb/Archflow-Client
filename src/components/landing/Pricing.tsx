@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { CheckCircle2, Sparkles, ArrowRight, Zap, Loader2, ShieldCheck } from 'lucide-react';
 
+import toast from 'react-hot-toast';
+
 export default function Pricing() {
   const router = useRouter();
   const { data: session } = authClient.useSession();
@@ -21,14 +23,11 @@ export default function Pricing() {
       return;
     }
 
-    // if (isProUser) {
-    //   router.push('/add-blueprint');
-    //   return;
-    // }
+    setLoadingCheckout(true);
+    const toastId = toast.loading('Initiating secure Stripe payment...');
 
     try {
-      setLoadingCheckout(true);
-      const res = await fetch('/api/checkout_sessions', {
+      const res = await fetch('/api/checkout_session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,13 +36,15 @@ export default function Pricing() {
 
       const data = await res.json();
       if (data.url) {
+        toast.success('Redirecting to Stripe...', { id: toastId });
         window.location.href = data.url;
-      } else if (data.error) {
-        alert(data.error);
+      } else {
+        toast.error(data.error || 'Failed to initiate checkout', { id: toastId });
         setLoadingCheckout(false);
       }
     } catch (err) {
       console.error('Checkout error:', err);
+      toast.error('An error occurred. Please try again.', { id: toastId });
       setLoadingCheckout(false);
     }
   };

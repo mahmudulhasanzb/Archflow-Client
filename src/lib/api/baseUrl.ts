@@ -1,6 +1,7 @@
 import { authClient } from '../auth-client';
 
-export const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+export const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+export const baseURL = baseUrl;
 
 export const getAuthHeaders = async (): Promise<Record<string, string>> => {
   try {

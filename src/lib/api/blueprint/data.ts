@@ -1,9 +1,16 @@
 import { baseURL, getAuthHeaders } from '../baseUrl';
 
-export const getBlueprintsByUserEmail = async (userEmail: string) => {
+export const getBlueprintsByUserEmail = async (userEmail: string, search?: string) => {
   try {
     const authHeaders = await getAuthHeaders();
-    const response = await fetch(`${baseURL}/api/my-blueprints/${encodeURIComponent(userEmail)}`, {
+    const query = new URLSearchParams();
+    if (search && search.trim()) {
+      query.set('search', search.trim());
+    }
+    const queryString = query.toString();
+    const url = `${baseURL}/api/my-blueprints/${encodeURIComponent(userEmail)}${queryString ? `?${queryString}` : ''}`;
+
+    const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
         ...authHeaders,
@@ -15,7 +22,7 @@ export const getBlueprintsByUserEmail = async (userEmail: string) => {
     }
 
     const data = await response.json();
-    return data;
+    return Array.isArray(data) ? data : (data.data || data.blueprints || []);
   } catch (error) {
     console.error('Error fetching blueprints:', error);
     return [];
