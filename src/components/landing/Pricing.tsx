@@ -77,14 +77,12 @@ export default function Pricing() {
         </p>
 
         {/* Annual / Monthly Billing Switcher */}
-        <div className="pt-4 flex items-center justify-center">
+        <div className="pt-6 flex items-center justify-center">
           <div className="relative flex items-center p-1 bg-muted/40 rounded-full border border-border shadow-[inset_0_1px_2px_rgba(0,0,0,0.05)]">
             <button
               onClick={() => setIsAnnual(false)}
               className={`relative w-32 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 z-10 ${
-                !isAnnual
-                  ? 'text-foreground'
-                  : 'text-muted-foreground hover:text-foreground/80'
+                !isAnnual ? 'text-foreground' : 'text-muted-foreground hover:text-foreground/80'
               }`}
             >
               Monthly Billing
@@ -92,12 +90,14 @@ export default function Pricing() {
             <button
               onClick={() => setIsAnnual(true)}
               className={`relative w-32 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 z-10 ${
-                isAnnual
-                  ? 'text-foreground'
-                  : 'text-muted-foreground hover:text-foreground/80'
+                isAnnual ? 'text-foreground' : 'text-muted-foreground hover:text-foreground/80'
               }`}
             >
               Annual Billing
+              {/* Floating Save Badge */}
+              <span className="absolute -top-3.5 -right-2 text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/20 shadow-sm rotate-3">
+                Save 20%
+              </span>
             </button>
 
             {/* Animated Pill Background */}
@@ -107,9 +107,6 @@ export default function Pricing() {
               }`}
             />
           </div>
-          <span className="ml-4 text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-            Save 20%
-          </span>
         </div>
       </div>
 
@@ -197,35 +194,25 @@ export default function Pricing() {
 
               <ul className="space-y-3.5 text-xs text-muted-foreground">
                 <li className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/15 text-primary p-0.5 shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-3 w-3 fill-current text-primary-foreground/20" />
-                  </div>
+                  <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                   <span className="font-semibold text-foreground">
                     Unlimited blueprint generations
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/15 text-primary p-0.5 shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-3 w-3 fill-current text-primary-foreground/20" />
-                  </div>
+                  <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                   <span>Bring your own LLM keys (OpenAI, Claude, Gemini)</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/15 text-primary p-0.5 shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-3 w-3 fill-current text-primary-foreground/20" />
-                  </div>
+                  <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                   <span>Private & encrypted team blueprints</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/15 text-primary p-0.5 shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-3 w-3 fill-current text-primary-foreground/20" />
-                  </div>
+                  <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                   <span>Interactive code stubs & OpenAPI exports</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="rounded-full bg-primary/15 text-primary p-0.5 shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-3 w-3 fill-current text-primary-foreground/20" />
-                  </div>
+                  <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                   <span>Priority multi-agent execution queue</span>
                 </li>
               </ul>
