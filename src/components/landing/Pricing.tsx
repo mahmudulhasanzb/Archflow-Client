@@ -4,7 +4,14 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
-import { CheckCircle2, Sparkles, ArrowRight, Zap, Loader2, ShieldCheck } from 'lucide-react';
+import {
+  CheckCircle2,
+  Sparkles,
+  ArrowRight,
+  Zap,
+  Loader2,
+  ShieldCheck,
+} from 'lucide-react';
 
 import toast from 'react-hot-toast';
 
@@ -39,7 +46,9 @@ export default function Pricing() {
         toast.success('Redirecting to Stripe...', { id: toastId });
         window.location.href = data.url;
       } else {
-        toast.error(data.error || 'Failed to initiate checkout', { id: toastId });
+        toast.error(data.error || 'Failed to initiate checkout', {
+          id: toastId,
+        });
         setLoadingCheckout(false);
       }
     } catch (err) {
@@ -50,8 +59,10 @@ export default function Pricing() {
   };
 
   return (
-    <section id="pricing" className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 border-b border-border">
-      
+    <section
+      id="pricing"
+      className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 border-b border-border"
+    >
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
         <div className="inline-flex items-center gap-1.5 rounded-full bg-muted/50 border border-border px-3.5 py-1 text-xs font-mono font-medium text-foreground uppercase tracking-wider">
@@ -61,7 +72,8 @@ export default function Pricing() {
           Simple, Predictable Plans
         </h2>
         <p className="text-base text-muted-foreground">
-          Start building for free or unlock unlimited multi-agent generations and custom key integrations.
+          Start building for free or unlock unlimited multi-agent generations
+          and custom key integrations.
         </p>
 
         {/* Annual / Monthly Billing Switcher */}
@@ -70,7 +82,9 @@ export default function Pricing() {
             <button
               onClick={() => setIsAnnual(false)}
               className={`relative w-32 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 z-10 ${
-                !isAnnual ? 'text-foreground' : 'text-muted-foreground hover:text-foreground/80'
+                !isAnnual
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground/80'
               }`}
             >
               Monthly Billing
@@ -78,12 +92,14 @@ export default function Pricing() {
             <button
               onClick={() => setIsAnnual(true)}
               className={`relative w-32 py-1.5 text-xs font-semibold rounded-full transition-all duration-300 z-10 ${
-                isAnnual ? 'text-foreground' : 'text-muted-foreground hover:text-foreground/80'
+                isAnnual
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground/80'
               }`}
             >
               Annual Billing
             </button>
-            
+
             {/* Animated Pill Background */}
             <div
               className={`absolute top-1 bottom-1 w-32 bg-card rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.1)] border border-border/50 transition-transform duration-300 ease-out ${
@@ -99,7 +115,6 @@ export default function Pricing() {
 
       {/* Pricing Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch pt-4">
-        
         {/* Free Starter Tier */}
         <div className="p-8 rounded-2xl border border-border bg-card flex flex-col justify-between transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.1)] hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)] hover:border-foreground/20">
           <div className="space-y-6">
@@ -153,15 +168,12 @@ export default function Pricing() {
         <div className="relative group">
           {/* Ambient Glow */}
           <div className="absolute -inset-[1px] bg-gradient-to-b from-primary/40 to-primary/0 rounded-[1.2rem] blur-[2px] opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
-          
-          <div className="relative h-full p-8 rounded-2xl border border-primary/30 bg-card flex flex-col justify-between transition-all duration-300 shadow-[0_4px_16px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)] hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.25)] hover:border-primary/50">
-            
-            {/* Top Floating Badge */}
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
-              <div className="bg-primary text-primary-foreground px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full font-display flex items-center gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.3)] border border-primary-foreground/20">
-                <Zap className="h-3.5 w-3.5 fill-current" />
-                Most Popular
-              </div>
+
+          <div className="relative h-full p-8 rounded-2xl border border-primary/30 bg-card flex flex-col justify-between transition-all duration-300 shadow-[0_4px_16px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)] hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.25)] hover:border-primary/50 overflow-hidden">
+            {/* Top Banner */}
+            <div className="absolute top-0 right-0 bg-foreground text-background px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-bl-xl font-display flex items-center gap-1 z-10">
+              <Zap className="h-3 w-3 fill-current" />
+              Most Popular
             </div>
 
             <div className="space-y-6">
@@ -188,7 +200,9 @@ export default function Pricing() {
                   <div className="rounded-full bg-primary/15 text-primary p-0.5 shrink-0 mt-0.5">
                     <CheckCircle2 className="h-3 w-3 fill-current text-primary-foreground/20" />
                   </div>
-                  <span className="font-semibold text-foreground">Unlimited blueprint generations</span>
+                  <span className="font-semibold text-foreground">
+                    Unlimited blueprint generations
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <div className="rounded-full bg-primary/15 text-primary p-0.5 shrink-0 mt-0.5">
@@ -241,7 +255,6 @@ export default function Pricing() {
             </button>
           </div>
         </div>
-
       </div>
     </section>
   );
