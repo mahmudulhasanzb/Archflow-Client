@@ -86,7 +86,7 @@ export default function FilterBlueprints({
       <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#6B7280] dark:text-[#9CA3AF]" />
+          <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search blueprints by name or description..."
@@ -94,17 +94,17 @@ export default function FilterBlueprints({
             onChange={e => setSearchQuery(e.target.value)}
             onBlur={handleSearchBlur}
             onKeyDown={handleSearchKeyDown}
-            className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] pl-10 pr-4 py-2.5 text-xs text-[#181B20] dark:text-[#F3F4F6] focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] transition-colors"
+            className="w-full rounded-xl border border-border bg-card pl-10 pr-4 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 transition-colors"
           />
         </div>
 
         {/* Stack Filter */}
         <div className="relative flex items-center">
-          <SlidersHorizontal className="absolute left-3.5 h-4 w-4 text-[#6B7280] dark:text-[#9CA3AF] pointer-events-none" />
+          <SlidersHorizontal className="absolute left-3.5 h-4 w-4 text-muted-foreground pointer-events-none" />
           <select
             value={selectedStack}
             onChange={e => handleStackChange(e.target.value)}
-            className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] pl-10 pr-4 py-2.5 text-xs text-[#181B20] dark:text-[#F3F4F6] focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] appearance-none cursor-pointer transition-colors"
+            className="w-full rounded-xl border border-border bg-card pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 appearance-none cursor-pointer transition-colors"
           >
             <option value="All">All Tech Stacks</option>
             <option value="Next.js">Next.js</option>
@@ -120,11 +120,11 @@ export default function FilterBlueprints({
 
         {/* Complexity Filter */}
         <div className="relative flex items-center">
-          <SlidersHorizontal className="absolute left-3.5 h-4 w-4 text-[#6B7280] dark:text-[#9CA3AF] pointer-events-none" />
+          <SlidersHorizontal className="absolute left-3.5 h-4 w-4 text-muted-foreground pointer-events-none" />
           <select
             value={selectedComplexity}
             onChange={e => handleComplexityChange(e.target.value)}
-            className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] pl-10 pr-4 py-2.5 text-xs text-[#181B20] dark:text-[#F3F4F6] focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] appearance-none cursor-pointer transition-colors"
+            className="w-full rounded-xl border border-border bg-card pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 appearance-none cursor-pointer transition-colors"
           >
             <option value="All">All Complexities</option>
             <option value="Low">Low Complexity</option>
@@ -135,11 +135,11 @@ export default function FilterBlueprints({
 
         {/* Sorting */}
         <div className="relative flex items-center">
-          <ArrowUpDown className="absolute left-3.5 h-4 w-4 text-[#6B7280] dark:text-[#9CA3AF] pointer-events-none" />
+          <ArrowUpDown className="absolute left-3.5 h-4 w-4 text-muted-foreground pointer-events-none" />
           <select
             value={selectedSort}
             onChange={e => handleSortChange(e.target.value)}
-            className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] pl-10 pr-4 py-2.5 text-xs text-[#181B20] dark:text-[#F3F4F6] focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] appearance-none cursor-pointer transition-colors"
+            className="w-full rounded-xl border border-border bg-card pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 appearance-none cursor-pointer transition-colors"
           >
             <option value="newest">Sort: Newest First</option>
             <option value="rating">Sort: Highest Rating</option>
@@ -156,21 +156,21 @@ export default function FilterBlueprints({
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] p-16 text-center max-w-lg mx-auto space-y-4">
-          <div className="mx-auto h-12 w-12 rounded-full bg-[#EEF0FF] dark:bg-[#4F46E5]/15 flex items-center justify-center text-[#4F46E5] dark:text-[#818CF8]">
+        <div className="rounded-2xl border border-dashed border-border bg-card p-16 text-center max-w-lg mx-auto space-y-4">
+          <div className="mx-auto h-12 w-12 rounded-2xl bg-muted text-foreground border border-border flex items-center justify-center">
             <Layers className="h-6 w-6" />
           </div>
           <div className="space-y-1">
-            <h3 className="text-base font-bold text-[#181B20] dark:text-[#F3F4F6] font-display">
+            <h3 className="text-base font-bold text-foreground font-display">
               No Blueprints Found
             </h3>
-            <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF]">
+            <p className="text-xs text-muted-foreground">
               No architecture blueprints matched your search or filters.
             </p>
           </div>
           <button
             onClick={handleReset}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#4F46E5] text-white text-xs font-semibold hover:bg-[#4338CA] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer shadow-xs"
           >
             <RefreshCw className="h-3.5 w-3.5" />
             <span>Reset Filters</span>

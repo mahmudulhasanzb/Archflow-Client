@@ -50,39 +50,39 @@ export default function Pricing() {
   };
 
   return (
-    <section id="pricing" className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 border-b border-[#E1E4EA] dark:border-[#222C43]">
+    <section id="pricing" className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 border-b border-border">
       
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF0FF] dark:bg-[#4F46E5]/15 border border-[#4F46E5]/30 px-3.5 py-1 text-xs font-semibold text-[#4F46E5] dark:text-[#818CF8] uppercase tracking-wider">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-muted/50 border border-border px-3.5 py-1 text-xs font-mono font-medium text-foreground uppercase tracking-wider">
           Transparent Pricing
         </div>
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#181B20] dark:text-[#F3F4F6] font-display">
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground font-display">
           Simple, Predictable Plans
         </h2>
-        <p className="text-base text-[#6B7280] dark:text-[#9CA3AF]">
+        <p className="text-base text-muted-foreground">
           Start building for free or unlock unlimited multi-agent generations and custom key integrations.
         </p>
 
         {/* Annual / Monthly Billing Switcher */}
         <div className="pt-4 flex items-center justify-center gap-3 text-xs font-semibold">
-          <span className={!isAnnual ? 'text-[#181B20] dark:text-[#F3F4F6]' : 'text-[#6B7280]'}>
+          <span className={!isAnnual ? 'text-foreground' : 'text-muted-foreground'}>
             Monthly Billing
           </span>
           <button
             onClick={() => setIsAnnual(!isAnnual)}
-            className="relative h-6 w-11 rounded-full bg-[#4F46E5] p-0.5 transition-colors cursor-pointer"
+            className="relative h-6 w-11 rounded-full bg-foreground p-0.5 transition-colors cursor-pointer"
           >
             <span
-              className={`block h-5 w-5 rounded-full bg-white transition-transform ${
+              className={`block h-5 w-5 rounded-full bg-background transition-transform ${
                 isAnnual ? 'translate-x-5' : 'translate-x-0'
               }`}
             />
           </button>
-          <span className={isAnnual ? 'text-[#181B20] dark:text-[#F3F4F6]' : 'text-[#6B7280]'}>
+          <span className={isAnnual ? 'text-foreground' : 'text-muted-foreground'}>
             Annual Billing
           </span>
-          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+          <span className="text-[10px] font-mono font-bold text-foreground bg-muted px-2 py-0.5 rounded-full border border-border">
             Save 20%
           </span>
         </div>
@@ -92,39 +92,39 @@ export default function Pricing() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
         
         {/* Free Starter Tier */}
-        <div className="p-8 rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] flex flex-col justify-between space-y-8 shadow-sm hover:shadow-lg transition-all">
+        <div className="p-8 rounded-2xl border border-border bg-card flex flex-col justify-between space-y-8 shadow-sm hover:border-foreground/30 transition-all">
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-bold text-[#181B20] dark:text-[#F3F4F6] font-display">
+              <h3 className="text-xl font-bold text-foreground font-display">
                 Free Starter
               </h3>
-              <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF] mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 For developers exploring AI software architecture concepts.
               </p>
             </div>
 
             <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-extrabold text-[#181B20] dark:text-[#F3F4F6] font-display">
+              <span className="text-4xl font-extrabold text-foreground font-display">
                 $0
               </span>
-              <span className="text-xs text-[#6B7280] dark:text-[#9CA3AF]">/ forever</span>
+              <span className="text-xs text-muted-foreground">/ forever</span>
             </div>
 
-            <ul className="space-y-3 text-xs text-[#6B7280] dark:text-[#9CA3AF]">
+            <ul className="space-y-3 text-xs text-muted-foreground">
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                 <span>Up to 3 blueprint generations per month</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                 <span>Standard 4-agent swarm pipeline</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                 <span>MongoDB & Express schema stubs</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                 <span>Public blueprint gallery access</span>
               </li>
             </ul>
@@ -132,57 +132,57 @@ export default function Pricing() {
 
           <Link
             href="/signup"
-            className="block text-center rounded-xl bg-[#F1F3F6] dark:bg-[#171E30] border border-[#E1E4EA] dark:border-[#222C43] py-3 text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] hover:bg-[#e4e7eb] dark:hover:bg-[#222C43] transition-colors"
+            className="block text-center rounded-xl bg-muted border border-border py-3 text-xs font-bold text-foreground hover:bg-muted/80 transition-colors"
           >
             Get Started Free
           </Link>
         </div>
 
         {/* Pro Developer Tier */}
-        <div className="p-8 rounded-2xl border-2 border-[#4F46E5] bg-white dark:bg-[#0E1321] flex flex-col justify-between space-y-8 relative overflow-hidden shadow-2xl glow-indigo-box">
+        <div className="p-8 rounded-2xl border-2 border-foreground bg-card flex flex-col justify-between space-y-8 relative overflow-hidden shadow-2xl">
           
           {/* Top Banner */}
-          <div className="absolute top-0 right-0 bg-[#4F46E5] text-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-bl-xl font-display flex items-center gap-1">
+          <div className="absolute top-0 right-0 bg-foreground text-background px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-bl-xl font-display flex items-center gap-1">
             <Zap className="h-3 w-3 fill-current" />
             Most Popular
           </div>
 
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-bold text-[#181B20] dark:text-[#F3F4F6] font-display">
+              <h3 className="text-xl font-bold text-foreground font-display">
                 Developer Pro
               </h3>
-              <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF] mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 For engineering leads, consultants, and scale-ups.
               </p>
             </div>
 
             <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-extrabold text-[#181B20] dark:text-[#F3F4F6] font-display">
+              <span className="text-4xl font-extrabold text-foreground font-display">
                 ${isAnnual ? '24' : '29'}
               </span>
-              <span className="text-xs text-[#6B7280] dark:text-[#9CA3AF]">/ month</span>
+              <span className="text-xs text-muted-foreground">/ month</span>
             </div>
 
-            <ul className="space-y-3 text-xs text-[#6B7280] dark:text-[#9CA3AF]">
+            <ul className="space-y-3 text-xs text-muted-foreground">
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="h-4 w-4 text-[#4F46E5] shrink-0" />
-                <span className="font-semibold text-[#181B20] dark:text-[#F3F4F6]">Unlimited blueprint generations</span>
+                <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
+                <span className="font-semibold text-foreground">Unlimited blueprint generations</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="h-4 w-4 text-[#4F46E5] shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                 <span>Bring your own LLM keys (OpenAI, Claude, Gemini)</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="h-4 w-4 text-[#4F46E5] shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                 <span>Private & encrypted team blueprints</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="h-4 w-4 text-[#4F46E5] shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                 <span>Interactive code stubs & OpenAPI exports</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <CheckCircle2 className="h-4 w-4 text-[#4F46E5] shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                 <span>Priority multi-agent execution queue</span>
               </li>
             </ul>
@@ -191,7 +191,7 @@ export default function Pricing() {
           <button
             onClick={handleUpgradeClick}
             disabled={loadingCheckout}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#4F46E5] py-3.5 text-xs font-bold text-white shadow-lg hover:bg-[#4338CA] transition-colors cursor-pointer disabled:opacity-60"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-xs font-bold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-60"
           >
             {loadingCheckout ? (
               <>
@@ -200,7 +200,7 @@ export default function Pricing() {
               </>
             ) : isProUser ? (
               <>
-                <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                <ShieldCheck className="h-4 w-4 text-foreground" />
                 Active Pro Plan (Go to App)
               </>
             ) : (

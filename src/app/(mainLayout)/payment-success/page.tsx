@@ -98,51 +98,51 @@ export default async function PaymentSuccessPage({
     <div className="min-h-screen bg-[#FAFBFC] dark:bg-[#090C15] flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 transition-colors">
       <div className="max-w-xl w-full bg-white dark:bg-[#0E1321] border border-[#E1E4EA] dark:border-[#1E2638] rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-lg">
         {/* Accent Bar */}
-        <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-indigo-600 dark:via-indigo-400 to-transparent opacity-85" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-foreground/40" />
 
         {/* Success Icon */}
         <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 border-2 border-indigo-600 dark:border-indigo-400 rounded-full flex items-center justify-center relative bg-indigo-50 dark:bg-indigo-950/40">
-            <Check className="h-8 w-8 text-indigo-600 dark:text-indigo-400 animate-bounce" />
+          <div className="w-16 h-16 border-2 border-border rounded-full flex items-center justify-center relative bg-muted">
+            <Check className="h-8 w-8 text-foreground" />
           </div>
         </div>
 
         {/* Header Title */}
         <div className="text-center mb-8">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/25 mb-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-muted text-foreground border border-border mb-3">
             <ShieldCheck className="w-3.5 h-3.5" /> Secure Stripe Payment Completed
           </span>
-          <h1 className="text-[#181B20] dark:text-white font-extrabold text-2xl sm:text-3xl tracking-wide uppercase select-none font-display">
+          <h1 className="text-foreground font-extrabold text-2xl sm:text-3xl tracking-wide uppercase select-none font-display">
             Payment Successful!
           </h1>
-          <p className="text-[#6B7280] dark:text-[#9CA3AF] text-sm mt-1.5">
-            Welcome to Developer Pro. Your account {customerEmail ? <span className="font-semibold text-[#181B20] dark:text-white">({customerEmail})</span> : ''} is fully upgraded.
+          <p className="text-muted-foreground text-sm mt-1.5">
+            Welcome to Developer Pro. Your account {customerEmail ? <span className="font-semibold text-foreground">({customerEmail})</span> : ''} is fully upgraded.
           </p>
         </div>
 
         {/* Receipt Details Card */}
-        <div className="bg-[#FAFBFC] dark:bg-[#141A29]/70 border border-[#E1E4EA] dark:border-[#1E2638] rounded-2xl p-5 mb-8">
-          <h3 className="text-[#181B20] dark:text-[#9CA3AF] text-[11px] font-black uppercase tracking-wider mb-4 border-b border-[#E1E4EA] dark:border-[#1E2638] pb-2 flex items-center gap-1.5">
-            <FileText className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" /> Transaction Receipt
+        <div className="bg-card border border-border rounded-2xl p-5 mb-8">
+          <h3 className="text-foreground text-[11px] font-black uppercase tracking-wider mb-4 border-b border-border pb-2 flex items-center gap-1.5">
+            <FileText className="w-3.5 h-3.5 text-foreground" /> Transaction Receipt
           </h3>
           <div className="space-y-3.5 text-sm">
             <div className="flex justify-between items-center">
-              <span className="text-[#6B7280] dark:text-[#9CA3AF]/70 text-xs">Plan Tier</span>
-              <span className="text-[#181B20] dark:text-white font-bold text-xs">{purchasedItemName}</span>
+              <span className="text-muted-foreground text-xs">Plan Tier</span>
+              <span className="text-foreground font-bold text-xs">{purchasedItemName}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-[#6B7280] dark:text-[#9CA3AF]/70 text-xs">Amount Paid</span>
-              <span className="text-indigo-600 dark:text-indigo-400 font-extrabold text-base">
+              <span className="text-muted-foreground text-xs">Amount Paid</span>
+              <span className="text-foreground font-extrabold text-base">
                 ${amountFormatted} {currencyFormatted}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-[#6B7280] dark:text-[#9CA3AF]/70 text-xs">Date</span>
-              <span className="text-[#181B20] dark:text-white font-medium text-xs">{dateFormatted}</span>
+              <span className="text-muted-foreground text-xs">Date</span>
+              <span className="text-foreground font-medium text-xs">{dateFormatted}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-[#6B7280] dark:text-[#9CA3AF]/70 text-xs">Transaction ID</span>
-              <span className="text-[#181B20] dark:text-white/80 font-mono text-xs max-w-[180px] sm:max-w-none truncate">
+              <span className="text-muted-foreground text-xs">Transaction ID</span>
+              <span className="text-foreground/80 font-mono text-xs max-w-[180px] sm:max-w-none truncate">
                 {transactionId}
               </span>
             </div>
@@ -153,15 +153,15 @@ export default async function PaymentSuccessPage({
         <div className="flex flex-col sm:flex-row gap-3.5">
           <Link
             href="/workspace"
-            className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-black py-3.5 rounded-xl text-xs uppercase tracking-widest transition-all duration-300 text-center cursor-pointer flex items-center justify-center gap-2 active:scale-[0.98] shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30"
+            className="flex-1 bg-primary hover:opacity-90 text-primary-foreground font-black py-3.5 rounded-xl text-xs uppercase tracking-widest transition-opacity text-center cursor-pointer flex items-center justify-center gap-2 active:scale-[0.98] shadow-xs"
           >
             <Activity className="w-4 h-4" /> Go To Dashboard
           </Link>
           <Link
             href="/add-blueprint"
-            className="flex-1 bg-transparent border border-[#E1E4EA] dark:border-[#222C43] hover:bg-slate-100 dark:hover:bg-[#1A2236] text-[#181B20] dark:text-white font-black py-3.5 rounded-xl text-xs uppercase tracking-widest transition-all duration-300 text-center cursor-pointer flex items-center justify-center gap-2 active:scale-[0.98]"
+            className="flex-1 bg-card border border-border hover:bg-muted text-foreground font-black py-3.5 rounded-xl text-xs uppercase tracking-widest transition-colors text-center cursor-pointer flex items-center justify-center gap-2 active:scale-[0.98]"
           >
-            <PlusCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" /> New Blueprint
+            <PlusCircle className="w-4 h-4 text-foreground" /> New Blueprint
           </Link>
         </div>
       </div>

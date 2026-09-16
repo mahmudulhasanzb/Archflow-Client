@@ -310,23 +310,23 @@ export default function AddBlueprintPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8 flex-grow">
       {/* Top Breadcrumb & Header */}
-      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#E1E4EA] dark:border-[#222C43] pb-6">
+      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border pb-6">
         <div>
           <Link
             href="/manage-blueprints"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6B7280] hover:text-[#181B20] dark:text-[#9CA3AF] dark:hover:text-white transition-colors mb-2"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors mb-2"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Back to My Blueprints
           </Link>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#181B20] dark:text-[#F3F4F6] font-display">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground font-display">
               AI Blueprint Studio
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 px-2.5 py-0.5 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted border border-border px-2.5 py-0.5 text-[11px] font-bold text-foreground uppercase tracking-wide">
               <Sparkles className="h-3 w-3" /> MVP Generator
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-[#6B7280] dark:text-[#9CA3AF] mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             Generate 5 deterministic, Agentic-IDE-ready markdown specifications with checkable phased tasks.
           </p>
         </div>
@@ -334,7 +334,7 @@ export default function AddBlueprintPage() {
         {/* Quota Badge Header */}
         <div className="flex items-center gap-3">
           {loadingQuota ? (
-            <div className="flex items-center gap-1.5 text-xs text-[#6B7280]">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Loader2 className="h-3.5 w-3.5 animate-spin" /> Checking quota...
             </div>
           ) : quota ? (
@@ -342,16 +342,16 @@ export default function AddBlueprintPage() {
               <div
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold ${
                   quota.isPro
-                    ? 'bg-indigo-50/70 border-indigo-200 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-300'
+                    ? 'bg-muted border-border text-foreground'
                     : quota.remaining === 0
-                    ? 'bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-800 dark:text-rose-300'
-                    : 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300'
+                    ? 'bg-destructive/10 border-destructive/20 text-destructive'
+                    : 'bg-muted border-border text-foreground'
                 }`}
               >
                 {quota.isPro ? (
-                  <Zap className="h-3.5 w-3.5 fill-current text-indigo-500" />
+                  <Zap className="h-3.5 w-3.5 fill-current text-foreground" />
                 ) : (
-                  <ShieldCheck className="h-3.5 w-3.5" />
+                  <ShieldCheck className="h-3.5 w-3.5 text-foreground" />
                 )}
                 <span>
                   {quota.isPro ? 'Developer Pro' : 'Free Tier'}:{' '}
@@ -367,7 +367,7 @@ export default function AddBlueprintPage() {
                   type="button"
                   onClick={handleUpgradeClick}
                   disabled={upgradingStripe}
-                  className="inline-flex items-center gap-1 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:opacity-95 transition-opacity cursor-pointer disabled:opacity-60"
+                  className="inline-flex items-center gap-1 rounded-xl bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-xs hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-60"
                 >
                   {upgradingStripe ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -386,17 +386,17 @@ export default function AddBlueprintPage() {
 
       {/* Quota Limit Reached Warning Banner */}
       {quota && !quota.canGenerate && (
-        <div className="mb-8 rounded-2xl border border-rose-200 bg-rose-50/80 p-5 text-rose-900 dark:border-rose-900/40 dark:bg-rose-950/30 dark:text-rose-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div className="mb-8 rounded-2xl border border-destructive/30 bg-destructive/10 p-5 text-destructive flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div>
             <h3 className="font-bold text-sm">Generation Quota Limit Reached</h3>
-            <p className="text-xs text-rose-700 dark:text-rose-300 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               You have created {quota.count} of {quota.max} blueprints allowed on the Free plan. Upgrade to Developer Pro for 10 daily blueprints and private workspaces.
             </p>
           </div>
           <button
             onClick={handleUpgradeClick}
             disabled={upgradingStripe}
-            className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-indigo-700 transition-colors cursor-pointer"
+            className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
           >
             {upgradingStripe ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5 fill-current" />}
             Upgrade to Pro ($29/mo)
@@ -407,11 +407,11 @@ export default function AddBlueprintPage() {
       {/* Starter Templates Carousel / Grid */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-bold uppercase tracking-wider text-[#6B7280] dark:text-[#9CA3AF] flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
+          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-foreground" />
             1-Click Starter Prompts
           </span>
-          <span className="text-[11px] text-[#9CA3AF]">Click any template to autopopulate</span>
+          <span className="text-[11px] text-muted-foreground">Click any template to autopopulate</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {STARTER_TEMPLATES.map((tpl, i) => (
@@ -420,18 +420,18 @@ export default function AddBlueprintPage() {
               type="button"
               onClick={() => applyTemplate(tpl)}
               disabled={isGenerating}
-              className="text-left p-3.5 rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] hover:border-indigo-500 hover:shadow-md transition-all cursor-pointer group disabled:opacity-50"
+              className="text-left p-3.5 rounded-xl border border-border bg-card hover:border-foreground/40 hover:shadow-md transition-all cursor-pointer group disabled:opacity-50"
             >
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
+                <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-muted text-foreground border border-border">
                   {tpl.badge}
                 </span>
-                <span className="text-[10px] text-[#9CA3AF] uppercase font-semibold">{tpl.complexity}</span>
+                <span className="text-[10px] text-muted-foreground uppercase font-semibold">{tpl.complexity}</span>
               </div>
-              <h4 className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
+              <h4 className="text-xs font-bold text-foreground group-hover:underline transition-all line-clamp-1">
                 {tpl.label}
               </h4>
-              <p className="text-[11px] text-[#6B7280] dark:text-[#9CA3AF] line-clamp-2 mt-1 leading-relaxed">
+              <p className="text-[11px] text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
                 {tpl.prompt}
               </p>
             </button>
@@ -444,15 +444,15 @@ export default function AddBlueprintPage() {
         
         {/* Left 2 Cols: Form */}
         <form onSubmit={handleGenerate} className="lg:col-span-2 space-y-6">
-          <div className="rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] p-6 shadow-sm space-y-5">
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5">
             
             {/* Project Requirements Prompt */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] uppercase tracking-wider">
-                  Project Prompt & Requirements <span className="text-rose-500">*</span>
+                <label className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  Project Prompt & Requirements <span className="text-destructive">*</span>
                 </label>
-                <span className="text-[11px] text-[#9CA3AF]">Paste any prompt, notes, or discovery specs</span>
+                <span className="text-[11px] text-muted-foreground">Paste any prompt, notes, or discovery specs</span>
               </div>
               <textarea
                 required
@@ -461,17 +461,17 @@ export default function AddBlueprintPage() {
                 value={prompt}
                 onChange={e => setPrompt(e.target.value)}
                 placeholder="Example: Build a B2B project management platform with real-time kanban boards, role permissions, activity audit logs, and Stripe billing. Include user stories and folder architecture..."
-                className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15] p-3.5 text-xs text-[#181B20] dark:text-[#F3F4F6] placeholder-[#9CA3AF] focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all font-sans leading-relaxed resize-y disabled:opacity-60"
+                className="w-full rounded-xl border border-border bg-background p-3.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-foreground focus:outline-none transition-all font-sans leading-relaxed resize-y disabled:opacity-60"
               />
             </div>
 
             {/* Tech Stack Preferences */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] uppercase tracking-wider">
+                <label className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Tech Stack Preferences
                 </label>
-                <span className="text-[11px] text-[#9CA3AF]">Comma-separated</span>
+                <span className="text-[11px] text-muted-foreground">Comma-separated</span>
               </div>
               <input
                 type="text"
@@ -479,17 +479,17 @@ export default function AddBlueprintPage() {
                 value={techStackInput}
                 onChange={e => setTechStackInput(e.target.value)}
                 placeholder="e.g. Next.js 16, Tailwind CSS v4, Express 5, MongoDB, Stripe"
-                className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15] px-3.5 py-2.5 text-xs text-[#181B20] dark:text-[#F3F4F6] placeholder-[#9CA3AF] focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all disabled:opacity-60"
+                className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-foreground focus:outline-none transition-all disabled:opacity-60"
               />
             </div>
 
             {/* Scope Exclusions (What NOT to build) */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] uppercase tracking-wider">
+                <label className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Scope Exclusions (What NOT to build)
                 </label>
-                <span className="text-[11px] text-[#9CA3AF]">Optional boundaries</span>
+                <span className="text-[11px] text-muted-foreground">Optional boundaries</span>
               </div>
               <input
                 type="text"
@@ -497,7 +497,7 @@ export default function AddBlueprintPage() {
                 value={exclusions}
                 onChange={e => setExclusions(e.target.value)}
                 placeholder="e.g. No microservices, no Redux, no Mongoose, no heavy Docker orchestration"
-                className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15] px-3.5 py-2.5 text-xs text-[#181B20] dark:text-[#F3F4F6] placeholder-[#9CA3AF] focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all disabled:opacity-60"
+                className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-foreground focus:outline-none transition-all disabled:opacity-60"
               />
             </div>
 
@@ -505,14 +505,14 @@ export default function AddBlueprintPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               {/* Complexity */}
               <div>
-                <label className="block text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
                   Target Complexity
                 </label>
                 <select
                   disabled={isGenerating}
                   value={complexity}
                   onChange={e => setComplexity(e.target.value)}
-                  className="w-full rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15] px-3 py-2.5 text-xs text-[#181B20] dark:text-[#F3F4F6] focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer disabled:opacity-60"
+                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-xs text-foreground focus:border-foreground focus:outline-none transition-all cursor-pointer disabled:opacity-60"
                 >
                   <option value="low">Low (Minimal viable prototype)</option>
                   <option value="medium">Medium (Standard full-stack product)</option>
@@ -523,11 +523,11 @@ export default function AddBlueprintPage() {
               {/* Visibility (Role Gated) */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] uppercase tracking-wider">
+                  <label className="text-xs font-bold text-foreground uppercase tracking-wider">
                     Blueprint Visibility
                   </label>
                   {!quota?.isPro && (
-                    <span className="text-[10px] text-amber-600 font-semibold flex items-center gap-1">
+                    <span className="text-[10px] text-muted-foreground font-semibold flex items-center gap-1">
                       <Lock className="h-2.5 w-2.5" /> Private is Pro
                     </span>
                   )}
@@ -539,8 +539,8 @@ export default function AddBlueprintPage() {
                     onClick={() => setVisibility('public')}
                     className={`flex items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-semibold transition-all cursor-pointer ${
                       visibility === 'public'
-                        ? 'border-indigo-600 bg-indigo-50/50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-300'
-                        : 'border-[#E1E4EA] dark:border-[#222C43] text-[#6B7280] hover:bg-[#F1F3F6] dark:hover:bg-[#171E30]'
+                        ? 'border-foreground bg-muted text-foreground font-bold'
+                        : 'border-border text-muted-foreground hover:bg-muted/50'
                     }`}
                   >
                     <Globe className="h-3.5 w-3.5" /> Public
@@ -558,10 +558,10 @@ export default function AddBlueprintPage() {
                     }}
                     className={`flex items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-semibold transition-all cursor-pointer ${
                       visibility === 'private'
-                        ? 'border-indigo-600 bg-indigo-50/50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-300'
+                        ? 'border-foreground bg-muted text-foreground font-bold'
                         : !quota?.isPro
-                        ? 'border-dashed border-[#E1E4EA] dark:border-[#222C43] opacity-60 text-[#9CA3AF] cursor-not-allowed'
-                        : 'border-[#E1E4EA] dark:border-[#222C43] text-[#6B7280] hover:bg-[#F1F3F6] dark:hover:bg-[#171E30]'
+                        ? 'border-dashed border-border opacity-50 text-muted-foreground cursor-not-allowed'
+                        : 'border-border text-muted-foreground hover:bg-muted/50'
                     }`}
                   >
                     <Lock className="h-3.5 w-3.5" /> Private
@@ -571,11 +571,11 @@ export default function AddBlueprintPage() {
             </div>
 
             {/* Submit Action CTA */}
-            <div className="pt-4 border-t border-[#E1E4EA] dark:border-[#222C43]">
+            <div className="pt-4 border-t border-border">
               <button
                 type="submit"
                 disabled={isGenerating || (quota !== null && !quota.canGenerate)}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 text-xs font-bold text-white shadow-lg shadow-indigo-500/25 hover:bg-indigo-500 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-xs font-bold text-primary-foreground shadow-sm hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isGenerating ? (
                   <>
@@ -600,18 +600,18 @@ export default function AddBlueprintPage() {
         </form>
 
         {/* Right 1 Col: Live 5-Step Progress Stepper */}
-        <div className="rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] p-5 shadow-sm space-y-4">
-          <div className="flex items-center justify-between border-b border-[#E1E4EA] dark:border-[#222C43] pb-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#181B20] dark:text-[#F3F4F6] flex items-center gap-1.5">
-              <Layers className="h-3.5 w-3.5 text-indigo-500" />
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-border pb-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
+              <Layers className="h-3.5 w-3.5 text-foreground" />
               Blueprint Generation Pipeline
             </h3>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[#6B7280]">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-foreground border border-border">
               5 Files
             </span>
           </div>
 
-          <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Archflow generates a deterministic 5-file suite optimized for direct prompt commands in Agentic IDEs (Cursor, Antigravity, Claude Code).
           </p>
 
@@ -623,10 +623,10 @@ export default function AddBlueprintPage() {
                   key={step.id}
                   className={`p-3 rounded-xl border transition-all flex items-center justify-between ${
                     step.status === 'completed'
-                      ? 'border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/40 dark:bg-emerald-950/20'
+                      ? 'border-emerald-500/30 bg-emerald-500/10'
                       : step.status === 'generating'
-                      ? 'border-indigo-300 bg-indigo-50/70 dark:border-indigo-800 dark:bg-indigo-950/40 shadow-sm animate-pulse'
-                      : 'border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15] opacity-80'
+                      ? 'border-foreground bg-muted shadow-sm animate-pulse'
+                      : 'border-border bg-background opacity-80'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -635,17 +635,17 @@ export default function AddBlueprintPage() {
                         step.status === 'completed'
                           ? 'bg-emerald-500 text-white'
                           : step.status === 'generating'
-                          ? 'bg-indigo-600 text-white'
-                          : 'bg-slate-200 dark:bg-slate-800 text-[#6B7280]'
+                          ? 'bg-foreground text-background'
+                          : 'bg-muted text-muted-foreground'
                       }`}
                     >
                       <Icon className="h-3.5 w-3.5" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6] line-clamp-1">
+                      <div className="text-xs font-bold text-foreground line-clamp-1">
                         {step.name}
                       </div>
-                      <div className="text-[10px] font-mono text-[#6B7280] dark:text-[#9CA3AF]">
+                      <div className="text-[10px] font-mono text-muted-foreground">
                         {step.file}
                       </div>
                     </div>
@@ -653,11 +653,11 @@ export default function AddBlueprintPage() {
 
                   <div>
                     {step.status === 'completed' ? (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                     ) : step.status === 'generating' ? (
-                      <Loader2 className="h-4 w-4 animate-spin text-indigo-600 dark:text-indigo-400" />
+                      <Loader2 className="h-4 w-4 animate-spin text-foreground" />
                     ) : (
-                      <span className="text-[10px] font-semibold text-[#9CA3AF] uppercase">Queued</span>
+                      <span className="text-[10px] font-semibold text-muted-foreground uppercase">Queued</span>
                     )}
                   </div>
                 </div>
@@ -666,10 +666,10 @@ export default function AddBlueprintPage() {
           </div>
 
           {/* IDE Tip Box */}
-          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] text-[#6B7280] dark:text-[#9CA3AF] space-y-1">
-            <span className="font-bold text-[#181B20] dark:text-[#F3F4F6] block">Agentic IDE Compatibility:</span>
+          <div className="p-3.5 rounded-xl bg-muted/50 border border-border text-[11px] text-muted-foreground space-y-1">
+            <span className="font-bold text-foreground block">Agentic IDE Compatibility:</span>
             <span>
-              Generated <code className="text-indigo-600 font-mono">executionPlan.md</code> uses strict <code className="font-mono">[ ]</code> syntax with explicit verification commands for AI coding assistants.
+              Generated <code className="text-foreground font-mono bg-muted px-1 py-0.5 rounded">executionPlan.md</code> uses strict <code className="font-mono">[ ]</code> syntax with explicit verification commands for AI coding assistants.
             </span>
           </div>
         </div>

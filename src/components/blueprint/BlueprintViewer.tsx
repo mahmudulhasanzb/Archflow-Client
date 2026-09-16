@@ -168,27 +168,27 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] shadow-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl border border-border bg-card shadow-sm">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-foreground border border-border">
             <Layers className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#181B20] dark:text-[#F3F4F6]">
+              <span className="text-xs font-bold uppercase tracking-wider text-foreground">
                 Agentic IDE Suite
               </span>
               {blueprint.visibility === 'private' ? (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
                   <Lock className="h-2.5 w-2.5" /> Private
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[#6B7280]">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
                   <Globe className="h-2.5 w-2.5" /> Public
                 </span>
               )}
             </div>
-            <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF]">
+            <p className="text-xs text-muted-foreground">
               {hasMarkdownFiles ? '5 deterministic markdown specifications ready for Cursor, Antigravity, or Claude Code.' : 'Legacy blueprint specifications.'}
             </p>
           </div>
@@ -198,7 +198,7 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
           <button
             onClick={handleDownloadZip}
             disabled={isZipping}
-            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-indigo-500 transition-colors cursor-pointer disabled:opacity-50"
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-xs hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
           >
             <Download className="h-4 w-4" />
             {isZipping ? 'Archiving...' : 'Download Suite (.zip)'}
@@ -208,7 +208,7 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
 
       <div className="space-y-4">
         {/* Tabs Navigation */}
-        <div className="flex flex-wrap gap-1.5 border-b border-[#E1E4EA] dark:border-[#222C43] pb-2">
+        <div className="flex flex-wrap gap-1.5 border-b border-border pb-2">
           {TABS.map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
@@ -217,18 +217,18 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-sm'
+                    ? 'bg-primary text-primary-foreground shadow-xs'
                     : isPlan
-                    ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 hover:bg-indigo-100'
-                    : 'bg-white dark:bg-[#0E1321] border border-[#E1E4EA] dark:border-[#222C43] text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white'
+                    ? 'bg-muted text-foreground border border-border hover:bg-muted/80'
+                    : 'bg-card border border-border text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
                 <span>{tab.filename}</span>
                 {isPlan && !isActive && (
-                  <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-indigo-600 text-white">
+                  <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-foreground text-background">
                     Agent
                   </span>
                 )}
@@ -238,32 +238,32 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
         </div>
 
           {/* Active File Preview Card */}
-          <div className="rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] shadow-sm overflow-hidden">
+          <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
             {/* Card File Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 bg-[#FAFBFC] dark:bg-[#090C15] border-b border-[#E1E4EA] dark:border-[#222C43]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 bg-muted/40 border-b border-border">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-[#181B20] dark:text-[#F3F4F6]">
+                  <span className="font-mono text-xs font-bold text-foreground">
                     {currentTabDef.filename}
                   </span>
-                  <span className="text-[11px] text-[#9CA3AF]">
+                  <span className="text-[11px] text-muted-foreground">
                     ({activeContent.split(/\s+/).length} words, {activeContent.length} bytes)
                   </span>
                 </div>
-                <p className="text-[11px] text-[#6B7280] dark:text-[#9CA3AF] mt-0.5">
+                <p className="text-[11px] text-muted-foreground mt-0.5">
                   {currentTabDef.description}
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
                 {/* View Mode Toggle */}
-                <div className="inline-flex items-center p-0.5 rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321]">
+                <div className="inline-flex items-center p-0.5 rounded-xl border border-border bg-card">
                   <button
                     onClick={() => setViewMode('mdx')}
                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                       viewMode === 'mdx'
-                        ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white'
+                        ? 'bg-primary text-primary-foreground shadow-xs'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                     title="Rendered MDX Document with Syntax Highlighting"
                   >
@@ -274,8 +274,8 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
                     onClick={() => setViewMode('raw')}
                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                       viewMode === 'raw'
-                        ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white'
+                        ? 'bg-primary text-primary-foreground shadow-xs'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                     title="Raw Markdown Code"
                   >
@@ -286,7 +286,7 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
 
                 <button
                   onClick={() => handleCopy(currentTabDef.filename, activeContent)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] px-3 py-1.5 text-xs font-semibold text-[#181B20] dark:text-[#F3F4F6] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
                 >
                   {copiedTab === currentTabDef.filename ? (
                     <>
@@ -295,7 +295,7 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
                     </>
                   ) : (
                     <>
-                      <Copy className="h-3.5 w-3.5 text-[#6B7280]" />
+                      <Copy className="h-3.5 w-3.5 text-muted-foreground" />
                       <span>Copy Markdown</span>
                     </>
                   )}
@@ -308,7 +308,7 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
               {viewMode === 'mdx' ? (
                 <MdxRenderer content={activeContent} />
               ) : (
-                <pre className="font-mono text-xs text-[#181B20] dark:text-[#E2E8F0] whitespace-pre-wrap leading-relaxed">
+                <pre className="font-mono text-xs text-foreground whitespace-pre-wrap leading-relaxed">
                   {activeContent}
                 </pre>
               )}
@@ -316,10 +316,10 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
 
             {/* Bottom Card Footer Tip */}
             {activeTab === 'executionPlan' && (
-              <div className="p-3.5 bg-indigo-50/50 dark:bg-indigo-950/20 border-t border-indigo-100 dark:border-indigo-900/30 text-xs text-indigo-800 dark:text-indigo-300 flex items-center gap-2">
-                <Terminal className="h-4 w-4 text-indigo-600 shrink-0" />
+              <div className="p-3.5 bg-muted/60 border-t border-border text-xs text-foreground flex items-center gap-2">
+                <Terminal className="h-4 w-4 text-foreground shrink-0" />
                 <span>
-                  <strong>Agentic IDE Command:</strong> Paste this file into your project as <code className="font-mono bg-white dark:bg-indigo-950 px-1 rounded">executionPlan.md</code> and prompt your agent: <em>&quot;Implement Step 1 from executionPlan.md&quot;</em>.
+                  <strong>Agentic IDE Command:</strong> Paste this file into your project as <code className="font-mono bg-card border border-border px-1.5 py-0.5 rounded text-foreground">executionPlan.md</code> and prompt your agent: <em>&quot;Implement Step 1 from executionPlan.md&quot;</em>.
                 </span>
               </div>
             )}

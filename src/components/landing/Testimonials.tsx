@@ -33,16 +33,16 @@ const REVIEWS = [
 
 export default function Testimonials() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 border-b border-[#E1E4EA] dark:border-[#222C43]">
+    <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 border-b border-border">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF0FF] dark:bg-[#4F46E5]/15 border border-[#4F46E5]/30 px-3.5 py-1 text-xs font-semibold text-[#4F46E5] dark:text-[#818CF8] uppercase tracking-wider">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-muted/50 border border-border px-3.5 py-1 text-xs font-mono font-medium text-foreground uppercase tracking-wider">
           Developer Testimonials
         </div>
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#181B20] dark:text-[#F3F4F6] font-display">
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground font-display">
           Loved by Architects & Lead Engineers
         </h2>
-        <p className="text-base text-[#6B7280] dark:text-[#9CA3AF]">
+        <p className="text-base text-muted-foreground">
           See how engineering leaders use Archflow to standardise specs and accelerate project launches.
         </p>
       </div>
@@ -52,33 +52,33 @@ export default function Testimonials() {
         {REVIEWS.map((rev, idx) => (
           <div
             key={idx}
-            className="flex flex-col justify-between p-6 rounded-2xl bg-white dark:bg-[#0E1321] border border-[#E1E4EA] dark:border-[#222C43] shadow-sm hover:shadow-xl transition-all duration-300 relative"
+            className="flex flex-col justify-between p-6 rounded-2xl bg-card border border-border shadow-sm hover:border-foreground/30 hover:shadow-md transition-all duration-300 relative"
           >
             <div className="space-y-4">
               {/* Star Rating & Quote Icon */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1">
                   {[...Array(rev.rating)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-amber-400 stroke-amber-400" />
+                    <Star key={i} className="h-4 w-4 fill-foreground/80 stroke-foreground/80" />
                   ))}
                 </div>
-                <Quote className="h-6 w-6 text-[#4F46E5]/20" />
+                <Quote className="h-5 w-5 text-muted-foreground/30" />
               </div>
 
               {/* Quote text */}
-              <p className="text-sm text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed italic">
+              <p className="text-sm text-muted-foreground leading-relaxed italic">
                 "{rev.quote}"
               </p>
             </div>
 
             {/* Author info & stack pill */}
-            <div className="mt-6 pt-4 border-t border-[#E1E4EA]/80 dark:border-[#222C43]/80 flex items-center justify-between">
+            <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
               <div>
-                <h4 className="text-sm font-bold text-[#181B20] dark:text-[#F3F4F6] font-display flex items-center gap-1.5">
+                <h4 className="text-sm font-bold text-foreground font-display flex items-center gap-1.5">
                   {rev.author}
-                  <CheckCircle2 className="h-3.5 w-3.5 text-[#4F46E5]" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-foreground" />
                 </h4>
-                <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF]">
+                <p className="text-xs text-muted-foreground">
                   {rev.role} • {rev.company}
                 </p>
               </div>

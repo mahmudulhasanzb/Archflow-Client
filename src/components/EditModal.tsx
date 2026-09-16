@@ -156,24 +156,24 @@ export default function EditModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-[#090A0C]/70 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-4xl max-h-[90vh] flex flex-col transform rounded-2xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] shadow-2xl transition-all z-10 overflow-hidden">
+      <div className="relative w-full max-w-4xl max-h-[90vh] flex flex-col transform rounded-2xl border border-border bg-card shadow-2xl transition-all z-10 overflow-hidden">
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-5 border-b border-[#E1E4EA] dark:border-[#222C43] bg-[#FAFBFC] dark:bg-[#090C15]">
+        <div className="flex items-center justify-between p-5 border-b border-border bg-muted/40">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-[#181B20] dark:text-[#F3F4F6] font-display">
+              <h3 className="text-base font-bold text-foreground font-display">
                 Edit Architecture Blueprint
               </h3>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-800/50">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-muted text-foreground border border-border">
                 PRO FEATURE
               </span>
             </div>
-            <p className="text-xs text-[#6B7280] dark:text-[#9CA3AF] mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               Edit architecture parameters and deterministic Markdown
               specifications. Immutable fields (creation date, ratings, author)
               are protected.
@@ -182,7 +182,7 @@ export default function EditModal({
 
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+            className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
             disabled={loading}
           >
             <X className="h-5 w-5" />
@@ -190,7 +190,7 @@ export default function EditModal({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-1.5 px-5 py-2.5 bg-slate-50/60 dark:bg-[#0A0D18] border-b border-[#E1E4EA] dark:border-[#222C43] overflow-x-auto text-xs">
+        <div className="flex items-center gap-1.5 px-5 py-2.5 bg-card border-b border-border overflow-x-auto text-xs">
           {navTabs.map(t => {
             const Icon = t.icon;
             const isActive = activeTab === t.id;
@@ -201,8 +201,8 @@ export default function EditModal({
                 onClick={() => setActiveTab(t.id)}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-colors cursor-pointer ${
                   isActive
-                    ? 'bg-indigo-600 text-white font-semibold shadow-xs'
-                    : 'text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white hover:bg-white dark:hover:bg-[#141A29]'
+                    ? 'bg-primary text-primary-foreground font-semibold shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
@@ -223,7 +223,7 @@ export default function EditModal({
               <div className="space-y-4">
                 {/* Title Field */}
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#181B20] dark:text-[#E2E8F0] mb-1.5">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-foreground mb-1.5">
                     Blueprint Title
                   </label>
                   <input
@@ -232,14 +232,14 @@ export default function EditModal({
                     value={title}
                     onChange={e => setTitle(e.target.value)}
                     placeholder="e.g. Microservices eCommerce API"
-                    className="w-full rounded-lg border border-[#E1E4EA] dark:border-[#222C43] px-3.5 py-2 text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100"
+                    className="w-full rounded-xl border border-border px-3.5 py-2 text-xs focus:border-foreground focus:outline-none bg-background text-foreground"
                     disabled={loading}
                   />
                 </div>
 
                 {/* Description Field */}
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#181B20] dark:text-[#E2E8F0] mb-1.5">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-foreground mb-1.5">
                     Executive Description
                   </label>
                   <textarea
@@ -248,14 +248,14 @@ export default function EditModal({
                     value={description}
                     onChange={e => setDescription(e.target.value)}
                     placeholder="Provide a description of the target system structure..."
-                    className="w-full rounded-lg border border-[#E1E4EA] dark:border-[#222C43] px-3.5 py-2 text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100"
+                    className="w-full rounded-xl border border-border px-3.5 py-2 text-xs focus:border-foreground focus:outline-none bg-background text-foreground"
                     disabled={loading}
                   />
                 </div>
 
                 {/* AI Prompt */}
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#181B20] dark:text-[#E2E8F0] mb-1.5">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-foreground mb-1.5">
                     AI Source Prompt
                   </label>
                   <textarea
@@ -263,14 +263,14 @@ export default function EditModal({
                     value={prompt}
                     onChange={e => setPrompt(e.target.value)}
                     placeholder="Original prompt used to seed the architecture..."
-                    className="w-full rounded-lg border border-[#E1E4EA] dark:border-[#222C43] px-3.5 py-2 text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100"
+                    className="w-full rounded-xl border border-border px-3.5 py-2 text-xs focus:border-foreground focus:outline-none bg-background text-foreground"
                     disabled={loading}
                   />
                 </div>
 
                 {/* Tech Stack Field */}
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#181B20] dark:text-[#E2E8F0] mb-1.5">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-foreground mb-1.5">
                     Tech Stack (comma separated)
                   </label>
                   <input
@@ -278,7 +278,7 @@ export default function EditModal({
                     value={techStackInput}
                     onChange={e => setTechStackInput(e.target.value)}
                     placeholder="React, Next.js, Node.js, MongoDB"
-                    className="w-full rounded-lg border border-[#E1E4EA] dark:border-[#222C43] px-3.5 py-2 text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100"
+                    className="w-full rounded-xl border border-border px-3.5 py-2 text-xs focus:border-foreground focus:outline-none bg-background text-foreground"
                     disabled={loading}
                   />
                 </div>
@@ -286,13 +286,13 @@ export default function EditModal({
                 {/* Complexity, Visibility & Status */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#181B20] dark:text-[#E2E8F0] mb-1.5">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-foreground mb-1.5">
                       Complexity
                     </label>
                     <select
                       value={complexity}
                       onChange={e => setComplexity(e.target.value)}
-                      className="w-full rounded-lg border border-[#E1E4EA] dark:border-[#222C43] px-3.5 py-2 text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100 cursor-pointer"
+                      className="w-full rounded-xl border border-border px-3.5 py-2 text-xs focus:border-foreground focus:outline-none bg-background text-foreground cursor-pointer"
                       disabled={loading}
                     >
                       <option value="Low">Low</option>
@@ -302,7 +302,7 @@ export default function EditModal({
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#181B20] dark:text-[#E2E8F0] mb-1.5">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-foreground mb-1.5">
                       Visibility
                     </label>
                     <select
@@ -310,7 +310,7 @@ export default function EditModal({
                       onChange={e =>
                         setVisibility(e.target.value as 'public' | 'private')
                       }
-                      className="w-full rounded-lg border border-[#E1E4EA] dark:border-[#222C43] px-3.5 py-2 text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100 cursor-pointer"
+                      className="w-full rounded-xl border border-border px-3.5 py-2 text-xs focus:border-foreground focus:outline-none bg-background text-foreground cursor-pointer"
                       disabled={loading}
                     >
                       <option value="public">Public (Shared in Gallery)</option>
@@ -319,13 +319,13 @@ export default function EditModal({
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#181B20] dark:text-[#E2E8F0] mb-1.5">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-foreground mb-1.5">
                       Status
                     </label>
                     <select
                       value={status}
                       onChange={e => setStatus(e.target.value)}
-                      className="w-full rounded-lg border border-[#E1E4EA] dark:border-[#222C43] px-3.5 py-2 text-xs focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100 cursor-pointer"
+                      className="w-full rounded-xl border border-border px-3.5 py-2 text-xs focus:border-foreground focus:outline-none bg-background text-foreground cursor-pointer"
                       disabled={loading}
                     >
                       <option value="Ready">Ready</option>
@@ -340,10 +340,10 @@ export default function EditModal({
             {activeTab === 'overview' && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-mono font-bold text-[#181B20] dark:text-[#E2E8F0]">
+                  <label className="block text-xs font-mono font-bold text-foreground">
                     projectOverview.md Content
                   </label>
-                  <span className="text-[11px] text-[#6B7280]">
+                  <span className="text-[11px] text-muted-foreground">
                     Markdown format
                   </span>
                 </div>
@@ -352,7 +352,7 @@ export default function EditModal({
                   value={projectOverview}
                   onChange={e => setProjectOverview(e.target.value)}
                   placeholder="# Project Overview..."
-                  className="w-full font-mono text-xs rounded-xl border border-[#E1E4EA] dark:border-[#222C43] p-4 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100 leading-relaxed"
+                  className="w-full font-mono text-xs rounded-xl border border-border p-4 focus:border-foreground focus:outline-none bg-background text-foreground leading-relaxed"
                   disabled={loading}
                 />
               </div>
@@ -362,10 +362,10 @@ export default function EditModal({
             {activeTab === 'requirements' && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-mono font-bold text-[#181B20] dark:text-[#E2E8F0]">
+                  <label className="block text-xs font-mono font-bold text-foreground">
                     requirements.md Content
                   </label>
-                  <span className="text-[11px] text-[#6B7280]">
+                  <span className="text-[11px] text-muted-foreground">
                     Markdown format
                   </span>
                 </div>
@@ -374,7 +374,7 @@ export default function EditModal({
                   value={requirements}
                   onChange={e => setRequirements(e.target.value)}
                   placeholder="# Requirements..."
-                  className="w-full font-mono text-xs rounded-xl border border-[#E1E4EA] dark:border-[#222C43] p-4 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100 leading-relaxed"
+                  className="w-full font-mono text-xs rounded-xl border border-border p-4 focus:border-foreground focus:outline-none bg-background text-foreground leading-relaxed"
                   disabled={loading}
                 />
               </div>
@@ -384,10 +384,10 @@ export default function EditModal({
             {activeTab === 'architecture' && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-mono font-bold text-[#181B20] dark:text-[#E2E8F0]">
+                  <label className="block text-xs font-mono font-bold text-foreground">
                     architecture.md Content
                   </label>
-                  <span className="text-[11px] text-[#6B7280]">
+                  <span className="text-[11px] text-muted-foreground">
                     Markdown format
                   </span>
                 </div>
@@ -396,7 +396,7 @@ export default function EditModal({
                   value={architecture}
                   onChange={e => setArchitecture(e.target.value)}
                   placeholder="# System Architecture..."
-                  className="w-full font-mono text-xs rounded-xl border border-[#E1E4EA] dark:border-[#222C43] p-4 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100 leading-relaxed"
+                  className="w-full font-mono text-xs rounded-xl border border-border p-4 focus:border-foreground focus:outline-none bg-background text-foreground leading-relaxed"
                   disabled={loading}
                 />
               </div>
@@ -406,10 +406,10 @@ export default function EditModal({
             {activeTab === 'design' && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-mono font-bold text-[#181B20] dark:text-[#E2E8F0]">
+                  <label className="block text-xs font-mono font-bold text-foreground">
                     design.md Content
                   </label>
-                  <span className="text-[11px] text-[#6B7280]">
+                  <span className="text-[11px] text-muted-foreground">
                     Markdown format
                   </span>
                 </div>
@@ -418,7 +418,7 @@ export default function EditModal({
                   value={design}
                   onChange={e => setDesign(e.target.value)}
                   placeholder="# Design System Specifications..."
-                  className="w-full font-mono text-xs rounded-xl border border-[#E1E4EA] dark:border-[#222C43] p-4 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100 leading-relaxed"
+                  className="w-full font-mono text-xs rounded-xl border border-border p-4 focus:border-foreground focus:outline-none bg-background text-foreground leading-relaxed"
                   disabled={loading}
                 />
               </div>
@@ -428,10 +428,10 @@ export default function EditModal({
             {activeTab === 'plan' && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-mono font-bold text-[#181B20] dark:text-[#E2E8F0]">
+                  <label className="block text-xs font-mono font-bold text-foreground">
                     executionPlan.md Content
                   </label>
-                  <span className="text-[11px] text-[#6B7280]">
+                  <span className="text-[11px] text-muted-foreground">
                     Markdown format
                   </span>
                 </div>
@@ -440,7 +440,7 @@ export default function EditModal({
                   value={executionPlan}
                   onChange={e => setExecutionPlan(e.target.value)}
                   placeholder="# Agentic IDE Execution Plan..."
-                  className="w-full font-mono text-xs rounded-xl border border-[#E1E4EA] dark:border-[#222C43] p-4 focus:border-[#4F46E5] focus:outline-none focus:ring-1 focus:ring-[#4F46E5] bg-white dark:bg-[#090C15] text-slate-800 dark:text-slate-100 leading-relaxed"
+                  className="w-full font-mono text-xs rounded-xl border border-border p-4 focus:border-foreground focus:outline-none bg-background text-foreground leading-relaxed"
                   disabled={loading}
                 />
               </div>
@@ -448,8 +448,8 @@ export default function EditModal({
           </div>
 
           {/* Action Buttons Footer */}
-          <div className="flex items-center justify-between gap-3 border-t border-[#E1E4EA] dark:border-[#222C43] p-4 bg-[#FAFBFC] dark:bg-[#090C15]">
-            <div className="text-[11px] text-[#6B7280] dark:text-[#9CA3AF]">
+          <div className="flex items-center justify-between gap-3 border-t border-border p-4 bg-muted/40">
+            <div className="text-[11px] text-muted-foreground">
               All changes are synced live to the database.
             </div>
 
@@ -457,20 +457,20 @@ export default function EditModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-xl border border-[#E1E4EA] dark:border-[#222C43] bg-white dark:bg-[#0E1321] px-4 py-2 text-xs font-semibold text-[#181B20] dark:text-[#F3F4F6] hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                className="rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
                 disabled={loading}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#4F46E5] px-4 py-2 text-xs font-semibold text-white hover:bg-[#4338CA] transition-colors disabled:opacity-50 shadow-sm cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50 shadow-xs cursor-pointer"
                 disabled={loading}
               >
                 {loading ? (
                   <>
                     <svg
-                      className="animate-spin -ml-0.5 mr-1 h-3.5 w-3.5 text-white"
+                      className="animate-spin -ml-0.5 mr-1 h-3.5 w-3.5 text-primary-foreground"
                       fill="none"
                       viewBox="0 0 24 24"
                     >

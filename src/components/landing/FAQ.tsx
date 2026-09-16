@@ -37,14 +37,14 @@ export default function FAQ() {
     <section className="mx-auto max-w-4xl px-4 py-24 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="text-center mb-16 space-y-4">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF0FF] dark:bg-[#4F46E5]/15 border border-[#4F46E5]/30 px-3.5 py-1 text-xs font-semibold text-[#4F46E5] dark:text-[#818CF8] uppercase tracking-wider">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-muted/50 border border-border px-3.5 py-1 text-xs font-mono font-medium text-foreground uppercase tracking-wider">
           <HelpCircle className="h-3.5 w-3.5" />
           Got Questions?
         </div>
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#181B20] dark:text-[#F3F4F6] font-display">
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground font-display">
           Frequently Asked Questions
         </h2>
-        <p className="text-base text-[#6B7280] dark:text-[#9CA3AF]">
+        <p className="text-base text-muted-foreground">
           Everything you need to know about Archflow and multi-agent blueprint generation.
         </p>
       </div>
@@ -59,27 +59,27 @@ export default function FAQ() {
               key={idx}
               className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
                 isOpen
-                  ? 'bg-white dark:bg-[#0E1321] border-[#4F46E5] shadow-md'
-                  : 'bg-white/70 dark:bg-[#0E1321]/60 border-[#E1E4EA] dark:border-[#222C43] hover:border-[#4F46E5]/40'
+                  ? 'bg-card border-foreground shadow-sm'
+                  : 'bg-card/60 border-border hover:border-foreground/30'
               }`}
             >
               <button
                 onClick={() => toggleFaq(idx)}
-                className="w-full flex justify-between items-center p-6 text-left font-bold text-[#181B20] dark:text-[#F3F4F6] font-display gap-4"
+                className="w-full flex justify-between items-center p-6 text-left font-bold text-foreground font-display gap-4"
               >
                 <div className="flex items-center gap-3">
-                  <Icon className="h-5 w-5 text-[#4F46E5] shrink-0" />
+                  <Icon className="h-5 w-5 text-foreground shrink-0" />
                   <span className="text-base">{faq.q}</span>
                 </div>
                 <ChevronDown
-                  className={`h-5 w-5 text-[#6B7280] dark:text-[#9CA3AF] shrink-0 transition-transform duration-200 ${
-                    isOpen ? 'rotate-180 text-[#4F46E5]' : ''
+                  className={`h-5 w-5 text-muted-foreground shrink-0 transition-transform duration-200 ${
+                    isOpen ? 'rotate-180 text-foreground' : ''
                   }`}
                 />
               </button>
 
               {isOpen && (
-                <div className="px-6 pb-6 pt-0 text-sm text-[#6B7280] dark:text-[#9CA3AF] leading-relaxed border-t border-[#E1E4EA]/60 dark:border-[#222C43]/60 bg-[#FAFBFC]/50 dark:bg-[#090C15]/50">
+                <div className="px-6 pb-6 pt-0 text-sm text-muted-foreground leading-relaxed border-t border-border bg-muted/20">
                   <div className="pt-4">{faq.a}</div>
                 </div>
               )}

@@ -9,7 +9,7 @@ interface MdxLayoutProps {
 export default function MdxLayout({ children, className = '' }: MdxLayoutProps) {
   return (
     <div
-      className={`prose prose-slate dark:prose-invert max-w-none prose-headings:font-display prose-headings:font-bold prose-a:text-indigo-600 dark:prose-a:text-indigo-400 prose-pre:bg-[#090C15] prose-pre:border prose-pre:border-[#1E2638] prose-code:text-indigo-600 dark:prose-code:text-indigo-300 prose-code:font-mono text-sm leading-relaxed ${className}`}
+      className={`prose prose-slate dark:prose-invert max-w-none prose-headings:font-display prose-headings:font-bold prose-a:text-foreground prose-a:underline prose-pre:bg-card prose-pre:border prose-pre:border-border prose-code:text-foreground prose-code:font-mono text-sm leading-relaxed ${className}`}
     >
       <SyntaxHighlighter>{children}</SyntaxHighlighter>
     </div>

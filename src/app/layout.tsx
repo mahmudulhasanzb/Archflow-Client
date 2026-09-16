@@ -30,6 +30,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
       <head>
@@ -47,7 +48,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col font-sans bg-[#FAFBFC] text-[#181B20]">
+      <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
         {children}
         <Toaster position="top-right" />
         <SupportChat />

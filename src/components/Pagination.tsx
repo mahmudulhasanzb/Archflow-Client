@@ -58,7 +58,7 @@ export default function PaginationControls({
   return (
     <nav
       aria-label="Pagination"
-      className="flex items-center justify-center pt-8 border-t border-[#E1E4EA]/60 dark:border-[#222C43]/60 select-none"
+      className="flex items-center justify-center pt-8 border-t border-border select-none"
     >
       <ul className="flex items-center gap-2">
         {/* ← Previous */}
@@ -74,8 +74,8 @@ export default function PaginationControls({
               'bg-transparent border-0 rounded-xl',
               'transition-colors duration-200',
               isFirst
-                ? 'text-[#6B7280]/40 dark:text-[#9CA3AF]/30 cursor-not-allowed'
-                : 'text-[#4F46E5] dark:text-[#818CF8] hover:underline cursor-pointer',
+                ? 'text-muted-foreground/30 cursor-not-allowed'
+                : 'text-foreground hover:underline cursor-pointer',
             ].join(' ')}
           >
             ← Prev
@@ -87,7 +87,7 @@ export default function PaginationControls({
           p === '...' ? (
             <li
               key={`ellipsis-${idx}`}
-              className="text-[#6B7280]/60 dark:text-[#9CA3AF]/60 text-xs font-bold px-1 select-none font-mono"
+              className="text-muted-foreground/50 text-xs font-bold px-1 select-none font-mono"
               aria-hidden="true"
             >
               ···
@@ -104,8 +104,8 @@ export default function PaginationControls({
                   'text-xs font-bold rounded-xl font-mono',
                   'transition-all duration-200 cursor-pointer',
                   p === currentPage
-                    ? 'bg-[#4F46E5] text-white border border-[#4F46E5] shadow-sm shadow-[#4F46E5]/30 font-bold'
-                    : 'bg-white dark:bg-[#0E1321] border border-[#E1E4EA] dark:border-[#222C43] text-[#181B20] dark:text-[#F3F4F6] hover:border-[#4F46E5]/50 hover:text-[#4F46E5] dark:hover:text-[#818CF8]',
+                    ? 'bg-primary text-primary-foreground font-bold shadow-xs'
+                    : 'bg-card border border-border text-foreground hover:bg-muted hover:border-foreground/30',
                 ].join(' ')}
               >
                 {p}
@@ -127,8 +127,8 @@ export default function PaginationControls({
               'bg-transparent border-0 rounded-xl',
               'transition-colors duration-200',
               isLast
-                ? 'text-[#6B7280]/40 dark:text-[#9CA3AF]/30 cursor-not-allowed'
-                : 'text-[#4F46E5] dark:text-[#818CF8] hover:underline cursor-pointer',
+                ? 'text-muted-foreground/30 cursor-not-allowed'
+                : 'text-foreground hover:underline cursor-pointer',
             ].join(' ')}
           >
             Next →

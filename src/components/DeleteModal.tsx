@@ -21,19 +21,19 @@ export default function DeleteModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-[#090A0C]/60 backdrop-blur-sm transition-opacity duration-300"
+        className="absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl border border-[#E1E4EA] bg-white p-6 shadow-2xl transition-all duration-300 animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-2xl transition-all duration-300 animate-in fade-in zoom-in-95">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-1 text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-colors"
+          className="absolute right-4 top-4 rounded-lg p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
           disabled={loading}
         >
           <X className="h-5 w-5" />
@@ -41,26 +41,26 @@ export default function DeleteModal({
 
         {/* Warning Icon & Title */}
         <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
             <AlertTriangle className="h-5 w-5" />
           </div>
           <div className="flex-1">
-            <h3 className="text-base font-bold text-[#181B20] font-display">
+            <h3 className="text-base font-bold text-foreground font-display">
               Delete Blueprint
             </h3>
-            <p className="mt-2 text-xs text-[#6B7280] leading-relaxed">
-              Are you sure you want to delete <span className="font-semibold text-slate-900">"{blueprintTitle}"</span>? 
+            <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+              Are you sure you want to delete <span className="font-semibold text-foreground">"{blueprintTitle}"</span>? 
               This action cannot be undone and all associated architecture flow details, roadmaps, and audit logs will be permanently deleted.
             </p>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-6 flex justify-end gap-3 border-t border-slate-100 pt-4">
+        <div className="mt-6 flex justify-end gap-3 border-t border-border pt-4">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-[#E1E4EA] bg-white px-4 py-2 text-xs font-semibold text-[#181B20] hover:bg-[#FAFBFC] transition-colors"
+            className="rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
             disabled={loading}
           >
             Cancel
@@ -68,12 +68,12 @@ export default function DeleteModal({
           <button
             type="button"
             onClick={onConfirm}
-            className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-rose-600 px-4 py-2 text-xs font-semibold text-white hover:bg-rose-700 transition-colors disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-destructive px-4 py-2 text-xs font-semibold text-destructive-foreground hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
             disabled={loading}
           >
             {loading ? (
               <>
-                <svg className="animate-spin -ml-0.5 mr-1 h-3 w-3 text-white" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin -ml-0.5 mr-1 h-3 w-3 text-destructive-foreground" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>

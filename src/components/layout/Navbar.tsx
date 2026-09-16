@@ -131,16 +131,16 @@ export default function Navbar() {
     (user as any)?.plan?.toLowerCase() === 'pro';
 
   return (
-    <nav className="w-full bg-white/95 dark:bg-[#090C15]/95 border-b border-[#E1E4EA] dark:border-[#1E2638] sticky top-0 z-50 backdrop-blur-md transition-all duration-300">
+    <nav className="w-full bg-background/80 border-b border-border sticky top-0 z-50 backdrop-blur-md transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-800/60 group-hover:scale-105 transition-transform duration-200">
-                <Activity className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-foreground text-background border border-border group-hover:scale-105 transition-transform duration-200">
+                <Activity className="h-5 w-5" />
               </div>
-              <span className="text-[#181B20] dark:text-white font-extrabold text-xl tracking-wider select-none font-display">
+              <span className="text-foreground font-extrabold text-xl tracking-wider select-none font-display">
                 ARCHFLOW
               </span>
             </Link>
@@ -156,13 +156,13 @@ export default function Navbar() {
                   href={link.href}
                   className={`relative text-[14px] font-medium transition-all duration-200 py-2 ${
                     active
-                      ? 'text-indigo-600 dark:text-white font-semibold'
-                      : 'text-[#6B7280] dark:text-[#9CA3AF]/80 hover:text-[#181B20] dark:hover:text-white'
+                      ? 'text-foreground font-semibold'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {link.label}
                   {active && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-indigo-600 dark:bg-indigo-400 rounded-full transition-all duration-300" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-foreground rounded-full transition-all duration-300" />
                   )}
                 </Link>
               );
@@ -175,7 +175,7 @@ export default function Navbar() {
             <button
               onClick={toggleTheme}
               aria-label="Toggle dark mode"
-              className="p-2 rounded-full bg-[#FAFBFC] dark:bg-[#141A29] border border-[#E1E4EA] dark:border-[#222C43] hover:border-indigo-500/50 text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white transition-colors cursor-pointer"
+              className="p-2 rounded-full bg-card border border-border hover:border-foreground/30 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
               {!mounted ? (
                 <div className="h-4 w-4" />
@@ -188,17 +188,17 @@ export default function Navbar() {
 
             {/* Auth Section */}
             {isPending ? (
-              <div className="h-9 w-24 animate-pulse rounded-full bg-[#F1F3F6] dark:bg-[#171E30]" />
+              <div className="h-9 w-24 animate-pulse rounded-full bg-muted" />
             ) : user ? (
               /* Profile Dropdown */
               <div className="relative" ref={dropdownRef}>
                 <div
-                  className="flex items-center space-x-2 cursor-pointer bg-[#FAFBFC] dark:bg-[#141A29] border border-[#E1E4EA] dark:border-[#222C43] hover:border-indigo-500/50 hover:bg-slate-100 dark:hover:bg-[#1C2234] p-1.5 pr-3 rounded-full transition-all duration-200"
+                  className="flex items-center space-x-2 cursor-pointer bg-card border border-border hover:border-foreground/30 hover:bg-muted p-1.5 pr-3 rounded-full transition-all duration-200"
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
                   onClick={handleDropdownClick}
                 >
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-indigo-600 flex items-center justify-center border border-indigo-400/40 text-white text-xs font-bold shrink-0">
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-foreground text-background flex items-center justify-center border border-border text-xs font-bold shrink-0">
                     {user?.image ? (
                       <Image
                         src={user.image}
@@ -211,35 +211,35 @@ export default function Navbar() {
                       <span>{getInitials(user?.name)}</span>
                     )}
                   </div>
-                  <span className="text-xs font-semibold text-[#181B20] dark:text-white/90 hidden sm:block truncate max-w-[85px]">
+                  <span className="text-xs font-semibold text-foreground hidden sm:block truncate max-w-[85px]">
                     {user?.name || 'Account'}
                   </span>
                   {isPro ? (
-                    <span className="text-[9px] font-extrabold text-white bg-indigo-600 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                    <span className="text-[9px] font-extrabold text-background bg-foreground px-1.5 py-0.5 rounded uppercase tracking-wider">
                       PRO
                     </span>
                   ) : (
-                    <span className="text-[9px] font-bold text-[#6B7280] dark:text-[#9CA3AF] bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded uppercase">
+                    <span className="text-[9px] font-bold text-muted-foreground bg-muted px-1.5 py-0.5 rounded uppercase">
                       FREE
                     </span>
                   )}
                   <ChevronDown
-                    className={`h-3.5 w-3.5 text-[#6B7280] dark:text-[#9CA3AF] transition-transform duration-300 ${
-                      isUserDropdownOpen ? 'rotate-180 text-indigo-600 dark:text-indigo-400' : ''
+                    className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-300 ${
+                      isUserDropdownOpen ? 'rotate-180 text-foreground' : ''
                     }`}
                   />
                 </div>
 
                 {isUserDropdownOpen && (
                   <div
-                    className="absolute right-0 mt-2.5 w-60 bg-white dark:bg-[#0E1321] border border-[#E1E4EA] dark:border-[#1E2638] rounded-2xl shadow-2xl py-3 z-50 animate-in fade-in zoom-in-95 backdrop-blur-md"
+                    className="absolute right-0 mt-2.5 w-60 bg-card border border-border rounded-2xl shadow-2xl py-3 z-50 animate-in fade-in zoom-in-95 backdrop-blur-md"
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                   >
                     {/* User Info Header */}
-                    <div className="px-4 pb-3 border-b border-[#E1E4EA] dark:border-[#1E2638]">
+                    <div className="px-4 pb-3 border-b border-border">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-indigo-600 flex items-center justify-center border border-indigo-400/40 text-white text-xs font-bold shrink-0">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-foreground text-background flex items-center justify-center border border-border text-xs font-bold shrink-0">
                           {user?.image ? (
                             <Image
                               src={user.image}
@@ -253,17 +253,17 @@ export default function Navbar() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[#181B20] dark:text-white font-bold truncate text-sm">
+                          <p className="text-foreground font-bold truncate text-sm">
                             {user?.name}
                           </p>
-                          <p className="text-[#6B7280] dark:text-[#9CA3AF] text-xs truncate">
+                          <p className="text-muted-foreground text-xs truncate">
                             {user?.email}
                           </p>
                           <span
                             className={`inline-block mt-1 text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded border ${
                               isPro
-                                ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20'
-                                : 'bg-slate-100 dark:bg-slate-800 text-[#6B7280] dark:text-[#9CA3AF] border-slate-200 dark:border-slate-700'
+                                ? 'bg-muted text-foreground border-border'
+                                : 'bg-muted text-muted-foreground border-border'
                             }`}
                           >
                             {isPro ? 'Pro Developer' : 'Free Tier'}
@@ -276,19 +276,19 @@ export default function Navbar() {
                     <div className="p-1.5 space-y-0.5">
                       <Link
                         href="/workspace"
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#181B20] dark:text-[#9CA3AF] hover:text-indigo-600 dark:hover:text-white hover:bg-[#EEF0FF] dark:hover:bg-[#141A29] transition-all duration-200"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-all duration-200"
                         onClick={() => setIsUserDropdownOpen(false)}
                       >
-                        <LayoutDashboard className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                        <LayoutDashboard className="h-4 w-4 text-foreground" />
                         <span>Workspace / Dashboard</span>
                       </Link>
                     </div>
 
                     {/* Sign Out Action */}
-                    <div className="border-t border-[#E1E4EA] dark:border-[#1E2638] p-1.5 mt-1">
+                    <div className="border-t border-border p-1.5 mt-1">
                       <button
                         onClick={handleSignOut}
-                        className="w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all duration-200 cursor-pointer"
+                        className="w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-destructive hover:bg-muted transition-all duration-200 cursor-pointer"
                       >
                         <LogOut className="h-4 w-4" />
                         <span>Sign Out</span>
@@ -301,7 +301,7 @@ export default function Navbar() {
               <div className="flex items-center space-x-3">
                 <Link
                   href="/signin"
-                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs uppercase px-5 py-2.5 rounded-full shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 hover:scale-[1.02] active:scale-95 transition-all duration-200"
+                  className="flex items-center gap-2 bg-primary hover:opacity-90 text-primary-foreground font-extrabold text-xs uppercase px-5 py-2.5 rounded-full shadow-xs hover:scale-[1.02] active:scale-95 transition-all duration-200"
                 >
                   Sign In
                 </Link>
@@ -314,7 +314,7 @@ export default function Navbar() {
             <button
               onClick={toggleTheme}
               aria-label="Toggle dark mode"
-              className="p-2 rounded-lg text-[#6B7280] dark:text-[#9CA3AF] hover:bg-[#F1F3F6] dark:hover:bg-[#171E30] transition-colors cursor-pointer"
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
             >
               {!mounted ? (
                 <div className="h-4 w-4" />
@@ -327,7 +327,7 @@ export default function Navbar() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#1C210E] focus:outline-none transition-all duration-200"
+              className="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted focus:outline-none transition-all duration-200"
               aria-controls="mobile-menu"
               aria-expanded={isOpen}
             >
@@ -342,12 +342,12 @@ export default function Navbar() {
       <div
         className={`md:hidden transition-all duration-300 ease-in-out ${
           isOpen
-            ? 'max-h-screen opacity-100 border-b border-[#E1E4EA] dark:border-[#1E2638]'
+            ? 'max-h-screen opacity-100 border-b border-border'
             : 'max-h-0 opacity-0 overflow-hidden'
         }`}
         id="mobile-menu"
       >
-        <div className="px-4 pt-2 pb-6 space-y-4 bg-white/98 dark:bg-[#090C15]/98 backdrop-blur-lg">
+        <div className="px-4 pt-2 pb-6 space-y-4 bg-background/95 backdrop-blur-lg">
           {/* Mobile Links */}
           <div className="flex flex-col space-y-1">
             {navLinks.map(link => {
@@ -359,8 +359,8 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className={`block px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     active
-                      ? 'bg-indigo-50 dark:bg-[#141A29] text-indigo-600 dark:text-white border-l-2 border-indigo-600 dark:border-indigo-400'
-                      : 'text-[#6B7280] dark:text-[#9CA3AF] hover:text-[#181B20] dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#141A29]/50'
+                      ? 'bg-muted text-foreground border-l-2 border-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   }`}
                 >
                   {link.label}
@@ -370,11 +370,11 @@ export default function Navbar() {
           </div>
 
           {/* User Section in Drawer */}
-          <div className="px-1 pt-2 border-t border-[#E1E4EA] dark:border-[#1E2638]">
+          <div className="px-1 pt-2 border-t border-border">
             {user ? (
               <div className="space-y-3">
-                <div className="flex items-center space-x-3 p-2 rounded-xl bg-slate-50 dark:bg-[#141A29] border border-[#E1E4EA] dark:border-[#222C43]">
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                <div className="flex items-center space-x-3 p-2 rounded-xl bg-muted/60 border border-border">
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-foreground text-background flex items-center justify-center text-xs font-bold shrink-0">
                     {user.image ? (
                       <Image
                         src={user.image}
@@ -388,10 +388,10 @@ export default function Navbar() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[#181B20] dark:text-white font-bold truncate text-sm">
+                    <p className="text-foreground font-bold truncate text-sm">
                       {user.name}
                     </p>
-                    <p className="text-[#6B7280] dark:text-[#9CA3AF] text-xs truncate">
+                    <p className="text-muted-foreground text-xs truncate">
                       {user.email}
                     </p>
                   </div>
@@ -401,7 +401,7 @@ export default function Navbar() {
                   <Link
                     href="/workspace"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-1.5 w-full bg-[#FAFBFC] dark:bg-[#141A29] border border-[#E1E4EA] dark:border-[#222C43] text-[#181B20] dark:text-white text-xs font-semibold py-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-[#1A2236] transition-colors"
+                    className="flex items-center justify-center gap-1.5 w-full bg-card border border-border text-foreground text-xs font-semibold py-2.5 rounded-full hover:bg-muted transition-colors"
                   >
                     Dashboard
                   </Link>
@@ -410,7 +410,7 @@ export default function Navbar() {
                       setIsOpen(false);
                       handleSignOut();
                     }}
-                    className="flex items-center justify-center gap-1.5 w-full bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold py-2.5 rounded-full hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-colors cursor-pointer"
+                    className="flex items-center justify-center gap-1.5 w-full bg-muted border border-border text-destructive text-xs font-bold py-2.5 rounded-full hover:bg-destructive/10 transition-colors cursor-pointer"
                   >
                     Sign Out
                   </button>
@@ -420,7 +420,7 @@ export default function Navbar() {
               <Link
                 href="/signin"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center gap-2 w-full bg-indigo-600 text-white font-semibold py-3 rounded-full hover:bg-indigo-500 transition-colors duration-200 shadow-md"
+                className="flex items-center justify-center gap-2 w-full bg-primary text-primary-foreground font-semibold py-3 rounded-full hover:opacity-90 transition-opacity duration-200 shadow-xs"
               >
                 Sign In
               </Link>

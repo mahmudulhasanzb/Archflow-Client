@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import {
@@ -8,6 +10,7 @@ import {
   Star,
   ArrowRight,
 } from 'lucide-react';
+import SpotlightCard from './ui/SpotlightCard';
 
 interface Blueprint {
   _id: string;
@@ -29,12 +32,6 @@ interface BlueprintCardProps {
 }
 
 const ICONS = [Cpu, Layers, Layout, ShieldAlert];
-const ACCENTS = [
-  { color: '#4F46E5', soft: '#EEF0FF' },
-  { color: '#0D9488', soft: '#E6F5F3' },
-  { color: '#EA5C34', soft: '#FFF0EA' },
-  { color: '#4F46E5', soft: '#EEF0FF' },
-];
 
 function hashIndex(str: string, len: number) {
   let hash = 0;
@@ -43,11 +40,15 @@ function hashIndex(str: string, len: number) {
   return hash;
 }
 
-const complexityStyle = (c: string) => {
-  const v = c.toLowerCase();
-  if (v === 'high') return 'text-rose-600 bg-rose-50';
-  if (v === 'medium') return 'text-amber-600 bg-amber-50';
-  return 'text-emerald-600 bg-emerald-50';
+const getComplexityBadge = (c: string) => {
+  const v = (c || 'Medium').toLowerCase();
+  if (v === 'high') {
+    return 'text-rose-500 bg-rose-500/10 border-rose-500/20';
+  }
+  if (v === 'medium') {
+    return 'text-amber-500 bg-amber-500/10 border-amber-500/20';
+  }
+  return 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20';
 };
 
 export default function BlueprintCard({ blueprint }: BlueprintCardProps) {
@@ -72,71 +73,69 @@ export default function BlueprintCard({ blueprint }: BlueprintCardProps) {
 
   const idx = hashIndex(title, ICONS.length);
   const Icon = ICONS[idx];
-  const { color, soft } = ACCENTS[idx];
 
   return (
-    <div className="card-hover group flex flex-col overflow-hidden rounded-xl border border-[#E1E4EA] bg-white shadow-sm hover:border-[#4F46E5]/30">
-      {/* Gradient header area */}
-      <div
-        className="relative flex h-36 items-center justify-center border-b border-[#E1E4EA] transition-opacity duration-200 group-hover:opacity-90"
-        style={{
-          background: `linear-gradient(135deg, ${soft} 0%, white 100%)`,
-        }}
-      >
-        <Icon
-          className="h-12 w-12 transition-transform duration-300 group-hover:scale-110"
-          style={{ color }}
-        />
-        {/* Complexity badge top-right */}
+    <SpotlightCard className="h-full group">
+      {/* Top Header Row with Icon & Complexity */}
+      <div className="p-5 pb-0 flex items-start justify-between gap-3">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-muted/40 text-foreground transition-transform duration-300 group-hover:scale-105">
+          <Icon className="h-5 w-5" />
+        </div>
         <span
-          className={`absolute top-3 right-3 rounded px-2 py-0.5 text-[9px] font-bold uppercase ${complexityStyle(complexity)}`}
+          className={`rounded-full border px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider ${getComplexityBadge(
+            complexity,
+          )}`}
         >
           {complexity}
         </span>
       </div>
 
-      {/* Content */}
-      <div className="flex flex-1 flex-col gap-3 p-4">
-        <h3 className="line-clamp-1 text-sm font-bold text-[#181B20] font-display transition-colors duration-200 group-hover:text-[#4F46E5]">
-          {title}
-        </h3>
-        <p className="line-clamp-3 text-xs text-[#6B7280] leading-relaxed">
-          {description}
-        </p>
+      {/* Main Content Area */}
+      <div className="flex flex-1 flex-col justify-between p-5 space-y-4">
+        <div className="space-y-2">
+          <h3 className="line-clamp-1 text-base font-bold text-foreground font-display group-hover:text-foreground/80 transition-colors">
+            {title}
+          </h3>
+          <p className="line-clamp-3 text-xs text-muted-foreground leading-relaxed">
+            {description}
+          </p>
+        </div>
 
-        {/* Tech stack pills */}
-        <div className="flex flex-wrap gap-1 mt-auto">
+        {/* Tech Stack Pills */}
+        <div className="flex flex-wrap gap-1.5 pt-1">
           {stackItems.slice(0, 3).map(tag => (
             <span
               key={tag}
-              className="rounded-full bg-[#F1F3F6] px-2 py-0.5 text-[9px] font-semibold text-[#6B7280]"
+              className="rounded-md border border-border bg-muted/40 px-2 py-0.5 text-[10px] font-mono text-muted-foreground"
             >
               {tag}
             </span>
           ))}
           {stackItems.length > 3 && (
-            <span className="rounded-full bg-[#F1F3F6] px-2 py-0.5 text-[9px] font-semibold text-[#6B7280]">
+            <span className="rounded-md border border-border bg-muted/40 px-2 py-0.5 text-[10px] font-mono text-muted-foreground">
               +{stackItems.length - 3}
             </span>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between border-t border-[#E1E4EA] pt-3 text-[10px] text-[#6B7280]">
-          <div className="flex items-center gap-1">
-            <Star className="h-3 w-3 fill-amber-400 stroke-amber-400" />
-            <span className="font-semibold text-[#181B20]">
+        {/* Card Footer */}
+        <div className="flex items-center justify-between border-t border-border pt-4 text-xs">
+          <div className="flex items-center gap-1.5">
+            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+            <span className="font-mono font-bold text-foreground">
               {Number(rating).toFixed(1)}
             </span>
           </div>
+
           <Link
             href={`/blueprints/${id}`}
-            className="flex items-center gap-0.5 font-semibold text-[#4F46E5] hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-foreground hover:underline group-hover:translate-x-0.5 transition-transform"
           >
-            View <ArrowRight className="h-3 w-3" />
+            <span>View</span>
+            <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
       </div>
-    </div>
+    </SpotlightCard>
   );
 }
