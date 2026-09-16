@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Search, SlidersHorizontal, ArrowUpDown, Layers, RefreshCw } from 'lucide-react';
 import BlueprintCard from '@/components/BlueprintCard';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 interface FilterBlueprintsProps {
   allBlueprints: any[];
@@ -99,53 +100,47 @@ export default function FilterBlueprints({
         </div>
 
         {/* Stack Filter */}
-        <div className="relative flex items-center">
-          <SlidersHorizontal className="absolute left-3.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-          <select
-            value={selectedStack}
-            onChange={e => handleStackChange(e.target.value)}
-            className="w-full rounded-xl border border-border bg-card pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 appearance-none cursor-pointer transition-colors"
-          >
-            <option value="All">All Tech Stacks</option>
-            <option value="Next.js">Next.js</option>
-            <option value="Node">Node.js</option>
-            <option value="Express">Express</option>
-            <option value="MongoDB">MongoDB</option>
-            <option value="Postgres">PostgreSQL</option>
-            <option value="Redis">Redis</option>
-            <option value="WebSockets">WebSockets</option>
-            <option value="Docker">Docker</option>
-          </select>
-        </div>
+        <CustomSelect
+          value={selectedStack}
+          onChange={handleStackChange}
+          icon={<Layers className="h-4 w-4" />}
+          options={[
+            { value: 'All', label: 'All Tech Stacks' },
+            { value: 'Next.js', label: 'Next.js', badge: 'REACT' },
+            { value: 'Node', label: 'Node.js' },
+            { value: 'Express', label: 'Express 5', badge: 'API' },
+            { value: 'MongoDB', label: 'MongoDB', badge: 'DB' },
+            { value: 'Postgres', label: 'PostgreSQL', badge: 'SQL' },
+            { value: 'Redis', label: 'Redis', badge: 'CACHE' },
+            { value: 'WebSockets', label: 'WebSockets', badge: 'REALTIME' },
+            { value: 'Docker', label: 'Docker' },
+          ]}
+        />
 
         {/* Complexity Filter */}
-        <div className="relative flex items-center">
-          <SlidersHorizontal className="absolute left-3.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-          <select
-            value={selectedComplexity}
-            onChange={e => handleComplexityChange(e.target.value)}
-            className="w-full rounded-xl border border-border bg-card pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 appearance-none cursor-pointer transition-colors"
-          >
-            <option value="All">All Complexities</option>
-            <option value="Low">Low Complexity</option>
-            <option value="Medium">Medium Complexity</option>
-            <option value="High">High Complexity</option>
-          </select>
-        </div>
+        <CustomSelect
+          value={selectedComplexity}
+          onChange={handleComplexityChange}
+          icon={<SlidersHorizontal className="h-4 w-4" />}
+          options={[
+            { value: 'All', label: 'All Complexities' },
+            { value: 'Low', label: 'Low Complexity', badge: 'MVP' },
+            { value: 'Medium', label: 'Medium Complexity', badge: 'MID' },
+            { value: 'High', label: 'High Complexity', badge: 'ENTERPRISE' },
+          ]}
+        />
 
         {/* Sorting */}
-        <div className="relative flex items-center">
-          <ArrowUpDown className="absolute left-3.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-          <select
-            value={selectedSort}
-            onChange={e => handleSortChange(e.target.value)}
-            className="w-full rounded-xl border border-border bg-card pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 appearance-none cursor-pointer transition-colors"
-          >
-            <option value="newest">Sort: Newest First</option>
-            <option value="rating">Sort: Highest Rating</option>
-            <option value="oldest">Sort: Oldest First</option>
-          </select>
-        </div>
+        <CustomSelect
+          value={selectedSort}
+          onChange={handleSortChange}
+          icon={<ArrowUpDown className="h-4 w-4" />}
+          options={[
+            { value: 'newest', label: 'Sort: Newest First' },
+            { value: 'rating', label: 'Sort: Highest Rating' },
+            { value: 'oldest', label: 'Sort: Oldest First' },
+          ]}
+        />
       </div>
 
       {/* Grid or Empty State */}

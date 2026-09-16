@@ -32,6 +32,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import Link from 'next/link';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 interface StarterTemplate {
   label: string;
@@ -508,16 +509,32 @@ export default function AddBlueprintPage() {
                 <label className="block text-xs font-bold text-foreground uppercase tracking-wider mb-1.5">
                   Target Complexity
                 </label>
-                <select
+                <CustomSelect
                   disabled={isGenerating}
                   value={complexity}
-                  onChange={e => setComplexity(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-xs text-foreground focus:border-foreground focus:outline-none transition-all cursor-pointer disabled:opacity-60"
-                >
-                  <option value="low">Low (Minimal viable prototype)</option>
-                  <option value="medium">Medium (Standard full-stack product)</option>
-                  <option value="high">High (Enterprise scale & multi-tier)</option>
-                </select>
+                  onChange={setComplexity}
+                  triggerClassName="bg-background"
+                  options={[
+                    {
+                      value: 'low',
+                      label: 'Low Complexity',
+                      badge: 'MVP',
+                      description: 'Minimal viable prototype & quick proof-of-concept',
+                    },
+                    {
+                      value: 'medium',
+                      label: 'Medium Complexity',
+                      badge: 'STANDARD',
+                      description: 'Standard full-stack product with auth & database',
+                    },
+                    {
+                      value: 'high',
+                      label: 'High Complexity',
+                      badge: 'ENTERPRISE',
+                      description: 'Enterprise-grade multi-tier & distributed scale',
+                    },
+                  ]}
+                />
               </div>
 
               {/* Visibility (Role Gated) */}

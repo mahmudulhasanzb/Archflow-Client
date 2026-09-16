@@ -1,7 +1,8 @@
 'use client';
 
-import { ArrowUpDown, Search, SlidersHorizontal } from 'lucide-react';
+import { ArrowUpDown, Search, SlidersHorizontal, Layers } from 'lucide-react';
 import React from 'react';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 interface SearchFilterControlsProps {
   search: string;
@@ -39,51 +40,45 @@ export default function SearchFilterControls({
       </div>
 
       {/* Stack Filter */}
-      <div className="relative flex items-center">
-        <SlidersHorizontal className="absolute left-3.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-        <select
-          value={stackFilter}
-          onChange={e => setStackFilter(e.target.value)}
-          className="w-full rounded-xl border border-border bg-card pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 appearance-none cursor-pointer transition-colors"
-        >
-          <option value="All">All Stacks</option>
-          <option value="Next.js">Next.js</option>
-          <option value="Express">Express</option>
-          <option value="Node">Node.js</option>
-          <option value="Python">Python</option>
-          <option value="WebSockets">WebSockets</option>
-          <option value="React">React</option>
-          <option value="MongoDB">MongoDB</option>
-        </select>
-      </div>
+      <CustomSelect
+        value={stackFilter}
+        onChange={setStackFilter}
+        icon={<Layers className="h-4 w-4" />}
+        options={[
+          { value: 'All', label: 'All Stacks' },
+          { value: 'Next.js', label: 'Next.js', badge: 'REACT' },
+          { value: 'Express', label: 'Express 5', badge: 'API' },
+          { value: 'Node', label: 'Node.js' },
+          { value: 'Python', label: 'Python' },
+          { value: 'WebSockets', label: 'WebSockets', badge: 'REALTIME' },
+          { value: 'React', label: 'React' },
+          { value: 'MongoDB', label: 'MongoDB', badge: 'DB' },
+        ]}
+      />
 
       {/* Complexity Filter */}
-      <div className="relative flex items-center">
-        <SlidersHorizontal className="absolute left-3.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-        <select
-          value={complexityFilter}
-          onChange={e => setComplexityFilter(e.target.value)}
-          className="w-full rounded-xl border border-border bg-card pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 appearance-none cursor-pointer transition-colors"
-        >
-          <option value="All">All Complexities</option>
-          <option value="Low">Low Complexity</option>
-          <option value="Medium">Medium Complexity</option>
-          <option value="High">High Complexity</option>
-        </select>
-      </div>
+      <CustomSelect
+        value={complexityFilter}
+        onChange={setComplexityFilter}
+        icon={<SlidersHorizontal className="h-4 w-4" />}
+        options={[
+          { value: 'All', label: 'All Complexities' },
+          { value: 'Low', label: 'Low Complexity', badge: 'MVP' },
+          { value: 'Medium', label: 'Medium Complexity', badge: 'MID' },
+          { value: 'High', label: 'High Complexity', badge: 'ENTERPRISE' },
+        ]}
+      />
 
       {/* Sorting */}
-      <div className="relative flex items-center">
-        <ArrowUpDown className="absolute left-3.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-        <select
-          value={sortBy}
-          onChange={e => setSortBy(e.target.value)}
-          className="w-full rounded-xl border border-border bg-card pl-10 pr-4 py-2.5 text-xs text-foreground focus:border-foreground/40 focus:outline-none focus:ring-1 focus:ring-foreground/20 appearance-none cursor-pointer transition-colors"
-        >
-          <option value="newest">Sort: Newest First</option>
-          <option value="rating">Sort: Highest Rating</option>
-        </select>
-      </div>
+      <CustomSelect
+        value={sortBy}
+        onChange={setSortBy}
+        icon={<ArrowUpDown className="h-4 w-4" />}
+        options={[
+          { value: 'newest', label: 'Sort: Newest First' },
+          { value: 'rating', label: 'Sort: Highest Rating' },
+        ]}
+      />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import {
   Sliders,
   Shield,
 } from 'lucide-react';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 interface MarkdownFiles {
   projectOverview?: string;
@@ -289,49 +290,50 @@ export default function EditModal({
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-foreground mb-1.5">
                       Complexity
                     </label>
-                    <select
+                    <CustomSelect
                       value={complexity}
-                      onChange={e => setComplexity(e.target.value)}
-                      className="w-full rounded-xl border border-border px-3.5 py-2 text-xs focus:border-foreground focus:outline-none bg-background text-foreground cursor-pointer"
+                      onChange={setComplexity}
                       disabled={loading}
-                    >
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                    </select>
+                      triggerClassName="bg-background"
+                      options={[
+                        { value: 'Low', label: 'Low', badge: 'MVP' },
+                        { value: 'Medium', label: 'Medium', badge: 'MID' },
+                        { value: 'High', label: 'High', badge: 'HIGH' },
+                      ]}
+                    />
                   </div>
 
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-foreground mb-1.5">
                       Visibility
                     </label>
-                    <select
+                    <CustomSelect
                       value={visibility}
-                      onChange={e =>
-                        setVisibility(e.target.value as 'public' | 'private')
-                      }
-                      className="w-full rounded-xl border border-border px-3.5 py-2 text-xs focus:border-foreground focus:outline-none bg-background text-foreground cursor-pointer"
+                      onChange={val => setVisibility(val as 'public' | 'private')}
                       disabled={loading}
-                    >
-                      <option value="public">Public (Shared in Gallery)</option>
-                      <option value="private">Private (Workspace Only)</option>
-                    </select>
+                      triggerClassName="bg-background"
+                      options={[
+                        { value: 'public', label: 'Public', badge: 'GALLERY', description: 'Shared in Explore Gallery' },
+                        { value: 'private', label: 'Private', badge: 'PRO', description: 'Workspace Only' },
+                      ]}
+                    />
                   </div>
 
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-wider text-foreground mb-1.5">
                       Status
                     </label>
-                    <select
+                    <CustomSelect
                       value={status}
-                      onChange={e => setStatus(e.target.value)}
-                      className="w-full rounded-xl border border-border px-3.5 py-2 text-xs focus:border-foreground focus:outline-none bg-background text-foreground cursor-pointer"
+                      onChange={setStatus}
                       disabled={loading}
-                    >
-                      <option value="Ready">Ready</option>
-                      <option value="Generating">Generating</option>
-                      <option value="Failed">Failed</option>
-                    </select>
+                      triggerClassName="bg-background"
+                      options={[
+                        { value: 'Ready', label: 'Ready', badge: 'ACTIVE' },
+                        { value: 'Generating', label: 'Generating', badge: 'BUILD' },
+                        { value: 'Failed', label: 'Failed', badge: 'ERR' },
+                      ]}
+                    />
                   </div>
                 </div>
               </div>
