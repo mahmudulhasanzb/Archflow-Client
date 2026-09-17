@@ -85,7 +85,7 @@ const Footer = () => {
             </h3>
             <div className="flex space-x-4 mb-4">
               <Link
-                href="https://github.com"
+                href="https://github.com/mahmudulhasanzb"
                 target="_blank"
                 className="hover:text-foreground transition-colors"
               >
@@ -99,7 +99,7 @@ const Footer = () => {
                 <Globe className="h-5 w-5" />
               </Link>
               <Link
-                href="mailto:support@archflow.com"
+                href="mailto:mahmudulhasankk9@gmail.com"
                 className="hover:text-foreground transition-colors"
               >
                 <Mail className="h-5 w-5" />
@@ -113,8 +113,16 @@ const Footer = () => {
           <p>
             &copy; {new Date().getFullYear()} Archflow. All rights reserved.
           </p>
-          <div className="flex gap-4 mt-4 md:mt-0 font-medium">
-            <span>Built by Mahmudul Hasan with ❤️</span>
+          <div className="flex items-center gap-2 mt-4 md:mt-0 font-medium">
+            <span>Developed by</span>
+            <a
+              href="https://mahmudulhasan-dev.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground hover:underline font-semibold"
+            >
+              Mahmudul Hasan
+            </a>
           </div>
         </div>
       </div>

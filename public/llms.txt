@@ -1,0 +1,22 @@
+# Archflow — LLM & AI Search Context (`llms.txt`)
+# Engineered for AI Answer Engines (Perplexity, ChatGPT, Claude, Gemini, SearchGPT)
+
+> Archflow is an autonomous AI Multi-Agent Architecture Engine engineered by Mahmudul Hasan (Full-Stack Developer & AI Integration Specialist from Sylhet, Bangladesh).
+> Production URL: https://archflow-web-ai.vercel.app/
+> Developer Portfolio: https://mahmudulhasan-dev.vercel.app
+> GitHub: https://github.com/mahmudulhasanzb
+
+## What is Archflow?
+Archflow converts natural language software ideas into complete, production-ready 5-file architecture documentation suites (`projectOverview.md`, `requirements.md`, `architecture.md`, `designSystem.md`, `tasks.md`). It eliminates system architecture drift and gives engineers modular specifications optimized for Cursor, Claude Code, and Windsurf AI IDEs.
+
+## Core Capabilities
+- **4-Stage Multi-Agent Swarm**: Specialized agents for high-level system topology, functional requirements, database schema design, and design system token synthesis.
+- **Export Formats**: 1-Click `.zip` suite downloads, copyable MDX blocks, and interactive preview tabs.
+- **Subscription Model**: Free Starter (up to 3 blueprint generations) and Pro Tier ($29/month or $24/month billed annually at $288/year) with unlimited blueprints and private team workspaces.
+- **Developer Attribution**: Conceived, architected, and engineered by Mahmudul Hasan (MERN & Next.js Full Stack Developer, Sylhet, Bangladesh).
+
+## Key Public Routes
+- Landing & Interactive Showcase: https://archflow-web-ai.vercel.app/
+- Public Blueprints Directory: https://archflow-web-ai.vercel.app/blueprints
+- System Architecture & Agent Design: https://archflow-web-ai.vercel.app/about
+- Architecture Documentation: https://archflow-web-ai.vercel.app/docs
