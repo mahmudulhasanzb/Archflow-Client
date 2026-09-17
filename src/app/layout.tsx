@@ -82,7 +82,7 @@ export const metadata: Metadata = {
       'Orchestrate 4 specialized AI agents to generate production-ready software architecture specs, database schemas, and design systems. Engineered by Mahmudul Hasan.',
     images: [
       {
-        url: `${siteUrl}/vercel.svg`,
+        url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
         alt: 'Archflow — AI Multi-Agent Architecture Engine Engineered by Mahmudul Hasan',
@@ -95,7 +95,7 @@ export const metadata: Metadata = {
     description:
       'Translating natural language software concepts into production-ready 5-file architecture suites. Engineered by Mahmudul Hasan.',
     creator: '@mahmudulhasanzb',
-    images: [`${siteUrl}/vercel.svg`],
+    images: [`${siteUrl}/og-image.png`],
   },
   category: 'technology',
 };
