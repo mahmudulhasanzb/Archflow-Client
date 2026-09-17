@@ -43,7 +43,9 @@ export default function Navbar() {
 
   useEffect(() => {
     setMounted(true);
-    const activeTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    const activeTheme = document.documentElement.classList.contains('dark')
+      ? 'dark'
+      : 'light';
     setTheme(activeTheme);
   }, []);
 
@@ -54,7 +56,10 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsUserDropdownOpen(false);
       }
     };
@@ -280,7 +285,7 @@ export default function Navbar() {
                         onClick={() => setIsUserDropdownOpen(false)}
                       >
                         <LayoutDashboard className="h-4 w-4 text-foreground" />
-                        <span>Workspace / Dashboard</span>
+                        <span>Workspace</span>
                       </Link>
                     </div>
 
@@ -332,7 +337,11 @@ export default function Navbar() {
               aria-expanded={isOpen}
             >
               <span className="sr-only">Open main menu</span>
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -397,24 +406,15 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2.5">
-                  <Link
-                    href="/workspace"
-                    onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-1.5 w-full bg-card border border-border text-foreground text-xs font-semibold py-2.5 rounded-full hover:bg-muted transition-colors"
-                  >
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      handleSignOut();
-                    }}
-                    className="flex items-center justify-center gap-1.5 w-full bg-muted border border-border text-destructive text-xs font-bold py-2.5 rounded-full hover:bg-destructive/10 transition-colors cursor-pointer"
-                  >
-                    Sign Out
-                  </button>
-                </div>
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    handleSignOut();
+                  }}
+                  className="flex items-center justify-center gap-1.5 w-full bg-muted border border-border text-destructive text-xs font-bold py-2.5 rounded-full hover:bg-destructive/10 transition-colors cursor-pointer"
+                >
+                  Sign Out
+                </button>
               </div>
             ) : (
               <Link
