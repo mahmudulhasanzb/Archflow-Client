@@ -15,7 +15,11 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import SpotlightCard from './ui/SpotlightCard';
-import { incrementViewAction } from '@/lib/api/blueprint/action';
+import {
+  incrementViewAction,
+  toggleBookmarkAction,
+  getUserBookmarksAction,
+} from '@/lib/api/blueprint/action';
 import { authClient } from '@/lib/auth-client';
 
 export interface Blueprint {
@@ -41,16 +45,20 @@ export interface Blueprint {
   creatorId?: string;
 }
 
-interface BlueprintCardProps {
+export interface BlueprintCardProps {
   blueprint: Blueprint;
+  isBookmarkedInitial?: boolean;
+  onBookmarkToggle?: (blueprintId: string, isSaved: boolean) => void;
 }
 
-const BOOKMARK_STORAGE_KEY = 'archflow_saved_blueprints';
-
-export default function BlueprintCard({ blueprint }: BlueprintCardProps) {
+export default function BlueprintCard({
+  blueprint,
+  isBookmarkedInitial,
+  onBookmarkToggle,
+}: BlueprintCardProps) {
   const router = useRouter();
   const { data: session } = authClient.useSession();
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(Boolean(isBookmarkedInitial));
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const id = blueprint._id;
@@ -99,19 +107,32 @@ export default function BlueprintCard({ blueprint }: BlueprintCardProps) {
 
   const createdTimeAgo = formatTimeAgo(blueprint.createdAt || blueprint.Date);
 
-  // Check saved bookmarks from localStorage
+  // Sync isBookmarked state from prop
   useEffect(() => {
-    try {
-      const saved = JSON.parse(
-        localStorage.getItem(BOOKMARK_STORAGE_KEY) || '[]',
-      );
-      if (Array.isArray(saved) && saved.includes(id)) {
-        setIsBookmarked(true);
-      }
-    } catch {
-      // Ignore storage errors
+    if (isBookmarkedInitial !== undefined) {
+      setIsBookmarked(Boolean(isBookmarkedInitial));
     }
-  }, [id]);
+  }, [isBookmarkedInitial]);
+
+  // If standalone and isBookmarkedInitial not provided, fetch from DB
+  useEffect(() => {
+    if (isBookmarkedInitial !== undefined) return;
+    if (!session?.user) {
+      setIsBookmarked(false);
+      return;
+    }
+    let isMounted = true;
+    getUserBookmarksAction()
+      .then(res => {
+        if (isMounted && res?.success && Array.isArray(res.bookmarkIds)) {
+          setIsBookmarked(res.bookmarkIds.includes(id));
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [id, session?.user, isBookmarkedInitial]);
 
   // Normalized tech stack
   let stackItems: string[] = [];
@@ -131,33 +152,40 @@ export default function BlueprintCard({ blueprint }: BlueprintCardProps) {
     }
   };
 
-  // Toggle bookmark logic
-  const handleBookmarkToggle = (e: React.MouseEvent) => {
+  // Toggle bookmark logic (Database backed)
+  const handleBookmarkToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // If user not signed in, trigger modal
+    // If user not signed in, trigger login modal
     if (!session?.user) {
+      setIsBookmarked(false);
       setShowAuthModal(true);
       return;
     }
 
+    const previousState = isBookmarked;
+    const nextState = !previousState;
+
+    // Optimistic UI update
+    setIsBookmarked(nextState);
+    onBookmarkToggle?.(id, nextState);
+
     try {
-      const saved: string[] = JSON.parse(
-        localStorage.getItem(BOOKMARK_STORAGE_KEY) || '[]',
-      );
-      if (isBookmarked) {
-        const next = saved.filter(bId => bId !== id);
-        localStorage.setItem(BOOKMARK_STORAGE_KEY, JSON.stringify(next));
-        setIsBookmarked(false);
-        toast.success('Removed from saved blueprints');
+      const res = await toggleBookmarkAction(id);
+      if (res?.success && res.isBookmarked !== undefined) {
+        setIsBookmarked(res.isBookmarked);
+        onBookmarkToggle?.(id, res.isBookmarked);
+        toast.success(res.isBookmarked ? 'Saved to bookmarks' : 'Removed from bookmarks');
       } else {
-        const next = Array.from(new Set([...saved, id]));
-        localStorage.setItem(BOOKMARK_STORAGE_KEY, JSON.stringify(next));
-        setIsBookmarked(true);
-        toast.success('Saved to your blueprints!');
+        // Revert on error
+        setIsBookmarked(previousState);
+        onBookmarkToggle?.(id, previousState);
+        toast.error('Unable to update bookmark');
       }
     } catch {
+      setIsBookmarked(previousState);
+      onBookmarkToggle?.(id, previousState);
       toast.error('Unable to update bookmark');
     }
   };

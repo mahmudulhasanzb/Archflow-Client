@@ -54,3 +54,16 @@ export const incrementDownloadAction = async (id: string) => {
     return null;
   }
 };
+
+export const toggleBookmarkAction = async (id: string) => {
+  const res = await serverMutation(`/api/blueprints/${id}/bookmark`, 'POST', {});
+  return res;
+};
+
+export const getUserBookmarksAction = async () => {
+  try {
+    return await serverMutation('/api/user/bookmarks', 'GET');
+  } catch {
+    return { success: false, bookmarkIds: [] };
+  }
+};

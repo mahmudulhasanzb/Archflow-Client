@@ -1,8 +1,6 @@
 import React from 'react';
 import FilterBlueprints from '@/components/explore/FilterBlueprints';
-import PaginationControls from '@/components/Pagination';
 import { baseURL } from '@/lib/api/baseUrl';
-import { Layers } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,14 +19,13 @@ export default async function ExplorePage({
   const currentPage = Number(params.page) || 1;
   const search = params.search || '';
   const stack = params.stack || 'All';
-  const complexity = params.complexity || 'All';
   const sort = params.sort || 'newest';
 
-  const query = new URLSearchParams({ page: String(currentPage), limit: '6' });
+  // 20 cards per page
+  const query = new URLSearchParams({ page: String(currentPage), limit: '20' });
   if (search.trim()) query.set('search', search.trim());
   if (stack && stack !== 'All') query.set('stack', stack);
-  if (complexity && complexity !== 'All') query.set('complexity', complexity);
-  if (sort) query.set('sort', sort);
+  if (sort && sort !== 'newest') query.set('sort', sort);
 
   let blueprints: any[] = [];
   let totalPage = 1;
@@ -49,34 +46,16 @@ export default async function ExplorePage({
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 flex-grow">
-      {/* Header section */}
-      <div className="mb-8 space-y-2">
-        <div className="inline-flex items-center gap-2 rounded-full bg-[#EEF0FF] dark:bg-[#4F46E5]/15 border border-[#4F46E5]/30 px-3.5 py-1 text-xs font-semibold text-[#4F46E5] dark:text-[#818CF8] uppercase tracking-wider">
-          <Layers className="h-3.5 w-3.5" />
-          <span>Architectural Community Gallery</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-[#181B20] dark:text-[#F3F4F6] font-display">
-          Explore AI Blueprints
-        </h1>
-        <p className="text-xs sm:text-sm text-[#6B7280] dark:text-[#9CA3AF]">
-          Browse {totalData > 0 ? `${totalData} production` : 'community'} architecture suites ready for Cursor, Windsurf, and Claude Code.
-        </p>
-      </div>
-
-      {/* Filter & Blueprints Grid Component */}
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 flex-grow">
       <FilterBlueprints
         allBlueprints={blueprints}
+        totalData={totalData}
+        currentPage={currentPage}
+        totalPages={totalPage}
         currentSearch={search}
         currentStack={stack}
-        currentComplexity={complexity}
         currentSort={sort}
       />
-
-      {/* Pagination Controls — sits at the bottom of the card grid */}
-      <div className="mt-10">
-        <PaginationControls currentPage={currentPage} totalPages={totalPage} />
-      </div>
     </div>
   );
 }
