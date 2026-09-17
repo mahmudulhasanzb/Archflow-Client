@@ -45,7 +45,8 @@ export default function FAQ() {
           Frequently Asked Questions
         </h2>
         <p className="text-base text-muted-foreground">
-          Everything you need to know about Archflow and multi-agent blueprint generation.
+          Everything you need to know about Archflow and multi-agent blueprint
+          generation.
         </p>
       </div>
 
@@ -57,7 +58,7 @@ export default function FAQ() {
           return (
             <div
               key={idx}
-              className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+              className={`rounded-2xl border border-border transition-all duration-500 overflow-hidden ${
                 isOpen
                   ? 'bg-card border-foreground shadow-sm'
                   : 'bg-card/60 border-border hover:border-foreground/30'

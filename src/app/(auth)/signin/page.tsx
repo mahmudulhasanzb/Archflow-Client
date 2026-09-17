@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { authClient } from '@/lib/auth-client';
 import {
@@ -29,6 +29,8 @@ const FEATURES = [
 
 export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/workspace';
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -43,7 +45,7 @@ export default function SignInPage() {
       const { error } = await authClient.signIn.email({
         email,
         password,
-        callbackURL: '/workspace',
+        callbackURL: callbackUrl,
       });
       if (error) {
         toast.error(error.message || 'Invalid email or password.', {
@@ -51,7 +53,7 @@ export default function SignInPage() {
         });
       } else {
         toast.success('Signed in successfully!', { id: toastId });
-        router.push('/workspace');
+        router.push(callbackUrl);
       }
     } catch {
       toast.error('An unexpected error occurred. Please try again.', {
@@ -68,10 +70,11 @@ export default function SignInPage() {
     const { error } = await authClient.signIn.email({
       email: 'demo@gmail.com',
       password: 'DemoP@ssord',
-      callbackURL: '/workspace',
+      callbackURL: callbackUrl,
     });
     if (!error) {
       toast.success('Signed in successfully!');
+      router.push(callbackUrl);
     } else {
       toast.error(error.message || 'Invalid email or password.');
     }

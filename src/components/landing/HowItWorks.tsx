@@ -104,7 +104,7 @@ export default function HowItWorks() {
           return (
             <div
               key={step.number}
-              className="rounded-2xl border border-border bg-card p-6 sm:p-7 flex flex-col justify-between space-y-6 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.1)] hover:-translate-y-1 hover:shadow-[0_8px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)] hover:border-foreground/30"
+              className="rounded-2xl border border-border bg-card p-6 sm:p-7 flex flex-col justify-between space-y-6 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.1)] hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)] hover:border-foreground/20"
             >
               <div className="space-y-4">
                 {/* Step number and Badge */}
@@ -133,9 +133,7 @@ export default function HowItWorks() {
                 </div>
 
                 {/* Visual Preview Box */}
-                <div className="pt-2">
-                  {step.preview}
-                </div>
+                <div className="pt-2">{step.preview}</div>
               </div>
 
               {/* Step indicator footer */}

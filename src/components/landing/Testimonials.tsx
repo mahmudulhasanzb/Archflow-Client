@@ -43,7 +43,8 @@ export default function Testimonials() {
           Loved by Architects & Lead Engineers
         </h2>
         <p className="text-base text-muted-foreground">
-          See how engineering leaders use Archflow to standardise specs and accelerate project launches.
+          See how engineering leaders use Archflow to standardise specs and
+          accelerate project launches.
         </p>
       </div>
 
@@ -52,14 +53,17 @@ export default function Testimonials() {
         {REVIEWS.map((rev, idx) => (
           <div
             key={idx}
-            className="flex flex-col justify-between p-6 rounded-2xl bg-card border border-border shadow-sm hover:border-foreground/30 hover:shadow-md transition-all duration-300 relative"
+            className="flex flex-col justify-between p-6 rounded-2xl bg-card border border-border shadow-sm hover:border-foreground/30 hover:shadow-md transition-all duration-500 relative"
           >
             <div className="space-y-4">
               {/* Star Rating & Quote Icon */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1">
                   {[...Array(rev.rating)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-foreground/80 stroke-foreground/80" />
+                    <Star
+                      key={i}
+                      className="h-4 w-4 fill-yellow-500 stroke-yellow-500"
+                    />
                   ))}
                 </div>
                 <Quote className="h-5 w-5 text-muted-foreground/30" />
@@ -76,7 +80,7 @@ export default function Testimonials() {
               <div>
                 <h4 className="text-sm font-bold text-foreground font-display flex items-center gap-1.5">
                   {rev.author}
-                  <CheckCircle2 className="h-3.5 w-3.5 text-foreground" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-foreground fill-blue-500/10 stroke-blue-500" />
                 </h4>
                 <p className="text-xs text-muted-foreground">
                   {rev.role} • {rev.company}

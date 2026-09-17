@@ -34,3 +34,23 @@ export const rateBlueprintAction = async (id: string, rating: number) => {
   revalidatePath('/blueprints');
   return res;
 };
+
+export const incrementViewAction = async (id: string) => {
+  try {
+    return await serverMutation(`/api/blueprints/${id}/view`, 'POST', {});
+  } catch {
+    // Non-blocking telemetry
+    return null;
+  }
+};
+
+export const incrementDownloadAction = async (id: string) => {
+  try {
+    const res = await serverMutation(`/api/blueprints/${id}/download`, 'POST', {});
+    revalidatePath('/blueprints');
+    return res;
+  } catch {
+    // Non-blocking telemetry
+    return null;
+  }
+};

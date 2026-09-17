@@ -2,7 +2,10 @@ import { baseURL, getAuthHeaders } from './baseUrl';
 
 // serverFetch
 export const serverFetch = async (path: any, options?: RequestInit) => {
-  const authHeaders = await getAuthHeaders();
+  let authHeaders = {};
+  if (typeof window !== 'undefined') {
+    authHeaders = await getAuthHeaders();
+  }
   const res = await fetch(`${baseURL}${path}`, {
     cache: 'no-store',
     ...options,

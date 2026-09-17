@@ -113,7 +113,7 @@ export default function Pricing() {
       {/* Pricing Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch pt-4">
         {/* Free Starter Tier */}
-        <div className="p-8 rounded-2xl border border-border bg-card flex flex-col justify-between transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.1)] hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)] hover:border-foreground/20">
+        <div className="p-8 rounded-2xl border border-border bg-card flex flex-col justify-between transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.1)]  hover:shadow-[0_8px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)] hover:border-foreground/20">
           <div className="space-y-6">
             <div className="pb-6 border-b border-border/50 space-y-6">
               <div>
@@ -166,7 +166,7 @@ export default function Pricing() {
           {/* Ambient Glow */}
           <div className="absolute -inset-[1px] bg-gradient-to-b from-primary/40 to-primary/0 rounded-[1.2rem] blur-[2px] opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
 
-          <div className="relative h-full p-8 rounded-2xl border border-primary/30 bg-card flex flex-col justify-between transition-all duration-300 shadow-[0_4px_16px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)] hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.25)] hover:border-primary/50 overflow-hidden">
+          <div className="relative h-full p-8 rounded-2xl border border-primary/30 bg-card flex flex-col justify-between transition-all duration-300 shadow-[0_4px_16px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.25)] hover:border-primary/50 overflow-hidden">
             {/* Top Banner */}
             <div className="absolute top-0 right-0 bg-foreground text-background px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-bl-xl font-display flex items-center gap-1 z-10">
               <Zap className="h-3 w-3 fill-current" />

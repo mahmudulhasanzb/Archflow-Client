@@ -15,21 +15,22 @@ interface PageProps {
 export default async function BlueprintDetailsPage({ params }: PageProps) {
   const resolvedParams = await params;
 
-  // Enforce authentication for blueprint details
+  // Check optional session for private blueprint ownership
   const headersList = await headers();
-  const session = await auth.api.getSession({
-    headers: headersList,
-  });
-
-  if (!session?.user) {
-    redirect(`/signin?callbackUrl=/blueprints/${resolvedParams.id}`);
+  let session = null;
+  try {
+    session = await auth.api.getSession({
+      headers: headersList,
+    });
+  } catch (err) {
+    // Guest visitor
   }
 
   // Forward user session headers to backend so owner can view their private blueprints
   const blueprint = await serverFetch(`/api/blueprints/${resolvedParams.id}`, {
     headers: {
-      'x-user-email': session.user.email || '',
-      'x-user-id': session.user.id || '',
+      'x-user-email': session?.user?.email || '',
+      'x-user-id': session?.user?.id || '',
     },
   });
 

@@ -21,6 +21,7 @@ import {
   Code,
 } from 'lucide-react';
 import MdxRenderer from '@/components/mdx/MdxRenderer';
+import { incrementDownloadAction } from '@/lib/api/blueprint/action';
 
 interface MarkdownFiles {
   projectOverview?: string;
@@ -153,6 +154,9 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       toast.success('Downloaded blueprint suite (.zip)!');
+      if (blueprint._id) {
+        incrementDownloadAction(blueprint._id);
+      }
     } catch (err) {
       console.error(err);
       toast.error('Failed to generate ZIP archive.');

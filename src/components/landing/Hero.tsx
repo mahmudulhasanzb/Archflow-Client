@@ -1,128 +1,36 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { 
   Sparkles, 
   ArrowRight, 
-  FileCode2, 
-  Database, 
-  Network, 
-  ListChecks, 
-  Layers, 
   Check, 
-  Copy,
   ChevronRight,
   Code2
 } from 'lucide-react';
 
-const BLUEPRINT_PREVIEWS = {
-  project: {
-    name: 'PROJECT_SPEC.md',
-    icon: FileCode2,
-    badge: 'Overview & Goals',
-    content: `# Realtime Collaborative Canvas
-## System Overview
-High-performance distributed canvas engine supporting 50+ concurrent editors.
-- **Latency Target**: < 15ms local optimistic updates
-- **State Sync**: Yjs CRDT over distributed WebSockets
-- **Storage**: Append-only event log with S3 snapshot backups
-- **Auth**: Better Auth session tokens with JWKS validation`,
-  },
-  architecture: {
-    name: 'ARCHITECTURE.md',
-    icon: Layers,
-    badge: 'System Design',
-    content: `## Distributed Topology
-┌─────────────┐      ┌─────────────────────────┐
-│ Next.js App │ <──> │ Express Gateway (P-5000)│
-└─────────────┘      └────────────┬────────────┘
-                                  │
-                  ┌───────────────┴───────────────┐
-                  ▼                               ▼
-       ┌────────────────────┐          ┌───────────────────┐
-       │ Redis CRDT Cluster │          │ MongoDB Replica   │
-       └────────────────────┘          └───────────────────┘`,
-  },
-  database: {
-    name: 'DATABASE.md',
-    icon: Database,
-    badge: 'Data Models',
-    content: `## MongoDB Collections
-
-### documents
-{
-  "_id": ObjectId("..."),
-  "title": "Q3 Infrastructure Map",
-  "ownerId": "usr_99812",
-  "crdtState": BinData(0, "..."),
-  "version": 42,
-  "updatedAt": ISODate("2026-09-14T10:00:00Z")
-}
-// Indices: { ownerId: 1, updatedAt: -1 }`,
-  },
-  api: {
-    name: 'API_SPEC.md',
-    icon: Network,
-    badge: 'Endpoints & RPC',
-    content: `## REST & WebSocket Contracts
-
-### POST /api/canvas/session
-Headers: Authorization: Bearer <jwks_token>
-Response 200 OK:
-{
-  "sessionId": "ses_81729",
-  "wsEndpoint": "wss://engine.archflow.dev/ws/canvas",
-  "readOnly": false
-}`,
-  },
-  tasks: {
-    name: 'TASKS.md',
-    icon: ListChecks,
-    badge: 'Roadmap & Sprints',
-    content: `## Agentic Execution Plan
-- [x] Phase 1: Redis Pub/Sub sync layer configuration
-- [x] Phase 2: Schema validation & JWT authorization bridge
-- [ ] Phase 3: Optimistic CRDT client rendering in Next.js
-- [ ] Phase 4: S3 vector snapshot archival cron`,
-  },
-};
-
-type PreviewKey = keyof typeof BLUEPRINT_PREVIEWS;
-
 export default function Hero() {
-  const [activeTab, setActiveTab] = useState<PreviewKey>('project');
-  const [copied, setCopied] = useState(false);
-
-  const activeSpec = BLUEPRINT_PREVIEWS[activeTab];
-  const ActiveIcon = activeSpec.icon;
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(activeSpec.content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
-    <section className="relative overflow-hidden bg-background border-b border-border pt-20 pb-24 md:pt-28 md:pb-32">
+    <section className="relative overflow-hidden bg-background border-b border-border py-16 sm:py-20 md:py-24">
       {/* Vercel-style subtle radial spotlight */}
       <div 
         aria-hidden="true" 
         className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-[520px] w-[900px] rounded-full bg-radial from-foreground/5 via-foreground/[0.02] to-transparent blur-3xl" 
       />
 
-      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        {/* Top Centered Header Content */}
-        <div className="text-center max-w-3xl mx-auto space-y-6">
+      <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        {/* Centered Header Content with balanced hierarchy */}
+        <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
           {/* Pill Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-3.5 py-1 text-xs font-medium text-foreground">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/60 px-4 py-1.5 text-xs font-medium text-foreground mb-6 shadow-xs">
             <Sparkles className="h-3.5 w-3.5 text-foreground" />
             <span>Autonomous Architecture Engine v2.0</span>
             <ChevronRight className="h-3 w-3 opacity-60" />
           </div>
 
           {/* Clean Modern Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.12]">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.12] mb-6">
             Design Production Systems <br className="hidden sm:inline" />
             <span className="bg-gradient-to-b from-foreground via-foreground/90 to-foreground/60 bg-clip-text text-transparent">
               Faster Than Prompts
@@ -130,31 +38,42 @@ export default function Hero() {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-8">
             Transform natural language into complete, production-ready system architectures. 
             Generate database schemas, API contracts, deployment specs, and agentic workflows tailored for Cursor, Windsurf, and Claude Code.
           </p>
 
-          {/* Call to Actions */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <Link
-              href="/add-blueprint"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90 transition-all hover:scale-[1.01]"
-            >
-              <span>Build A Blueprint</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/blueprints"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted transition-colors"
-            >
-              <Code2 className="h-4 w-4 text-muted-foreground" />
-              <span>Explore Blueprints</span>
-            </Link>
+          {/* Call to Actions with tactile 2.5D depth */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto mb-8">
+            {/* Primary 2.5D tactile button */}
+            <div className="relative group w-full sm:w-auto">
+              {/* Subtle ambient border glow */}
+              <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-b from-primary/50 to-primary/0 opacity-60 group-hover:opacity-100 blur-[1px] transition-opacity duration-300" />
+              <Link
+                href="/add-blueprint"
+                className="relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground border border-primary-foreground/20 shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.25)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.35)] transition-all duration-200 active:scale-[0.98]"
+              >
+                <span>Build A Blueprint</span>
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+
+            {/* Secondary 2.5D tactile button */}
+            <div className="relative group w-full sm:w-auto">
+              {/* Subtle perimeter border gradient */}
+              <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-b from-foreground/15 to-foreground/0 opacity-60 group-hover:opacity-100 blur-[1px] transition-opacity duration-300" />
+              <Link
+                href="/blueprints"
+                className="relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-border/80 bg-card px-6 py-3 text-sm font-semibold text-foreground shadow-[0_3px_10px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)] hover:bg-muted/60 hover:shadow-[0_6px_16px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all duration-200 active:scale-[0.98]"
+              >
+                <Code2 className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                <span>Explore Blueprints</span>
+              </Link>
+            </div>
           </div>
 
           {/* Trust points */}
-          <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-6 pt-4 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-y-2.5 gap-x-6 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <Check className="h-3.5 w-3.5 text-foreground" /> 5 Spec Markdown Files
             </span>
@@ -164,75 +83,6 @@ export default function Hero() {
             <span className="flex items-center gap-1.5">
               <Check className="h-3.5 w-3.5 text-foreground" /> Free Tier Included
             </span>
-          </div>
-        </div>
-
-        {/* Sleek Preview Window Card */}
-        <div className="mt-14 max-w-4xl mx-auto">
-          <div className="rounded-2xl border border-border bg-card shadow-2xl overflow-hidden transition-all">
-            {/* Top Window Bar */}
-            <div className="flex flex-wrap items-center justify-between border-b border-border bg-muted/40 px-4 py-2.5 gap-2">
-              <div className="flex items-center gap-2">
-                <div className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
-                <div className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
-                <div className="h-2.5 w-2.5 rounded-full bg-foreground/20" />
-                <span className="ml-2 font-mono text-xs text-muted-foreground">
-                  archflow-output /
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-md border border-border bg-card text-foreground">
-                  {activeSpec.badge}
-                </span>
-                <button
-                  onClick={handleCopy}
-                  className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground hover:text-foreground px-2 py-1 rounded border border-border bg-background hover:bg-muted transition-colors"
-                  title="Copy preview markdown"
-                >
-                  {copied ? <Check className="h-3 w-3 text-foreground" /> : <Copy className="h-3 w-3" />}
-                  <span>{copied ? 'Copied' : 'Copy'}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Spec File Tabs */}
-            <div className="flex overflow-x-auto border-b border-border bg-card no-scrollbar">
-              {(Object.keys(BLUEPRINT_PREVIEWS) as PreviewKey[]).map((key) => {
-                const spec = BLUEPRINT_PREVIEWS[key];
-                const TabIcon = spec.icon;
-                const isActive = activeTab === key;
-                return (
-                  <button
-                    key={key}
-                    onClick={() => setActiveTab(key)}
-                    className={`flex items-center gap-2 px-4 py-2.5 text-xs font-mono font-medium border-b-2 transition-all whitespace-nowrap ${
-                      isActive
-                        ? 'border-foreground bg-muted/60 text-foreground font-semibold'
-                        : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/30'
-                    }`}
-                  >
-                    <TabIcon className="h-3.5 w-3.5" />
-                    <span>{spec.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Markdown Preview Content */}
-            <div className="p-5 bg-card/50 text-foreground font-mono text-xs min-h-[220px] overflow-x-auto selection:bg-primary selection:text-primary-foreground">
-              <pre className="leading-relaxed text-foreground/90 whitespace-pre-wrap">
-                <code>{activeSpec.content}</code>
-              </pre>
-            </div>
-
-            {/* Card Footer Bar */}
-            <div className="flex items-center justify-between px-5 py-2.5 bg-muted/40 border-t border-border text-[11px] text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <ActiveIcon className="h-3.5 w-3.5 text-foreground" />
-                <span>Active spec: <strong className="text-foreground">{activeSpec.name}</strong></span>
-              </span>
-              <span className="font-mono text-muted-foreground">Format: Markdown / Agent-Ready</span>
-            </div>
           </div>
         </div>
 
