@@ -76,7 +76,9 @@ export default function SignUpPage() {
             : 'bg-muted border border-border text-muted-foreground'
         }`}
       >
-        <Check className={`h-2.5 w-2.5 stroke-[3] ${met ? 'opacity-100' : 'opacity-0'}`} />
+        <Check
+          className={`h-2.5 w-2.5 stroke-[3] ${met ? 'opacity-100' : 'opacity-0'}`}
+        />
       </span>
       <span
         className={`transition-colors text-[11px] ${
@@ -186,16 +188,16 @@ export default function SignUpPage() {
                 {...register('password', {
                   required: 'Password is required',
                   validate: {
-                    minLength: (v) => v.length >= 8 || 'At least 8 characters.',
-                    uppercase: (v) => /[A-Z]/.test(v) || 'One uppercase letter.',
-                    lowercase: (v) => /[a-z]/.test(v) || 'One lowercase letter.',
+                    minLength: v => v.length >= 8 || 'At least 8 characters.',
+                    uppercase: v => /[A-Z]/.test(v) || 'One uppercase letter.',
+                    lowercase: v => /[a-z]/.test(v) || 'One lowercase letter.',
                   },
                 })}
                 className="w-full rounded-xl border border-border bg-background pl-10 pr-10 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               <button
                 type="button"
-                onClick={() => setShowPassword((p) => !p)}
+                onClick={() => setShowPassword(p => !p)}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 {showPassword ? (
@@ -214,8 +216,14 @@ export default function SignUpPage() {
             {/* Password Complexity Checklist */}
             <div className="pt-2 space-y-1.5 rounded-xl bg-muted/40 border border-border p-3">
               <PasswordRule met={hasMinLength} label="At least 8 characters" />
-              <PasswordRule met={hasUppercase} label="At least 1 uppercase letter (A-Z)" />
-              <PasswordRule met={hasLowercase} label="At least 1 lowercase letter (a-z)" />
+              <PasswordRule
+                met={hasUppercase}
+                label="At least 1 uppercase letter (A-Z)"
+              />
+              <PasswordRule
+                met={hasLowercase}
+                label="At least 1 lowercase letter (a-z)"
+              />
             </div>
           </div>
 
@@ -225,7 +233,9 @@ export default function SignUpPage() {
             disabled={isSubmitting}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-xs hover:opacity-90 transition-opacity focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer pt-2"
           >
-            <span>{isSubmitting ? 'Creating account...' : 'Create Account'}</span>
+            <span>
+              {isSubmitting ? 'Creating account...' : 'Create Account'}
+            </span>
             <ArrowRight className="h-3.5 w-3.5" />
           </button>
         </form>

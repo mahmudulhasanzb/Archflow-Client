@@ -13,6 +13,8 @@ import {
   User,
   Compass,
   Home,
+  Menu,
+  X,
 } from 'lucide-react';
 import Image from 'next/image';
 import { authClient } from '@/lib/auth-client';
@@ -39,11 +41,17 @@ export default function DashboardSidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { data: session } = authClient.useSession();
   const user = session?.user;
+
+  // Auto-close mobile drawer on route change
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -102,7 +110,44 @@ export default function DashboardSidebar() {
   const roleLabel = isPro ? 'Pro Developer' : 'Free Tier';
 
   return (
-    <aside className="fixed inset-y-0 left-0 w-64 h-screen bg-card border-r border-border flex flex-col justify-between z-40 select-none transition-colors">
+    <>
+      {/* Mobile Top Bar */}
+      <div className="md:hidden fixed top-0 inset-x-0 h-16 bg-card/95 backdrop-blur-md border-b border-border z-30 px-4 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground text-background">
+            <Activity className="h-4 w-4" />
+          </div>
+          <span className="text-foreground font-extrabold text-base tracking-wider font-display">
+            ARCHFLOW
+          </span>
+          <span className="text-[9px] font-black uppercase tracking-widest bg-muted text-foreground px-1.5 py-0.5 rounded border border-border">
+            Studio
+          </span>
+        </Link>
+        <button
+          type="button"
+          onClick={() => setIsMobileOpen(prev => !prev)}
+          className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted border border-border transition-colors cursor-pointer"
+          aria-label="Toggle navigation menu"
+        >
+          {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {/* Mobile Backdrop */}
+      {isMobileOpen && (
+        <div
+          aria-hidden="true"
+          onClick={() => setIsMobileOpen(false)}
+          className="fixed inset-0 bg-background/80 backdrop-blur-xs z-35 md:hidden"
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 w-64 h-screen bg-card border-r border-border flex flex-col justify-between z-40 select-none transition-transform duration-300 ${
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
+      >
       {/* Brand Header & Navigation */}
       <div>
         {/* Brand Header */}
@@ -249,6 +294,7 @@ export default function DashboardSidebar() {
         )}
       </div>
     </aside>
+    </>
   );
 }
 
