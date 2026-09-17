@@ -113,14 +113,14 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { label: 'Explore', href: '/blueprints' },
+    { label: 'Blueprints', href: '/blueprints' },
     { label: 'Docs', href: '/docs' },
     { label: 'About', href: '/about' },
     { label: 'Pricing', href: '/#pricing' },
   ];
 
   if (user) {
-    navLinks.push({ label: 'Dashboard', href: '/workspace' });
+    navLinks.push({ label: 'Workspace', href: '/workspace' });
   }
 
   const isLinkActive = (href: string) => pathname === href;

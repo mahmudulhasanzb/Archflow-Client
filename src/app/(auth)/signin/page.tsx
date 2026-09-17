@@ -9,10 +9,10 @@ import {
   Eye,
   EyeOff,
   Activity,
-  Cpu,
-  Layers,
-  ShieldAlert,
+  Mail,
+  Lock,
   Zap,
+  ArrowRight,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -20,12 +20,6 @@ type Inputs = {
   email: string;
   password: string;
 };
-
-const FEATURES = [
-  { icon: Cpu, text: 'AI architect agent generates full schemas' },
-  { icon: Layers, text: 'Multi-agent pipeline with 4 specialists' },
-  { icon: ShieldAlert, text: 'Security audit included in every blueprint' },
-];
 
 export default function SignInPage() {
   const router = useRouter();
@@ -62,117 +56,77 @@ export default function SignInPage() {
     }
   };
 
+  /* ── DEMO LOGIN HANDLER (Easily toggled/removed when ready) ── */
   const handleDemoLogin = async () => {
-    toast.loading('Logging in as Demo User...');
-    setTimeout(() => {
-      toast.dismiss();
-    }, 4000);
-    const { error } = await authClient.signIn.email({
-      email: 'demo@gmail.com',
-      password: 'DemoP@ssord',
-      callbackURL: callbackUrl,
-    });
-    if (!error) {
-      toast.success('Signed in successfully!');
-      router.push(callbackUrl);
-    } else {
-      toast.error(error.message || 'Invalid email or password.');
+    const toastId = toast.loading('Logging in as Demo User...');
+    try {
+      const { error } = await authClient.signIn.email({
+        email: 'demo@gmail.com',
+        password: 'DemoP@ssord',
+        callbackURL: callbackUrl,
+      });
+      if (!error) {
+        toast.success('Signed in as Demo User!', { id: toastId });
+        router.push(callbackUrl);
+      } else {
+        toast.error(error.message || 'Demo login failed.', { id: toastId });
+      }
+    } catch {
+      toast.error('Failed to log in as demo user.', { id: toastId });
     }
-    router.refresh();
   };
 
   return (
-    <div className="flex min-h-screen bg-[#FAFBFC]">
-      {/* ── Left brand panel ───────────────────────────────────── */}
-      <div className="hidden lg:flex lg:w-[45%] flex-col justify-between p-12 bg-gradient-to-br from-[#4F46E5] via-[#4338CA] to-[#3730A3] relative overflow-hidden">
-        {/* Decorative orbs */}
-        <div
-          aria-hidden
-          className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-white/5 blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-[#0D9488]/20 blur-3xl"
-        />
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+      {/* Blueprint Grid Background Pattern */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-25"
+      />
 
-        {/* Logo */}
-        <div className="relative flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15">
-            <Activity className="h-5 w-5 text-white" />
-          </div>
-          <span className="text-xl font-bold text-white font-display">
-            Archflow
-          </span>
+      {/* Ambient Glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[450px] w-[650px] rounded-full bg-primary/10 blur-3xl"
+      />
+
+      {/* Top Logo */}
+      <Link
+        href="/"
+        className="relative z-10 flex items-center gap-2.5 mb-8 group transition-opacity hover:opacity-90"
+      >
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs">
+          <Activity className="h-5 w-5" />
         </div>
+        <span className="text-xl font-bold font-display tracking-tight text-foreground">
+          Archflow
+        </span>
+      </Link>
 
-        {/* Headline */}
-        <div className="relative space-y-6">
-          <h2 className="text-4xl font-extrabold text-white font-display leading-tight">
-            Architecture
-            <br />
-            starts with
-            <br />
-            <span className="text-[#86EFAC]">one idea.</span>
-          </h2>
-          <p className="text-indigo-200 text-sm leading-relaxed max-w-xs">
-            Our multi-agent AI system turns a paragraph description into
-            complete schemas, roadmaps, and code stubs — in seconds.
+      {/* Centered Floating Card */}
+      <div className="w-full max-w-md rounded-2xl border border-border bg-card/90 backdrop-blur-xl p-6 sm:p-8 shadow-xl relative z-10 space-y-6">
+        {/* Card Header */}
+        <div className="text-center space-y-1.5">
+          <h1 className="text-2xl font-bold tracking-tight font-display text-foreground">
+            Welcome back
+          </h1>
+          <p className="text-xs text-muted-foreground">
+            Enter your credentials to access your architecture workspace
           </p>
-
-          {/* Feature list */}
-          <ul className="space-y-3">
-            {FEATURES.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-center gap-3">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10">
-                  <Icon className="h-3.5 w-3.5 text-white" />
-                </div>
-                <span className="text-xs text-indigo-200">{text}</span>
-              </li>
-            ))}
-          </ul>
         </div>
 
-        {/* Bottom quote */}
-        <p className="relative text-xs text-indigo-300">
-          &copy; {new Date().getFullYear()} Archflow. All rights reserved.
-        </p>
-      </div>
-
-      {/* ── Right form panel ───────────────────────────────────── */}
-      <div className="flex flex-1 items-center justify-center px-6 py-12 lg:px-12">
-        <div className="w-full max-w-sm space-y-8 animate-slide-up">
-          {/* Mobile logo */}
-          <div className="flex items-center gap-2 lg:hidden">
-            <Activity className="h-6 w-6 text-[#4F46E5]" />
-            <span className="text-lg font-bold text-[#181B20] font-display">
-              Archflow
-            </span>
-          </div>
-
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-[#181B20] font-display">
-              Welcome back
-            </h1>
-            <p className="mt-1.5 text-sm text-[#6B7280]">
-              Don&apos;t have an account?{' '}
-              <Link
-                href="/signup"
-                className="font-semibold text-[#4F46E5] hover:underline"
-              >
-                Sign up free
-              </Link>
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Email */}
-            <div className="space-y-1.5">
-              <label
-                htmlFor="email-address"
-                className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
-              >
-                Email Address
-              </label>
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Email Address */}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="email-address"
+              className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+            >
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 id="email-address"
                 type="email"
@@ -184,78 +138,91 @@ export default function SignInPage() {
                     message: 'Invalid email address',
                   },
                 })}
-                className="w-full rounded-xl border border-[#E1E4EA] bg-[#F1F3F6]/50 px-4 py-2.5 text-sm text-[#181B20] placeholder-[#6B7280] transition-colors focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20"
+                className="w-full rounded-xl border border-border bg-background pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
-              {errors.email && (
-                <p className="text-xs text-red-500">{errors.email.message}</p>
-              )}
             </div>
+            {errors.email && (
+              <p className="text-xs text-destructive">{errors.email.message}</p>
+            )}
+          </div>
 
-            {/* Password */}
-            <div className="space-y-1.5">
-              <label
-                htmlFor="password"
-                className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
+          {/* Password */}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="password"
+              className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+            >
+              Password
+            </label>
+            <div className="relative">
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                {...register('password', {
+                  required: 'Password is required',
+                })}
+                className="w-full rounded-xl border border-border bg-background pl-10 pr-10 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((p) => !p)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  {...register('password', {
-                    required: 'Password is required',
-                  })}
-                  className="w-full rounded-xl border border-[#E1E4EA] bg-[#F1F3F6]/50 px-4 py-2.5 pr-10 text-sm text-[#181B20] placeholder-[#6B7280] transition-colors focus:border-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/20"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(p => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#181B20] transition-colors"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="text-xs text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
             </div>
+            {errors.password && (
+              <p className="text-xs text-destructive">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#4F46E5] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#4F46E5]/25 transition-all hover:bg-[#4338CA] hover:shadow-[#4F46E5]/40 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-            >
-              {isSubmitting ? 'Signing in...' : 'Sign In'}
-            </button>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-xs hover:opacity-90 transition-opacity focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer pt-2"
+          >
+            <span>{isSubmitting ? 'Signing in...' : 'Sign In'}</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
 
-            {/* Divider */}
-            <div className="relative flex items-center">
-              <div className="flex-1 border-t border-[#E1E4EA]" />
-              <span className="mx-3 text-xs uppercase tracking-wider text-[#6B7280]">
-                Or
-              </span>
-              <div className="flex-1 border-t border-[#E1E4EA]" />
-            </div>
+          {/* ── DEMO LOGIN SECTION (Easily toggled/removed when ready) ── */}
+          <div className="relative flex items-center pt-2">
+            <div className="flex-1 border-t border-border" />
+            <span className="mx-3 text-[11px] uppercase tracking-wider text-muted-foreground">
+              Or
+            </span>
+            <div className="flex-1 border-t border-border" />
+          </div>
 
-            {/* Demo login */}
-            <button
-              type="button"
-              onClick={handleDemoLogin}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#E1E4EA] bg-white px-4 py-2.5 text-sm cursor-pointer font-semibold text-[#4F46E5] transition-all hover:bg-[#EEF0FF] hover:border-[#4F46E5]/30"
-            >
-              <Zap className="h-4 w-4" />
-              One Click Demo Login
-            </button>
-          </form>
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-muted/40 hover:bg-muted px-4 py-2.5 text-xs font-semibold text-foreground transition-colors cursor-pointer"
+          >
+            <Zap className="h-3.5 w-3.5 text-primary" />
+            <span>One Click Demo Login</span>
+          </button>
+          {/* ──────────────────────────────────────────────────────────── */}
+        </form>
+
+        {/* Card Footer Switch */}
+        <div className="pt-2 text-center text-xs text-muted-foreground border-t border-border">
+          Don&apos;t have an account?{' '}
+          <Link
+            href="/signup"
+            className="font-semibold text-foreground hover:underline"
+          >
+            Sign up free
+          </Link>
         </div>
       </div>
     </div>
