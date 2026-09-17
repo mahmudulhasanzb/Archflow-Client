@@ -1,28 +1,28 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle, Code2, Shield, Bot } from 'lucide-react';
+import { ChevronDown, HelpCircle, Code2, Shield, Layers, Download } from 'lucide-react';
 
 const FAQS = [
   {
-    q: 'What is an Archflow technical blueprint?',
-    a: 'An Archflow blueprint is an end-to-end technical architectural plan synthesized from a plain-text prompt. It includes Mongoose/Postgres database schema definitions, an implementation task checklist, OpenAPI 3.0 specs, code boilerplate stubs, and a security compliance audit.',
+    q: 'What is an Archflow technical blueprint suite?',
+    a: 'An Archflow blueprint is a deterministic 5-file architecture contract synthesized from your project concept. It outputs projectOverview.md, requirements.md, architecture.md, design.md, and executionPlan.md for Cursor, Claude Code, and Windsurf.',
     icon: Code2,
   },
   {
-    q: 'How do the 4 autonomous agents collaborate?',
-    a: 'The 4 agents (Architect, Planner, Documenter, Reviewer) execute over a shared session object. The Architect defines data models; the Planner reads the schemas to create implementation tasks; the Documenter builds setup stubs; and the Reviewer verifies schema integrity and security rules.',
-    icon: Bot,
+    q: 'How does the multi-stage AI generation pipeline work?',
+    a: 'Archflow executes a sequential 5-stage synthesis pipeline. Each stage builds on the previous output to prevent architectural drift—generating the overview first, deriving exact requirements, structuring schemas and APIs, defining UI tokens, and formulating the execution plan.',
+    icon: Layers,
   },
   {
-    q: 'Can I bring my own LLM API keys?',
-    a: 'Yes! Pro users can connect custom API keys for OpenAI, Anthropic Claude, or Google Gemini to tune agent model sizes and token limits.',
+    q: 'How do I use generated blueprints in Cursor or Claude Code?',
+    a: 'Download the entire blueprint suite as an organized .zip archive with 1-click. Extract the markdown files into your local project root or .planning directory, and your AI coding assistant can follow the explicit specs without hallucinating.',
+    icon: Download,
+  },
+  {
+    q: 'What is the difference between Free Starter and Pro plans?',
+    a: 'Free Starter allows generating up to 3 community blueprints with public gallery access. Pro ($29/mo or $24/mo billed annually) unlocks 10 daily blueprints, private blueprints, custom LLM API keys (OpenAI, Claude, Gemini), and priority queues.',
     icon: Shield,
-  },
-  {
-    q: 'Can I export blueprints to my local codebase?',
-    a: 'Absolutely. You can copy generated schema code directly, export OpenAPI JSON definitions, or download complete project folder templates to jumpstart your build.',
-    icon: Code2,
   },
 ];
 
