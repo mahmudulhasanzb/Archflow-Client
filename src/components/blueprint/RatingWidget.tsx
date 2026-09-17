@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Star, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { rateBlueprintAction } from '@/lib/api/blueprint/action';
+import { rateBlueprintAction, getUserRatingAction } from '@/lib/api/blueprint/action';
+import { authClient } from '@/lib/auth-client';
 
 interface RatingWidgetProps {
   blueprintId: string;
@@ -16,22 +17,62 @@ export default function RatingWidget({
   initialRating = 5,
   initialCount = 1,
 }: RatingWidgetProps) {
+  const { data: session } = authClient.useSession();
+
   const [rating, setRating] = useState(initialRating);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [ratingsCount, setRatingsCount] = useState(initialCount);
+  const [hasRated, setHasRated] = useState(false);
+  const [userRating, setUserRating] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if current authenticated user has already rated
+  useEffect(() => {
+    if (!session?.user || !blueprintId) {
+      setHasRated(false);
+      setUserRating(null);
+      return;
+    }
+    let isMounted = true;
+    getUserRatingAction(blueprintId)
+      .then(res => {
+        if (isMounted && res?.hasRated) {
+          setHasRated(true);
+          setUserRating(res.userRating);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [blueprintId, session?.user]);
 
   const handleRate = async (starValue: number) => {
     if (isSubmitting) return;
+
+    // Must be logged in to rate
+    if (!session?.user) {
+      toast.error('Please sign in to rate this blueprint');
+      return;
+    }
+
+    // Each user can only rate once
+    if (hasRated) {
+      toast('You have already rated this blueprint', { icon: 'ℹ️' });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const data = await rateBlueprintAction(blueprintId, starValue);
       if (data?.success) {
         setRating(data.rating);
         setRatingsCount(data.ratingsCount);
+        setHasRated(true);
+        setUserRating(starValue);
         toast.success(`Rated ${starValue} / 5 stars!`);
       } else {
-        throw new Error(data?.error || 'Failed to submit rating');
+        toast.error(data?.error || 'Failed to submit rating');
       }
     } catch (err: any) {
       console.error(err);
@@ -41,38 +82,54 @@ export default function RatingWidget({
     }
   };
 
-  const displayRating = hoverRating !== null ? hoverRating : rating;
+  const displayRating = hoverRating !== null && !hasRated ? hoverRating : rating;
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex items-center gap-0.5">
+      <div
+        className="flex items-center gap-0.5"
+        title={hasRated ? `You already rated ${userRating} ★` : 'Click to rate (1-5 stars)'}
+      >
         {[1, 2, 3, 4, 5].map(star => (
           <button
             key={star}
             type="button"
-            disabled={isSubmitting}
+            disabled={isSubmitting || hasRated}
             onClick={() => handleRate(star)}
-            onMouseEnter={() => setHoverRating(star)}
-            onMouseLeave={() => setHoverRating(null)}
+            onMouseEnter={() => !hasRated && setHoverRating(star)}
+            onMouseLeave={() => !hasRated && setHoverRating(null)}
             aria-label={`Rate ${star} stars`}
-            className="p-0.5 rounded transition-transform hover:scale-125 focus:outline-none cursor-pointer"
+            className={`p-0.5 rounded transition-transform ${
+              hasRated
+                ? 'cursor-default opacity-90'
+                : 'hover:scale-125 focus:outline-none cursor-pointer'
+            }`}
           >
             <Star
-              className={`h-4 w-4 transition-colors ${
-                star <= displayRating
+              className={`h-3.5 w-3.5 transition-colors ${
+                star <= Math.round(displayRating)
                   ? 'text-amber-500 fill-amber-500'
-                  : 'text-slate-300 dark:text-slate-700'
+                  : 'text-muted-foreground/30'
               }`}
             />
           </button>
         ))}
       </div>
-      <span className="text-xs font-bold text-[#181B20] dark:text-[#F3F4F6]">
+      <span className="text-xs font-bold text-foreground">
         {rating.toFixed(1)}
       </span>
       {ratingsCount > 0 && (
-        <span className="text-[10px] text-[#6B7280] dark:text-[#9CA3AF]">
+        <span className="text-[10px] text-muted-foreground">
           ({ratingsCount} {ratingsCount === 1 ? 'review' : 'reviews'})
+        </span>
+      )}
+      {hasRated && (
+        <span
+          className="inline-flex items-center gap-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded"
+          title={`You rated this blueprint ${userRating} stars`}
+        >
+          <Check className="h-2.5 w-2.5" />
+          Rated
         </span>
       )}
     </div>

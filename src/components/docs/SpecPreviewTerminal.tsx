@@ -13,81 +13,155 @@ import {
 } from 'lucide-react';
 
 export const BLUEPRINT_PREVIEWS = {
-  project: {
-    name: 'PROJECT_SPEC.md',
+  projectOverview: {
+    name: 'projectOverview.md',
     icon: FileCode2,
-    badge: 'Overview & Scope',
-    content: `# Realtime Collaborative Canvas
-## System Overview
-High-performance distributed canvas engine supporting 50+ concurrent editors.
-- **Latency Target**: < 15ms local optimistic updates
-- **State Sync**: Yjs CRDT over distributed WebSockets
-- **Storage**: Append-only event log with S3 snapshot backups
-- **Auth**: Better Auth session tokens with JWKS validation`,
+    badge: 'Overview & Setup',
+    content: `# FlowForge - Real-Time Collaborative Architecture Suite
+
+## 1. Executive Summary & Problem Solved
+FlowForge provides distributed real-time diagramming for systems engineering teams. Eliminates architectural drift between whiteboard drawings and deployed infrastructure code.
+
+## 2. Target Users & Value Proposition
+- Staff & Lead Architects: Rapid high-level component topology modeling.
+- AI Coding Agents: Contextual grounding to eliminate hallucinated routes or missing schemas.
+
+## 3. Tech Stack Rationale
+- Frontend: Next.js 16 (App Router), Tailwind CSS v4, HeroUI for high-contrast accessibility.
+- Backend: Express 5 single-file micro-gateway with native MongoDB driver connection pooling.
+- Auth: Better Auth with JWKS public key bridge for stateless token verification.
+- Real-Time: WebSocket CRDT state sync engine with Redis channel replication.
+
+## 4. Environment Setup
+PORT=5000
+MONGODB_URI=mongodb+srv://.../flowforge
+BETTER_AUTH_URL=http://localhost:3000
+JWKS_CACHE_TTL_MS=3600000`,
+  },
+  requirements: {
+    name: 'requirements.md',
+    icon: ListChecks,
+    badge: 'Requirements & Scope',
+    content: `# Requirements & Functional Specifications
+
+## 1. Target Personas
+- P-01 (Architect): Requires fast visual topology canvas, SVG export, and live presence.
+- P-02 (AI Coding Agent): Consumes executionPlan.md to generate components without ambiguity.
+
+## 2. Core Functional Requirements
+### REQ-01: Real-Time Canvas Multi-Tenancy
+- Description: Canvas state must synchronize across all joined clients within 25ms.
+- Acceptance Criteria:
+  - [x] Concurrent cursor coordinates broadcast via WebSockets.
+  - [x] Optimistic node creation with server ACK resolution.
+  - [x] Conflict-free resolution via CRDT state vector.
+
+### REQ-02: Deterministic Schema Persistence
+- Description: Canvas snapshots auto-persist to MongoDB every 5 seconds or upon blur.
+- Acceptance Criteria:
+  - [x] Debounced save mechanism to avoid write amplification.
+  - [x] Version integer incremented on each persisted snapshot.
+
+## 3. Non-Functional Requirements
+- Sub-50ms p95 API response time.
+- Zero client bundle dependency on heavy ORM runtimes.`,
   },
   architecture: {
-    name: 'ARCHITECTURE.md',
+    name: 'architecture.md',
     icon: Layers,
-    badge: 'System Design',
-    content: `## Distributed Topology
-┌─────────────┐      ┌─────────────────────────┐
-│ Next.js App │ <──> │ Express Gateway (P-5000)│
-└─────────────┘      └────────────┬────────────┘
-                                  │
-                  ┌───────────────┴───────────────┐
-                  ▼                               ▼
-       ┌────────────────────┐          ┌───────────────────┐
-       │ Redis CRDT Cluster │          │ MongoDB Replica   │
-       └────────────────────┘          └───────────────────┘`,
-  },
-  database: {
-    name: 'DATABASE.md',
-    icon: Database,
-    badge: 'Data Models',
-    content: `## MongoDB Collections
+    badge: 'System Architecture',
+    content: `# System Architecture & Topology
 
-### documents
+## 1. High-Level Component Topology
+Client (Next.js 16) ──[HTTPS/WSS]──> Express 5 Gateway ──> MongoDB Replica
+                                         │
+                                         └──> Redis Pub/Sub (Presence)
+
+## 2. Directory Structure (ASCII)
+├── Archflow-Client/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── (mainLayout)/    # Public views (explore, docs, about)
+│   │   │   ├── (dashboard)/     # Workspace, generator, editor
+│   │   │   └── api/auth/        # Better Auth client bridge
+│   │   ├── components/          # Modular UI components (HeroUI/Tailwind)
+│   │   └── lib/                 # API fetchers & JWKS verify helpers
+└── Archflow-Server/
+    └── src/
+        └── index.ts             # Single-file Express 5 micro-gateway
+
+## 3. Data Models & Schemas
+Collection: blueprints
 {
   "_id": ObjectId("..."),
-  "title": "Q3 Infrastructure Map",
-  "ownerId": "usr_99812",
-  "crdtState": BinData(0, "..."),
-  "version": 42,
-  "updatedAt": ISODate("2026-09-14T10:00:00Z")
+  "title": "String (required, indexed)",
+  "authorEmail": "String (indexed)",
+  "techStack": ["Next.js", "MongoDB", "Express"],
+  "markdownFiles": {
+    "projectOverview": "String",
+    "requirements": "String",
+    "architecture": "String",
+    "design": "String",
+    "executionPlan": "String"
+  },
+  "metrics": { "views": 142, "downloads": 38, "rating": 4.9 },
+  "createdAt": ISODate("2026-09-17T12:00:00Z")
 }
-// Indices: { ownerId: 1, updatedAt: -1 }`,
+Indexes: { title: "text" }, { authorEmail: 1 }, { "metrics.views": -1 }`,
   },
-  api: {
-    name: 'API_SPEC.md',
-    icon: Network,
-    badge: 'Contracts & RPC',
-    content: `## REST & WebSocket Contracts
+  design: {
+    name: 'design.md',
+    icon: Database,
+    badge: 'Design System',
+    content: `# Design System & UI Architecture
 
-### POST /api/canvas/session
-Headers: Authorization: Bearer <jwks_token>
-Response 200 OK:
-{
-  "sessionId": "ses_81729",
-  "wsEndpoint": "wss://engine.archflow.dev/ws/canvas",
-  "readOnly": false
-}`,
+## 1. Visual Direction & Theme
+- Obsidian Dark & Paper Light: Deep slate background (#090d16) with high-contrast surfaces (#111827) and muted zinc borders (#1f2937).
+- Accent: Precision indigo/violet primary gradient (#6366f1 -> #8b5cf6).
+
+## 2. Typography Scale
+- Display: Plus Jakarta Sans / Outfit (Headings, bold tracking -0.02em).
+- Body: Inter / Geist (Clean readability, 14px/16px line-height 1.6).
+- Code: JetBrains Mono / Fira Code (ASCII trees, env variables, bash scripts).
+
+## 3. Component Hierarchy
+- Header: Compact sticky bar (avatar, title, telemetry, bookmark, rate).
+- Workbench Tabs: Sticky file switcher with active tab contrast pill.
+- Viewer Container: Responsive min-w-0 wrapper with raw markdown toggle and 1-click clipboard copy.`,
   },
-  tasks: {
-    name: 'TASKS.md',
+  executionPlan: {
+    name: 'executionPlan.md',
     icon: ListChecks,
-    badge: 'Roadmap & Sprints',
-    content: `## Agentic Execution Plan
-- [x] Phase 1: Redis Pub/Sub sync layer configuration
-- [x] Phase 2: Schema validation & JWT authorization bridge
-- [ ] Phase 3: Optimistic CRDT client rendering in Next.js
-- [ ] Phase 4: S3 vector snapshot archival cron`,
+    badge: 'Execution Roadmap',
+    content: `# Agentic Execution Plan
+
+## Phase 1: Database Foundation & Auth Bridge
+- [ ] Task 1.1: Initialize MongoDB native connection pool in server
+  - File: Archflow-Server/src/index.ts
+  - Verify: curl -f http://localhost:5000/api/health
+- [ ] Task 1.2: Configure Better Auth JWKS verification middleware
+  - File: Archflow-Server/src/middleware/auth.ts
+  - Verify: npm test -- tests/auth.test.ts
+
+## Phase 2: Blueprint CRUD & Generator Services
+- [ ] Task 2.1: Implement parallel markdown file generator pipeline
+  - File: Archflow-Client/src/lib/api/blueprintGenerator.ts
+  - Verify: npx tsx scripts/test-generator.ts
+- [ ] Task 2.2: Add rating collection with unique (userId, blueprintId) constraint
+  - File: Archflow-Server/src/index.ts
+  - Verify: mongosh --eval "db.ratings.getIndexes()"
+
+## Phase 3: Client Viewer & Workbench UI
+- [ ] Task 3.1: Build sticky tab navigation with full markdown renderer
+  - File: Archflow-Client/src/components/blueprint/BlueprintViewer.tsx
+  - Verify: npx tsc --noEmit`,
   },
 };
 
 type PreviewKey = keyof typeof BLUEPRINT_PREVIEWS;
 
 export default function SpecPreviewTerminal() {
-  const [activeTab, setActiveTab] = useState<PreviewKey>('project');
+  const [activeTab, setActiveTab] = useState<PreviewKey>('projectOverview');
   const [copied, setCopied] = useState(false);
 
   const activeSpec = BLUEPRINT_PREVIEWS[activeTab];

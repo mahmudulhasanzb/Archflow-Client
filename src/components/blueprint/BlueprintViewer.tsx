@@ -12,10 +12,6 @@ import {
   Code2,
   Palette,
   CheckCircle2,
-  Sparkles,
-  Lock,
-  Globe,
-  Layers,
   Terminal,
   Eye,
   Code,
@@ -168,51 +164,15 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
   // Current active file content
   const activeContent = blueprint.markdownFiles?.[activeTab] || 'No content generated for this section.';
   const currentTabDef = TABS.find(t => t.key === activeTab) || TABS[0];
+  const wordsCount = activeContent.trim() ? activeContent.trim().split(/\s+/).length : 0;
+  const kbSize = (new Blob([activeContent]).size / 1024).toFixed(1);
 
   return (
-    <div className="space-y-6">
-      {/* Top Action Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl border border-border bg-card shadow-sm">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-foreground border border-border">
-            <Layers className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-                Agentic IDE Suite
-              </span>
-              {blueprint.visibility === 'private' ? (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
-                  <Lock className="h-2.5 w-2.5" /> Private
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
-                  <Globe className="h-2.5 w-2.5" /> Public
-                </span>
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {hasMarkdownFiles ? '5 deterministic markdown specifications ready for Cursor, Antigravity, or Claude Code.' : 'Legacy blueprint specifications.'}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <button
-            onClick={handleDownloadZip}
-            disabled={isZipping}
-            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-xs hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
-          >
-            <Download className="h-4 w-4" />
-            {isZipping ? 'Archiving...' : 'Download Suite (.zip)'}
-          </button>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {/* Tabs Navigation */}
-        <div className="flex flex-wrap gap-1.5 border-b border-border pb-2">
+    <div className="space-y-4 w-full min-w-0">
+      {/* Workbench File Tabs & Download Action - Sticky on Scroll */}
+      <div className="sticky top-16 z-20 bg-background/95 backdrop-blur-md py-2.5 border-b border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full min-w-0">
+        {/* File Tabs */}
+        <div className="flex flex-wrap items-center gap-1.5 min-w-0">
           {TABS.map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
@@ -226,13 +186,13 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
                     ? 'bg-primary text-primary-foreground shadow-xs'
                     : isPlan
                     ? 'bg-muted text-foreground border border-border hover:bg-muted/80'
-                    : 'bg-card border border-border text-muted-foreground hover:text-foreground'
+                    : 'bg-card border border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
-                <Icon className="h-3.5 w-3.5" />
-                <span>{tab.filename}</span>
+                <Icon className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">{tab.filename}</span>
                 {isPlan && !isActive && (
-                  <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-foreground text-background">
+                  <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-muted-foreground/20 text-foreground shrink-0">
                     Agent
                   </span>
                 )}
@@ -241,71 +201,85 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
           })}
         </div>
 
-          {/* Active File Preview Card */}
-          <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-            {/* Card File Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 bg-muted/40 border-b border-border">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-foreground">
-                    {currentTabDef.filename}
-                  </span>
-                  <span className="text-[11px] text-muted-foreground">
-                    ({activeContent.split(/\s+/).length} words, {activeContent.length} bytes)
-                  </span>
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
-                  {currentTabDef.description}
-                </p>
-              </div>
+        {/* Download Suite Button */}
+        <div className="flex items-center shrink-0 w-full sm:w-auto">
+          <button
+            onClick={handleDownloadZip}
+            disabled={isZipping}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-xs hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
+          >
+            <Download className="h-3.5 w-3.5" />
+            <span>{isZipping ? 'Archiving...' : 'Download Suite (.zip)'}</span>
+          </button>
+        </div>
+      </div>
 
-              <div className="flex items-center gap-2">
-                {/* View Mode Toggle */}
-                <div className="inline-flex items-center p-0.5 rounded-xl border border-border bg-card">
-                  <button
-                    onClick={() => setViewMode('mdx')}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-                      viewMode === 'mdx'
-                        ? 'bg-primary text-primary-foreground shadow-xs'
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                    title="Rendered MDX Document with Syntax Highlighting"
-                  >
-                    <Eye className="h-3.5 w-3.5" />
-                    <span>MDX Preview</span>
-                  </button>
-                  <button
-                    onClick={() => setViewMode('raw')}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-                      viewMode === 'raw'
-                        ? 'bg-primary text-primary-foreground shadow-xs'
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                    title="Raw Markdown Code"
-                  >
-                    <Code className="h-3.5 w-3.5" />
-                    <span>Raw Code</span>
-                  </button>
-                </div>
-
-                <button
-                  onClick={() => handleCopy(currentTabDef.filename, activeContent)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
-                >
-                  {copiedTab === currentTabDef.filename ? (
-                    <>
-                      <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-                      <span className="text-emerald-600 dark:text-emerald-400">Copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span>Copy Markdown</span>
-                    </>
-                  )}
-                </button>
-              </div>
+      {/* Active File Preview Card */}
+      <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden w-full min-w-0">
+        {/* Card File Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-muted/30 border-b border-border min-w-0">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-xs font-bold text-foreground">
+                {currentTabDef.filename}
+              </span>
+              <span className="text-[11px] text-muted-foreground">
+                ({wordsCount.toLocaleString()} words • {kbSize} KB)
+              </span>
             </div>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              {currentTabDef.description}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {/* View Mode Toggle */}
+            <div className="inline-flex items-center p-0.5 rounded-xl border border-border bg-card">
+              <button
+                onClick={() => setViewMode('mdx')}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                  viewMode === 'mdx'
+                    ? 'bg-primary text-primary-foreground shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title="Rendered MDX Document with Syntax Highlighting"
+              >
+                <Eye className="h-3.5 w-3.5" />
+                <span>Preview</span>
+              </button>
+              <button
+                onClick={() => setViewMode('raw')}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                  viewMode === 'raw'
+                    ? 'bg-primary text-primary-foreground shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title="Raw Markdown Code"
+              >
+                <Code className="h-3.5 w-3.5" />
+                <span>Raw</span>
+              </button>
+            </div>
+
+            {/* Copy Raw Markdown */}
+            <button
+              onClick={() => handleCopy(currentTabDef.filename, activeContent)}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
+            >
+              {copiedTab === currentTabDef.filename ? (
+                <>
+                  <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span className="text-emerald-600 dark:text-emerald-400">Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span>Copy Markdown</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
 
             {/* Markdown Document Content Area */}
             <div className="p-6 overflow-x-auto max-h-[700px] overflow-y-auto">
@@ -329,6 +303,5 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
             )}
           </div>
         </div>
-      </div>
   );
 }

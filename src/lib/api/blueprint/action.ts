@@ -29,10 +29,22 @@ export const deleteBlueprintAction = async (id: string) => {
 };
 
 export const rateBlueprintAction = async (id: string, rating: number) => {
-  const res = await serverMutation(`/api/blueprints/${id}/rate`, 'POST', { rating });
-  revalidatePath(`/blueprints/${id}`);
-  revalidatePath('/blueprints');
-  return res;
+  try {
+    const res = await serverMutation(`/api/blueprints/${id}/rate`, 'POST', { rating });
+    revalidatePath(`/blueprints/${id}`);
+    revalidatePath('/blueprints');
+    return res;
+  } catch (error: any) {
+    return { success: false, error: error.message || 'Failed to submit rating' };
+  }
+};
+
+export const getUserRatingAction = async (id: string) => {
+  try {
+    return await serverMutation(`/api/blueprints/${id}/user-rating`, 'GET');
+  } catch {
+    return { hasRated: false, userRating: null };
+  }
 };
 
 export const incrementViewAction = async (id: string) => {
