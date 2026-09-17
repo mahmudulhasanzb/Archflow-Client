@@ -78,36 +78,26 @@ Client (Next.js 16) ──[HTTPS/WSS]──> Express 5 Gateway ──> MongoDB R
                                          └──> Redis Pub/Sub (Presence)
 
 ## 2. Directory Structure (ASCII)
-├── Archflow-Client/
+├── apps/web/
 │   ├── src/
-│   │   ├── app/
-│   │   │   ├── (mainLayout)/    # Public views (explore, docs, about)
-│   │   │   ├── (dashboard)/     # Workspace, generator, editor
-│   │   │   └── api/auth/        # Better Auth client bridge
-│   │   ├── components/          # Modular UI components (HeroUI/Tailwind)
-│   │   └── lib/                 # API fetchers & JWKS verify helpers
-└── Archflow-Server/
+│   │   ├── app/                 # Public views & workspace canvas
+│   │   ├── components/          # Canvas rendering & toolbar widgets
+│   │   └── lib/                 # Real-time WebSocket & state hooks
+└── apps/api/
     └── src/
-        └── index.ts             # Single-file Express 5 micro-gateway
+        └── server.ts            # High-performance gateway & sync engine
 
 ## 3. Data Models & Schemas
-Collection: blueprints
+Collection: canvases
 {
   "_id": ObjectId("..."),
   "title": "String (required, indexed)",
-  "authorEmail": "String (indexed)",
-  "techStack": ["Next.js", "MongoDB", "Express"],
-  "markdownFiles": {
-    "projectOverview": "String",
-    "requirements": "String",
-    "architecture": "String",
-    "design": "String",
-    "executionPlan": "String"
-  },
-  "metrics": { "views": 142, "downloads": 38, "rating": 4.9 },
-  "createdAt": ISODate("2026-09-17T12:00:00Z")
+  "ownerId": "String (indexed)",
+  "state": "Binary (CRDT)",
+  "metrics": { "views": 142, "editors": 8 },
+  "updatedAt": ISODate("2026-09-17T12:00:00Z")
 }
-Indexes: { title: "text" }, { authorEmail: 1 }, { "metrics.views": -1 }`,
+Indexes: { title: "text" }, { ownerId: 1 }`,
   },
   design: {
     name: 'design.md',
@@ -136,24 +126,24 @@ Indexes: { title: "text" }, { authorEmail: 1 }, { "metrics.views": -1 }`,
     content: `# Agentic Execution Plan
 
 ## Phase 1: Database Foundation & Auth Bridge
-- [ ] Task 1.1: Initialize MongoDB native connection pool in server
-  - File: Archflow-Server/src/index.ts
+- [ ] Task 1.1: Initialize connection pooling & health checks
+  - File: apps/api/src/server.ts
   - Verify: curl -f http://localhost:5000/api/health
-- [ ] Task 1.2: Configure Better Auth JWKS verification middleware
-  - File: Archflow-Server/src/middleware/auth.ts
+- [ ] Task 1.2: Configure cryptographic session token verification
+  - File: apps/api/src/auth.ts
   - Verify: npm test -- tests/auth.test.ts
 
-## Phase 2: Blueprint CRUD & Generator Services
-- [ ] Task 2.1: Implement parallel markdown file generator pipeline
-  - File: Archflow-Client/src/lib/api/blueprintGenerator.ts
-  - Verify: npx tsx scripts/test-generator.ts
-- [ ] Task 2.2: Add rating collection with unique (userId, blueprintId) constraint
-  - File: Archflow-Server/src/index.ts
-  - Verify: mongosh --eval "db.ratings.getIndexes()"
+## Phase 2: Real-time State & CRDT Engine
+- [ ] Task 2.1: Implement binary vector synchronization pipeline
+  - File: apps/web/src/engine/crdt.ts
+  - Verify: npm test -- tests/crdt.test.ts
+- [ ] Task 2.2: Add presence channel broadcast with rate limiting
+  - File: apps/api/src/server.ts
+  - Verify: npm test -- tests/presence.test.ts
 
-## Phase 3: Client Viewer & Workbench UI
-- [ ] Task 3.1: Build sticky tab navigation with full markdown renderer
-  - File: Archflow-Client/src/components/blueprint/BlueprintViewer.tsx
+## Phase 3: Interactive Canvas UI
+- [ ] Task 3.1: Build optimistic rendering canvas viewport
+  - File: apps/web/src/components/CanvasViewer.tsx
   - Verify: npx tsc --noEmit`,
   },
 };

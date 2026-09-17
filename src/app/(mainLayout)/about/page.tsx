@@ -1,135 +1,351 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, Cpu, Database, Shield, CheckCircle2, FileCode2, Sparkles } from 'lucide-react';
+import {
+  Sparkles,
+  ArrowRight,
+  Cpu,
+  Database,
+  ShieldCheck,
+  CheckCircle2,
+  FileCode2,
+  Terminal,
+  Workflow,
+  ExternalLink,
+  Code2,
+  Layers,
+  Palette,
+  ListTodo,
+} from 'lucide-react';
 
 export const metadata = {
-  title: 'About - Archflow',
-  description: 'Learn about Archflow, the autonomous architecture pipeline delivering production-grade Agentic-IDE specifications for modern developers.',
+  title: 'About - Archflow | Autonomous Architecture Engineering',
+  description:
+    'Learn how Archflow bridges human intent and AI coding assistants like Cursor and Claude Code through deterministic 5-file architecture suites. Built by Mahmudul Hasan.',
 };
+
+const STATS = [
+  { label: 'Deterministic Files', value: '5 Specs', hint: 'Overview, Req, Arch, Design, Plan' },
+  { label: 'Architecture Drift', value: '0%', hint: 'Unified contracts between client & server' },
+  { label: 'Vendor Lock-in', value: 'Zero', hint: '100% pure GitHub-flavored markdown' },
+  { label: 'Supported Agents', value: 'Universal', hint: 'Cursor, Claude Code, Windsurf, Antigravity' },
+];
+
+const PIPELINE_STEPS = [
+  {
+    step: '01',
+    title: 'Natural Language Requirements',
+    description:
+      'Describe your software concept in plain English. Specify your preferred tech stack (e.g. Next.js, Express, MongoDB) and any explicit scope exclusions.',
+    badge: 'Human Input',
+  },
+  {
+    step: '02',
+    title: 'Multi-Stage Architect Engine',
+    description:
+      'Archflow runs a structured LLM pipeline that synthesizes system design, ASCII folder trees, database schemas with indexes, and design tokens.',
+    badge: 'LLM Pipeline',
+  },
+  {
+    step: '03',
+    title: 'The 5-File Specification Contract',
+    description:
+      'Generates five cohesive markdown files: projectOverview.md, requirements.md, architecture.md, design.md, and executionPlan.md.',
+    badge: 'Spec Suite',
+  },
+  {
+    step: '04',
+    title: 'Agentic IDE Execution',
+    description:
+      'Unpack the suite (.zip) into your repository root. Prompt Cursor or Claude Code to execute step-by-step with automated verification commands.',
+    badge: 'Deterministic Code',
+  },
+];
+
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-background text-foreground py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-12">
-        
-        {/* Page Title & Intro */}
-        <div className="space-y-4 border-b border-border pb-8">
+      <div className="max-w-5xl mx-auto space-y-16">
+        {/* Hero Section */}
+        <div className="space-y-6 border-b border-border pb-12">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/60 px-3.5 py-1 text-xs font-semibold text-foreground">
             <Sparkles className="h-3.5 w-3.5" />
-            <span>Autonomous Architecture Engineering</span>
+            <span>Architecting for the Agentic AI Era</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold font-display text-foreground tracking-tight">
-            About Archflow
+          <h1 className="text-3xl sm:text-5xl font-extrabold font-display text-foreground tracking-tight leading-tight">
+            Bridging Human Intent & AI Coding Agents
           </h1>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-3xl">
-            Archflow is an AI-driven system architecture platform designed to transform software concepts into complete, production-ready specification suites for modern agentic IDEs like Cursor, Windsurf, and Claude Code.
+            Archflow is an autonomous architecture engine built to eliminate{' '}
+            <strong>architectural drift</strong>. Instead of prompting AI models
+            into messy spaghetti code, Archflow generates a deterministic 5-file
+            specification contract before a single line of code is written.
           </p>
+
+          {/* Stats Bar */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+            {STATS.map((stat, i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-border bg-card p-4 space-y-1 shadow-xs"
+              >
+                <span className="text-2xl font-extrabold font-display text-foreground block">
+                  {stat.value}
+                </span>
+                <span className="text-xs font-semibold text-foreground block">
+                  {stat.label}
+                </span>
+                <span className="text-[11px] text-muted-foreground block">
+                  {stat.hint}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Section 1: Our Mission */}
-        <section className="space-y-4">
-          <h2 className="text-2xl font-bold font-display text-foreground">
-            Our Mission
-          </h2>
-          <div className="space-y-4 text-muted-foreground leading-relaxed text-sm sm:text-base">
-            <p>
-              Starting modern full-stack software often involves dozens of tedious hours designing schemas, defining REST and WebSocket contracts, tuning indices, structuring folders, and writing task checklists.
-            </p>
-            <p>
-              Archflow was engineered to remove this friction. Instead of prompt-engineering AI models from scratch, Archflow runs a deterministic pipeline to produce an enterprise-grade 5-file specification bundle: <code className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-xs">PROJECT_SPEC.md</code>, <code className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-xs">ARCHITECTURE.md</code>, <code className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-xs">DATABASE.md</code>, <code className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-xs">API_SPEC.md</code>, and <code className="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono text-xs">TASKS.md</code>.
-            </p>
-          </div>
-        </section>
-
-        {/* Section 2: Core Capabilities */}
+        {/* Section 1: The Core Problem & The "Why" */}
         <section className="space-y-6">
-          <h2 className="text-2xl font-bold font-display text-foreground">
-            What We Deliver
-          </h2>
+          <div className="border-b border-border pb-4">
+            <h2 className="text-2xl font-bold font-display text-foreground">
+              The Problem: Why AI Agents Drift
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              AI pair programmers are exceptionally powerful, but suffer from
+              architectural amnesia without rigid constraints:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
+            <div className="p-6 rounded-2xl border border-border bg-card space-y-3">
+              <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold text-sm">
+                <span className="h-2 w-2 rounded-full bg-rose-500 shrink-0" />
+                <span>Without Architecture (Drift & Chaos)</span>
+              </div>
+              <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                <li>
+                  • Agents invent conflicting routes between client fetchers and
+                  backend endpoints.
+                </li>
+                <li>
+                  • Database schemas miss critical compound indexes, causing
+                  production bottlenecks.
+                </li>
+                <li>
+                  • Clashing port conventions, inconsistent design tokens, and
+                  unverified code stubs.
+                </li>
+                <li>
+                  • Developers spend more time debugging agent mistakes than
+                  writing real software.
+                </li>
+              </ul>
+            </div>
+
+            <div className="p-6 rounded-2xl border border-border bg-card space-y-3">
+              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+                <span>With Archflow (Deterministic Precision)</span>
+              </div>
+              <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                <li>
+                  • <strong>Exact Folder Trees:</strong> ASCII directory
+                  structures define file locations up front.
+                </li>
+                <li>
+                  • <strong>Locked Schemas & Endpoints:</strong> Verified
+                  MongoDB models and REST contracts.
+                </li>
+                <li>
+                  • <strong>Design System Tokens:</strong> Pre-calibrated color
+                  hex codes, font hierarchy, and responsive rules.
+                </li>
+                <li>
+                  • <strong>Automated Verification:</strong> Every task in
+                  executionPlan.md specifies an exact verify check.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 2: The 4-Stage Autonomous Pipeline */}
+        <section className="space-y-6">
+          <div className="border-b border-border pb-4">
+            <h2 className="text-2xl font-bold font-display text-foreground">
+              The 4-Stage Architecture Pipeline
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              How Archflow translates a single-paragraph idea into
+              production-grade agentic specifications:
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div className="p-5 rounded-2xl border border-border bg-card space-y-2">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-muted text-foreground">
-                  <Cpu className="h-5 w-5" />
+            {PIPELINE_STEPS.map(item => (
+              <div
+                key={item.step}
+                className="rounded-2xl border border-border bg-card p-6 space-y-3 shadow-xs hover:border-foreground/20 transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-muted-foreground">
+                    STAGE {item.step}
+                  </span>
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-muted border border-border text-foreground">
+                    {item.badge}
+                  </span>
                 </div>
-                <h3 className="font-bold text-base text-foreground">Distributed Topologies</h3>
+                <h3 className="text-base font-bold text-foreground">
+                  {item.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  {item.description}
+                </p>
               </div>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Clear component boundaries, gateway routing, caching layers, and real-time state synchronization architectures.
+            ))}
+          </div>
+        </section>
+
+        {/* Section 3: The 5 Specification Documents */}
+        <section className="space-y-6">
+          <div className="border-b border-border pb-4">
+            <h2 className="text-2xl font-bold font-display text-foreground">
+              The Output Suite
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Every Archflow generation delivers these five standardized
+              markdown files:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
+                <FileCode2 className="h-4 w-4 shrink-0" />
+                <span>projectOverview.md</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Master briefing file with executive summary, stack rationale,
+                .env variables, and port rules.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl border border-border bg-card space-y-2">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-muted text-foreground">
-                  <Database className="h-5 w-5" />
-                </div>
-                <h3 className="font-bold text-base text-foreground">Data Schemas & Indices</h3>
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
+                <ListTodo className="h-4 w-4 shrink-0" />
+                <span>requirements.md</span>
               </div>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Production MongoDB and PostgreSQL document models with compound indices and referential integrity rules.
+              <p className="text-xs text-muted-foreground">
+                User personas, core functional requirements, scope boundaries,
+                and acceptance criteria.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl border border-border bg-card space-y-2">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-muted text-foreground">
-                  <Shield className="h-5 w-5" />
-                </div>
-                <h3 className="font-bold text-base text-foreground">Stateless Security Contracts</h3>
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
+                <Layers className="h-4 w-4 shrink-0" />
+                <span>architecture.md</span>
               </div>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Better Auth integrations with JWKS public key verification to protect Express and Next.js microservices.
+              <p className="text-xs text-muted-foreground">
+                Component topology, ASCII folder layout, route maps, MongoDB
+                schemas, and API contracts.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl border border-border bg-card space-y-2">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-muted text-foreground">
-                  <FileCode2 className="h-5 w-5" />
-                </div>
-                <h3 className="font-bold text-base text-foreground">Phased Execution Roadmaps</h3>
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
+                <Palette className="h-4 w-4 shrink-0" />
+                <span>design.md</span>
               </div>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Step-by-step checklists categorized by foundation, core APIs, UI views, and verification testing.
+              <p className="text-xs text-muted-foreground">
+                Theme aesthetic, color hex tokens, typography scale, component
+                hierarchies, and responsive rules.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2 sm:col-span-2">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                <span>executionPlan.md</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Phased task roadmap designed for AI agents with deterministic
+                checkboxes (
+                <code className="font-mono bg-muted px-1 rounded">- [ ]</code>),
+                designated file paths, and automated verification checks.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Section 3: Core Values */}
-        <section className="space-y-4">
-          <h2 className="text-2xl font-bold font-display text-foreground">
-            Architectural Principles
-          </h2>
-          <ul className="space-y-3 text-sm text-muted-foreground">
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="h-4 w-4 text-foreground shrink-0 mt-1" />
-              <span><strong className="text-foreground">Production Standards:</strong> Every output follows enterprise standards for separation of concerns, strict type-safety, and minimal dependency overhead.</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="h-4 w-4 text-foreground shrink-0 mt-1" />
-              <span><strong className="text-foreground">Vendor Agnostic:</strong> Zero proprietary lock-in. Blueprints export as clean markdown, pure JSON schemas, and universal TypeScript signatures.</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <CheckCircle2 className="h-4 w-4 text-foreground shrink-0 mt-1" />
-              <span><strong className="text-foreground">Agentic-First:</strong> Designed specifically for AI pair programmers to read and write without hallucination or context window overflow.</span>
-            </li>
-          </ul>
+        {/* Section 5: Creator & Mission */}
+        <section className="rounded-2xl border border-border bg-card p-6 sm:p-8 space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                Engineering & Origin
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold font-display text-foreground">
+                Built by Mahmudul Hasan
+              </h2>
+            </div>
+            <div className="flex items-center gap-3">
+              <a
+                href="https://mahmudulhasan-dev.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-background hover:bg-muted text-foreground text-xs font-semibold transition-colors"
+              >
+                <span>Portfolio</span>
+                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+              </a>
+              <a
+                href="https://github.com/mahmudulhasanzb"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-background hover:bg-muted text-foreground text-xs font-semibold transition-colors"
+              >
+                <span>GitHub</span>
+                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+              </a>
+            </div>
+          </div>
+
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            Archflow was developed out of a real need when working daily with
+            agentic AI IDEs. When pair-programming on complex full-stack web
+            applications, having unambiguous architectural contracts before
+            coding saves hours of refactoring and prevents prompt exhaustion.
+            Archflow turns system design into a deterministic science.
+          </p>
         </section>
 
-        {/* Minimal Footer Navigation */}
-        <div className="pt-8 border-t border-border flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">Archflow Architecture Platform</span>
-          <Link
-            href="/blueprints"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-foreground hover:underline"
-          >
-            Explore Blueprints
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+        {/* CTA Card */}
+        <div className="pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h3 className="text-base font-bold text-foreground">
+              Ready to explore or build your first blueprint?
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              Browse community architectures or generate a complete 5-file
+              specification suite.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/docs"
+              className="px-4 py-2 text-xs font-semibold rounded-xl border border-border bg-card text-foreground hover:bg-muted transition-colors"
+            >
+              Read Docs
+            </Link>
+            <Link
+              href="/add-blueprint"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl bg-primary text-primary-foreground hover:opacity-90 shadow-xs transition-opacity"
+            >
+              <span>Build Blueprint</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
-
       </div>
     </div>
   );
