@@ -22,11 +22,11 @@ const siteUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Archflow — AI Multi-Agent Architecture Engine | From Idea to Blueprint',
+    default: 'Archflow — AI Software Architecture Engine',
     template: '%s | Archflow',
   },
   description:
-    'Archflow is an AI software architecture engine orchestrating multi-agent blueprint design. Translates software concepts into production-ready specifications for Cursor and Claude Code. Engineered by Mahmudul Hasan.',
+    'Generate production-ready software architecture blueprints and markdown spec suites for Cursor and Claude Code with AI.',
   applicationName: 'Archflow',
   authors: [
     {
@@ -77,23 +77,23 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: siteUrl,
     siteName: 'Archflow',
-    title: 'Archflow — AI Multi-Agent Architecture Engine',
+    title: 'Archflow — AI Software Architecture Engine',
     description:
-      'Orchestrate 4 specialized AI agents to generate production-ready software architecture specs, database schemas, and design systems. Engineered by Mahmudul Hasan.',
+      'Turn ideas into production-ready software architecture blueprints and spec suites for AI IDEs.',
     images: [
       {
         url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: 'Archflow — AI Multi-Agent Architecture Engine Engineered by Mahmudul Hasan',
+        alt: 'Archflow — AI Multi-Agent Architecture Engine',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Archflow — AI Multi-Agent Architecture Engine',
+    title: 'Archflow — AI Software Architecture Engine',
     description:
-      'Translating natural language software concepts into production-ready 5-file architecture suites. Engineered by Mahmudul Hasan.',
+      'Turn ideas into production-ready software architecture blueprints and spec suites for AI IDEs.',
     creator: '@mahmudulhasanzb',
     images: [`${siteUrl}/og-image.png`],
   },
