@@ -266,7 +266,7 @@ export default function Navbar() {
                                 : 'bg-muted text-muted-foreground border-border'
                             }`}
                           >
-                            {isPro ? 'Pro Developer' : 'Free Tier'}
+                            {isPro ? 'Pro' : 'Free'}
                           </span>
                         </div>
                       </div>

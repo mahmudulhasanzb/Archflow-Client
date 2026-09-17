@@ -12,8 +12,8 @@ import {
   Bookmark,
   Sparkles,
 } from 'lucide-react';
-import BlueprintCard from '@/components/BlueprintCard';
-import PaginationControls from '@/components/Pagination';
+import BlueprintCard from '@/components/blueprint/BlueprintCard';
+import PaginationControls from '@/components/ui/Pagination';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { authClient } from '@/lib/auth-client';
 import { getUserBookmarksAction } from '@/lib/api/blueprint/action';

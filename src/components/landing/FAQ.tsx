@@ -16,7 +16,7 @@ const FAQS = [
   },
   {
     q: 'Can I bring my own LLM API keys?',
-    a: 'Yes! Developer Pro users can connect custom API keys for OpenAI, Anthropic Claude, or Google Gemini to tune agent model sizes and token limits.',
+    a: 'Yes! Pro users can connect custom API keys for OpenAI, Anthropic Claude, or Google Gemini to tune agent model sizes and token limits.',
     icon: Shield,
   },
   {

@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   PlusCircle,
   FolderHeart,
-  Activity,
   ChevronDown,
   LogOut,
   User,
@@ -107,21 +106,15 @@ export default function DashboardSidebar() {
     (user as any)?.role?.toLowerCase() === 'admin' ||
     (user as any)?.plan?.toLowerCase() === 'pro';
 
-  const roleLabel = isPro ? 'Pro Developer' : 'Free Tier';
+  const roleLabel = isPro ? 'Pro' : 'Free';
 
   return (
     <>
       {/* Mobile Top Bar */}
       <div className="md:hidden fixed top-0 inset-x-0 h-16 bg-card/95 backdrop-blur-md border-b border-border z-30 px-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground text-background">
-            <Activity className="h-4 w-4" />
-          </div>
-          <span className="text-foreground font-extrabold text-base tracking-wider font-display">
+        <Link href="/" className="inline-flex items-center">
+          <span className="text-foreground font-black text-lg tracking-tight font-display">
             ARCHFLOW
-          </span>
-          <span className="text-[9px] font-black uppercase tracking-widest bg-muted text-foreground px-1.5 py-0.5 rounded border border-border">
-            Studio
           </span>
         </Link>
         <button
@@ -152,15 +145,9 @@ export default function DashboardSidebar() {
       <div>
         {/* Brand Header */}
         <div className="h-16 md:h-20 border-b border-border flex items-center px-6">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-foreground text-background border border-border group-hover:scale-105 transition-transform duration-200">
-              <Activity className="h-5 w-5" />
-            </div>
-            <span className="text-foreground font-extrabold text-xl tracking-wider select-none font-display">
+          <Link href="/" className="inline-flex items-center group">
+            <span className="text-foreground font-black text-xl tracking-tight select-none font-display group-hover:opacity-80 transition-opacity">
               ARCHFLOW
-            </span>
-            <span className="text-[10px] font-black uppercase tracking-widest bg-muted text-foreground px-2 py-0.5 rounded border border-border">
-              Studio
             </span>
           </Link>
         </div>

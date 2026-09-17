@@ -155,12 +155,12 @@ export default function WorkspacePage() {
           {isPro ? (
             <div className="inline-flex items-center gap-1.5 rounded-full bg-muted border border-border px-3.5 py-1.5 text-xs font-bold text-foreground uppercase tracking-wider">
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              Pro Developer Active
+              Pro Active
             </div>
           ) : (
             <div className="flex items-center gap-2">
               <div className="inline-flex items-center gap-1.5 rounded-full bg-muted border border-border px-3 py-1 text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Free Tier
+                Free
               </div>
               <Link
                 href="/#pricing"

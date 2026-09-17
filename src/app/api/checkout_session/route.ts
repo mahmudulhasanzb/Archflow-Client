@@ -12,6 +12,18 @@ export async function POST(req: Request) {
     const userSession = await auth.api.getSession({ headers: headersList });
     const email = userSession?.user?.email;
 
+    // Parse request body for billing interval (month vs year)
+    const body = await req.json().catch(() => ({}));
+    const interval = body?.interval === 'year' ? 'year' : 'month';
+    const isYearly = interval === 'year';
+
+    // Pricing: $29/mo (monthly) vs $24/mo billed annually ($288/yr)
+    const unitAmount = isYearly ? 28800 : 2900;
+    const planName = isYearly ? 'Archflow Pro (Annual)' : 'Archflow Pro (Monthly)';
+    const planDescription = isYearly
+      ? 'Annual billing ($24/month billed $288/year). Access to AI Architecture Engine, 10 daily blueprints, and private workspaces.'
+      : 'Monthly billing ($29/month). Access to AI Architecture Engine, 10 daily blueprints, and private workspaces.';
+
     // Create Checkout Session matching FitPulse pattern
     const session = await stripe.checkout.sessions.create({
       customer_email: email,
@@ -20,11 +32,11 @@ export async function POST(req: Request) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'Archflow Pro Subscription',
-              description: 'Access to AI Multi-Agent Architecture Engine, 10 daily blueprints, and full Markdown suite exports.',
+              name: planName,
+              description: planDescription,
             },
-            unit_amount: 1400, // $14.00/month
-            recurring: { interval: 'month' },
+            unit_amount: unitAmount,
+            recurring: { interval },
           },
           quantity: 1,
         },

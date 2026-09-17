@@ -14,7 +14,7 @@ import {
   LogIn,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import SpotlightCard from './ui/SpotlightCard';
+import SpotlightCard from '@/components/ui/SpotlightCard';
 import {
   incrementViewAction,
   toggleBookmarkAction,

@@ -39,6 +39,9 @@ export default function Pricing() {
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          interval: isAnnual ? 'year' : 'month',
+        }),
       });
 
       const data = await res.json();
@@ -161,7 +164,7 @@ export default function Pricing() {
           </Link>
         </div>
 
-        {/* Pro Developer Tier */}
+        {/* Pro Tier */}
         <div className="relative group">
           {/* Ambient Glow */}
           <div className="absolute -inset-[1px] bg-gradient-to-b from-primary/40 to-primary/0 rounded-[1.2rem] blur-[2px] opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
@@ -177,7 +180,7 @@ export default function Pricing() {
               <div className="pb-6 border-b border-border/50 space-y-6 pt-1">
                 <div>
                   <h3 className="text-xl font-bold text-foreground font-display">
-                    Developer Pro
+                    Pro
                   </h3>
                   <p className="text-xs text-muted-foreground mt-1">
                     For engineering leads, consultants, and scale-ups.

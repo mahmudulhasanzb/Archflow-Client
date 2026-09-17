@@ -3,7 +3,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import MdxLayout from '@/components/layouts/mdx/MdxLayout';
+import MdxLayout from '@/components/layout/MdxLayout';
 
 interface MdxRendererProps {
   content: string;

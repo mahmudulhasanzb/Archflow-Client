@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Sliders,
   Shield,
+  Sparkles,
 } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 
@@ -105,6 +106,18 @@ export default function EditModal({
     }
   }, [blueprint, isOpen]);
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   if (!isOpen || !blueprint) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -157,12 +170,12 @@ export default function EditModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"
         onClick={onClose}
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-4xl max-h-[90vh] flex flex-col transform rounded-2xl border border-border bg-card shadow-2xl transition-all z-10 overflow-hidden">
+      <div className="relative w-full max-w-4xl max-h-[90vh] flex flex-col transform rounded-2xl border border-border bg-card shadow-2xl transition-all z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Modal Header */}
         <div className="flex items-center justify-between p-5 border-b border-border bg-muted/40">
           <div>
@@ -170,8 +183,9 @@ export default function EditModal({
               <h3 className="text-base font-bold text-foreground font-display">
                 Edit Architecture Blueprint
               </h3>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-muted text-foreground border border-border">
-                PRO FEATURE
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                <Sparkles className="h-3 w-3 text-primary" />
+                Pro
               </span>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">

@@ -1,5 +1,5 @@
 import React from 'react';
-import FilterBlueprints from '@/components/explore/FilterBlueprints';
+import FilterBlueprints from '@/components/blueprint/FilterBlueprints';
 import { baseURL } from '@/lib/api/baseUrl';
 
 export const dynamic = 'force-dynamic';

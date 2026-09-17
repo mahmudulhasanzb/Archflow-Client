@@ -219,6 +219,7 @@ export default function AddBlueprintPage() {
       const res = await fetch('/api/checkout_session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ interval: 'month' }),
       });
       const data = await res.json();
       if (data.url) {
@@ -461,7 +462,7 @@ export default function AddBlueprintPage() {
                     ) : (
                       <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
                     )}
-                    {quota.isPro ? 'Developer Pro' : 'Free Tier'}
+                    {quota.isPro ? 'Pro' : 'Free'}
                   </span>
                   <span className="font-bold text-foreground text-[11px]">
                     {quota.remaining} of {quota.max} left
@@ -513,7 +514,7 @@ export default function AddBlueprintPage() {
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
               You have created {quota.count} of {quota.max} blueprints allowed
-              on the Free plan. Upgrade to Developer Pro for 10 daily blueprints
+              on the Free plan. Upgrade to Pro for 10 daily blueprints
               and private workspaces.
             </p>
           </div>

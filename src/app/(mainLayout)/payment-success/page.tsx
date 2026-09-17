@@ -116,7 +116,7 @@ export default async function PaymentSuccessPage({
             Payment Successful!
           </h1>
           <p className="text-muted-foreground text-sm mt-1.5">
-            Welcome to Developer Pro. Your account {customerEmail ? <span className="font-semibold text-foreground">({customerEmail})</span> : ''} is fully upgraded.
+            Welcome to Pro. Your account {customerEmail ? <span className="font-semibold text-foreground">({customerEmail})</span> : ''} is fully upgraded.
           </p>
         </div>
 

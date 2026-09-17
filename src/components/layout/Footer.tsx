@@ -68,7 +68,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="https://github.com"
+                  href="https://github.com/mahmudulhasanzb"
                   target="_blank"
                   className="hover:text-foreground transition-colors"
                 >
