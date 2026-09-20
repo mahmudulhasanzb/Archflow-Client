@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Users,
   CreditCard,
+  Layers,
 } from 'lucide-react';
 import Image from 'next/image';
 import { authClient } from '@/lib/auth-client';
@@ -25,7 +26,7 @@ import toast from 'react-hot-toast';
 const menuItems = [
   { label: 'Overview', href: '/workspace', icon: LayoutDashboard },
   { label: 'New Blueprint', href: '/add-blueprint', icon: PlusCircle },
-  { label: 'My Blueprints', href: '/manage-blueprints', icon: FolderHeart },
+  { label: 'My Blueprints', href: '/my-blueprints', icon: FolderHeart },
   { label: 'Explore Gallery', href: '/blueprints', icon: Compass },
 ];
 
@@ -115,6 +116,7 @@ export default function DashboardSidebar() {
 
   const adminMenuItems = [
     { label: 'User Control', href: '/admin/users', icon: Users },
+    { label: 'Manage Blueprints', href: '/manage-blueprints', icon: Layers },
     { label: 'Transactions', href: '/admin/transactions', icon: CreditCard },
   ];
 
@@ -287,6 +289,14 @@ export default function DashboardSidebar() {
                     >
                       <CreditCard className="h-3.5 w-3.5 text-primary" />
                       <span>Transactions</span>
+                    </Link>
+                    <Link
+                      href="/manage-blueprints"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-primary hover:bg-muted transition-all duration-200"
+                      onClick={() => setIsUserDropdownOpen(false)}
+                    >
+                      <Layers className="h-3.5 w-3.5 text-primary" />
+                      <span>Manage Blueprints</span>
                     </Link>
                   </>
                 )}

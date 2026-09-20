@@ -7,7 +7,7 @@ export const createBlueprintAction = async (data: any) => {
   const res = await serverMutation('/api/blueprints', 'POST', data);
   revalidatePath('/workspace');
   revalidatePath('/blueprints');
-  revalidatePath('/manage-blueprints');
+  revalidatePath('/my-blueprints');
   return res;
 };
 
@@ -16,7 +16,7 @@ export const updateBlueprintAction = async (id: string, data: any) => {
   revalidatePath('/workspace');
   revalidatePath('/blueprints');
   revalidatePath(`/blueprints/${id}`);
-  revalidatePath('/manage-blueprints');
+  revalidatePath('/my-blueprints');
   return res;
 };
 
@@ -24,7 +24,7 @@ export const deleteBlueprintAction = async (id: string) => {
   const res = await deleteMutation(`/api/my-blueprints/${id}`);
   revalidatePath('/workspace');
   revalidatePath('/blueprints');
-  revalidatePath('/manage-blueprints');
+  revalidatePath('/my-blueprints');
   return res;
 };
 

@@ -9,6 +9,7 @@ export async function proxy(request: NextRequest) {
   const isProtectedRoute =
     pathname.startsWith('/workspace') ||
     pathname.startsWith('/add-blueprint') ||
+    pathname.startsWith('/my-blueprints') ||
     pathname.startsWith('/manage-blueprints');
 
   const isAuthRoute = pathname === '/signin' || pathname === '/signup';
@@ -59,6 +60,8 @@ export const config = {
     '/workspace',
     '/workspace/:path*',
     '/add-blueprint',
+    '/my-blueprints',
+    '/my-blueprints/:path*',
     '/manage-blueprints',
     '/signin',
     '/signup',

@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { serverMutation } from '../mutation';
+import { serverMutation, deleteMutation } from '../mutation';
 
 export const toggleUserBlockAction = async (userId: string, isBlocked: boolean) => {
   try {
@@ -22,3 +22,32 @@ export const updateUserRoleAction = async (userId: string, role: 'free' | 'pro')
     return { success: false, error: error.message || 'Failed to update user role' };
   }
 };
+
+export const toggleAdminBlueprintVisibilityAction = async (
+  blueprintId: string,
+  visibility: 'public' | 'private'
+) => {
+  try {
+    const res = await serverMutation(`/api/admin/blueprints/${blueprintId}/visibility`, 'PATCH', {
+      visibility,
+    });
+    revalidatePath('/manage-blueprints');
+    revalidatePath('/blueprints');
+    return res;
+  } catch (error: any) {
+    return { success: false, error: error.message || 'Failed to update blueprint visibility' };
+  }
+};
+
+export const deleteAdminBlueprintAction = async (blueprintId: string) => {
+  try {
+    const res = await deleteMutation(`/api/admin/blueprints/${blueprintId}`);
+    revalidatePath('/manage-blueprints');
+    revalidatePath('/blueprints');
+    return res;
+  } catch (error: any) {
+    return { success: false, error: error.message || 'Failed to delete blueprint' };
+  }
+};
+
+
