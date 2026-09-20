@@ -29,6 +29,7 @@ import {
   ListTodo,
   Zap,
   ArrowRight,
+  Ban,
 } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 
@@ -297,6 +298,10 @@ export default function AddBlueprintPage() {
     }
 
     if (quota && !quota.canGenerate) {
+      if ((quota as any).isBlocked) {
+        toast.error((quota as any).message || 'Your blueprint generation access has been restricted by an administrator.');
+        return;
+      }
       toast.error(
         `Blueprint limit reached (${quota.count}/${quota.max}). Upgrade to Pro to continue.`,
       );
@@ -451,6 +456,11 @@ export default function AddBlueprintPage() {
           {loadingQuota ? (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Loader2 className="h-3.5 w-3.5 animate-spin" /> Checking quota...
+            </div>
+          ) : (quota as any)?.isBlocked ? (
+            <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-500 text-xs font-semibold shadow-2xs">
+              <Ban className="h-4 w-4 shrink-0" />
+              <span>Generation Restricted by Admin</span>
             </div>
           ) : quota ? (
             <div className="flex items-center gap-3">

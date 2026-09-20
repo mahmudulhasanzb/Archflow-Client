@@ -14,6 +14,9 @@ import {
   Home,
   Menu,
   X,
+  ShieldCheck,
+  Users,
+  CreditCard,
 } from 'lucide-react';
 import Image from 'next/image';
 import { authClient } from '@/lib/auth-client';
@@ -101,12 +104,19 @@ export default function DashboardSidebar() {
     }
   };
 
+  const isAdmin = (user as any)?.role?.toLowerCase() === 'admin';
+
   const isPro =
     (user as any)?.role?.toLowerCase() === 'pro' ||
-    (user as any)?.role?.toLowerCase() === 'admin' ||
+    isAdmin ||
     (user as any)?.plan?.toLowerCase() === 'pro';
 
-  const roleLabel = isPro ? 'Pro' : 'Free';
+  const roleLabel = isAdmin ? 'Admin' : isPro ? 'Pro' : 'Free';
+
+  const adminMenuItems = [
+    { label: 'User Control', href: '/admin/users', icon: Users },
+    { label: 'Transactions', href: '/admin/transactions', icon: CreditCard },
+  ];
 
   return (
     <>
@@ -185,6 +195,43 @@ export default function DashboardSidebar() {
               </Link>
             );
           })}
+
+          {isAdmin && (
+            <>
+              <div className="text-[10px] font-bold text-primary uppercase tracking-widest px-3 mt-5 mb-2 flex items-center gap-1.5">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span>Admin Console</span>
+              </div>
+              {adminMenuItems.map((item, index) => {
+                const IconComponent = item.icon;
+                const active = pathname === item.href || pathname.startsWith(item.href);
+
+                return (
+                  <Link
+                    key={`admin-${index}`}
+                    href={item.href}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-semibold transition-all duration-200 group border ${
+                      active
+                        ? 'bg-muted border-border text-foreground'
+                        : 'bg-transparent border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                    }`}
+                  >
+                    <IconComponent
+                      className={`h-4.5 w-4.5 transition-colors duration-200 ${
+                        active
+                          ? 'text-primary'
+                          : 'text-muted-foreground group-hover:text-foreground'
+                      }`}
+                    />
+                    <span>{item.label}</span>
+                    {active && (
+                      <span className="ml-auto w-1.5 h-1.5 bg-primary rounded-full" />
+                    )}
+                  </Link>
+                );
+              })}
+            </>
+          )}
         </nav>
       </div>
 
@@ -223,6 +270,26 @@ export default function DashboardSidebar() {
                   <Compass className="h-3.5 w-3.5 text-foreground" />
                   <span>Explore Blueprints</span>
                 </Link>
+                {isAdmin && (
+                  <>
+                    <Link
+                      href="/admin/users"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-primary hover:bg-muted transition-all duration-200"
+                      onClick={() => setIsUserDropdownOpen(false)}
+                    >
+                      <Users className="h-3.5 w-3.5 text-primary" />
+                      <span>User Control</span>
+                    </Link>
+                    <Link
+                      href="/admin/transactions"
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-primary hover:bg-muted transition-all duration-200"
+                      onClick={() => setIsUserDropdownOpen(false)}
+                    >
+                      <CreditCard className="h-3.5 w-3.5 text-primary" />
+                      <span>Transactions</span>
+                    </Link>
+                  </>
+                )}
                 <div className="border-t border-border pt-1 mt-1">
                   <button
                     onClick={handleSignOut}
