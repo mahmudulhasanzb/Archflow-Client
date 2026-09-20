@@ -11,15 +11,18 @@ import {
   CheckCircle2,
   Sliders,
   Shield,
+  ShieldCheck,
   Sparkles,
 } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 
 interface MarkdownFiles {
   projectOverview?: string;
+  prd?: string;
   requirements?: string;
   architecture?: string;
   design?: string;
+  rules?: string;
   executionPlan?: string;
 }
 
@@ -47,9 +50,10 @@ interface EditModalProps {
 type TabType =
   | 'metadata'
   | 'overview'
-  | 'requirements'
+  | 'prd'
   | 'architecture'
   | 'design'
+  | 'rules'
   | 'plan';
 
 export default function EditModal({
@@ -72,9 +76,10 @@ export default function EditModal({
 
   // Markdown files content
   const [projectOverview, setProjectOverview] = useState('');
-  const [requirements, setRequirements] = useState('');
+  const [prd, setPrd] = useState('');
   const [architecture, setArchitecture] = useState('');
   const [design, setDesign] = useState('');
+  const [rules, setRules] = useState('');
   const [executionPlan, setExecutionPlan] = useState('');
 
   useEffect(() => {
@@ -98,9 +103,10 @@ export default function EditModal({
 
       const mf = blueprint.markdownFiles || {};
       setProjectOverview(mf.projectOverview || '');
-      setRequirements(mf.requirements || '');
+      setPrd(mf.prd || mf.requirements || '');
       setArchitecture(mf.architecture || '');
       setDesign(mf.design || '');
+      setRules(mf.rules || '');
       setExecutionPlan(mf.executionPlan || '');
       setActiveTab('metadata');
     }
@@ -132,9 +138,11 @@ export default function EditModal({
 
     const updatedMarkdownFiles: MarkdownFiles = {
       projectOverview,
-      requirements,
+      prd,
+      requirements: prd,
       architecture,
       design,
+      rules,
       executionPlan,
     };
 
@@ -160,9 +168,10 @@ export default function EditModal({
   }[] = [
     { id: 'metadata', label: 'General & Specs', icon: Sliders },
     { id: 'overview', label: 'Overview.md', icon: FileText },
-    { id: 'requirements', label: 'Requirements.md', icon: ListTodo },
+    { id: 'prd', label: 'PRD.md', icon: ListTodo },
     { id: 'architecture', label: 'Architecture.md', icon: Code2 },
     { id: 'design', label: 'Design.md', icon: Palette },
+    { id: 'rules', label: 'Rules.md', icon: ShieldCheck },
     { id: 'plan', label: 'ExecutionPlan.md', icon: CheckCircle2 },
   ];
 
@@ -374,12 +383,12 @@ export default function EditModal({
               </div>
             )}
 
-            {/* TAB 3: requirements.md */}
-            {activeTab === 'requirements' && (
+            {/* TAB 3: PRD.md */}
+            {activeTab === 'prd' && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-mono font-bold text-foreground">
-                    requirements.md Content
+                    PRD.md Content
                   </label>
                   <span className="text-[11px] text-muted-foreground">
                     Markdown format
@@ -387,9 +396,9 @@ export default function EditModal({
                 </div>
                 <textarea
                   rows={14}
-                  value={requirements}
-                  onChange={e => setRequirements(e.target.value)}
-                  placeholder="# Requirements..."
+                  value={prd}
+                  onChange={e => setPrd(e.target.value)}
+                  placeholder="# Product Requirements Document (PRD)..."
                   className="w-full font-mono text-xs rounded-xl border border-border p-4 focus:border-foreground focus:outline-none bg-background text-foreground leading-relaxed"
                   disabled={loading}
                 />
@@ -440,7 +449,29 @@ export default function EditModal({
               </div>
             )}
 
-            {/* TAB 6: executionPlan.md */}
+            {/* TAB 6: rules.md */}
+            {activeTab === 'rules' && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-mono font-bold text-foreground">
+                    rules.md Content
+                  </label>
+                  <span className="text-[11px] text-muted-foreground">
+                    Markdown format
+                  </span>
+                </div>
+                <textarea
+                  rows={14}
+                  value={rules}
+                  onChange={e => setRules(e.target.value)}
+                  placeholder="# AI Coding Rules & Operational Guardrails..."
+                  className="w-full font-mono text-xs rounded-xl border border-border p-4 focus:border-foreground focus:outline-none bg-background text-foreground leading-relaxed"
+                  disabled={loading}
+                />
+              </div>
+            )}
+
+            {/* TAB 7: executionPlan.md */}
             {activeTab === 'plan' && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">

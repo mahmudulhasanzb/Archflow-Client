@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { authClient } from '@/lib/auth-client';
 import { getAdminUsers, AdminUser, UserRouteStats } from '@/lib/api/admin/data';
+import { PageHeaderSkeleton, StatsSkeleton, TableSkeleton } from '@/components/ui/skeletons';
 import {
   toggleUserBlockAction,
   updateUserRoleAction,
@@ -12,6 +13,8 @@ import {
 import UserStats from '@/components/admin/UserStats';
 import UserFilters from '@/components/admin/UserFilters';
 import UserTable from '@/components/admin/UserTable';
+import RoleChangeModal from '@/components/admin/RoleChangeModal';
+import PlanChangeModal from '@/components/admin/PlanChangeModal';
 import PaginationControls from '@/components/ui/Pagination';
 
 export default function AdminUsersPage() {
@@ -25,6 +28,18 @@ export default function AdminUsersPage() {
   const [totalUsers, setTotalUsers] = useState(0);
   const [stats, setStats] = useState<UserRouteStats | undefined>(undefined);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+
+  // Role confirmation modal state (Admin ↔ User)
+  const [roleModalUser, setRoleModalUser] = useState<AdminUser | null>(null);
+  const [roleModalTarget, setRoleModalTarget] = useState<'admin' | 'user'>('admin');
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const [roleModalLoading, setRoleModalLoading] = useState(false);
+
+  // Plan confirmation modal state (Free ↔ Pro)
+  const [planModalUser, setPlanModalUser] = useState<AdminUser | null>(null);
+  const [planModalTarget, setPlanModalTarget] = useState<'free' | 'pro'>('free');
+  const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+  const [planModalLoading, setPlanModalLoading] = useState(false);
 
   // Read state directly from URL query parameters
   const search = searchParams?.get('search') || '';
@@ -117,56 +132,125 @@ export default function AdminUsersPage() {
     }
   };
 
-  // Handle role toggle (Free ↔ Pro)
-  const handleToggleRole = async (user: AdminUser) => {
-    const nextRole = user.role === 'pro' ? 'free' : 'pro';
-    setActionLoadingId(user._id);
+  // Open plan change confirmation modal
+  const handleOpenPlanModal = (user: AdminUser) => {
+    const nextPlan = user.role === 'pro' || user.plan === 'pro' ? 'free' : 'pro';
+    setPlanModalUser(user);
+    setPlanModalTarget(nextPlan);
+    setIsPlanModalOpen(true);
+  };
+
+  const handleClosePlanModal = () => {
+    if (!planModalLoading) {
+      setIsPlanModalOpen(false);
+      setPlanModalUser(null);
+    }
+  };
+
+  // Execute confirmed plan change (Free ↔ Pro)
+  const handleConfirmPlanChange = async () => {
+    if (!planModalUser) return;
+    setPlanModalLoading(true);
     const toastId = toast.loading(
-      `Changing ${user.email} plan to ${nextRole.toUpperCase()}...`
+      `Changing ${planModalUser.email} plan to ${planModalTarget.toUpperCase()}...`
     );
 
     try {
-      const result = await updateUserRoleAction(user._id, nextRole as 'free' | 'pro');
+      const result = await updateUserRoleAction(planModalUser._id, planModalTarget);
       if (result.success) {
-        toast.success(`Plan updated to ${nextRole.toUpperCase()}`, { id: toastId });
+        toast.success(`Plan updated to ${planModalTarget.toUpperCase()}`, { id: toastId });
         setUsers(prev =>
           prev.map(u =>
-            u._id === user._id
-              ? { ...u, role: nextRole, plan: nextRole }
+            u._id === planModalUser._id
+              ? { ...u, role: planModalTarget, plan: planModalTarget }
               : u
           )
         );
         // Dynamically update stats count
         setStats(prev => {
           if (!prev) return undefined;
-          const isNextPro = nextRole === 'pro';
+          const isNextPro = planModalTarget === 'pro';
           return {
             ...prev,
             proUsers: isNextPro ? prev.proUsers + 1 : Math.max(0, prev.proUsers - 1),
             freeUsers: isNextPro ? Math.max(0, prev.freeUsers - 1) : prev.freeUsers + 1,
           };
         });
+        setIsPlanModalOpen(false);
+        setPlanModalUser(null);
       } else {
         toast.error(result.error || 'Failed to update plan', { id: toastId });
       }
     } catch (err: any) {
       toast.error(err.message || 'Network error updating plan', { id: toastId });
     } finally {
-      setActionLoadingId(null);
+      setPlanModalLoading(false);
+    }
+  };
+
+  // Open role change confirmation modal (Admin ↔ User)
+  const handleOpenRoleModal = (user: AdminUser, targetRole: 'admin' | 'user') => {
+    setRoleModalUser(user);
+    setRoleModalTarget(targetRole);
+    setIsRoleModalOpen(true);
+  };
+
+  const handleCloseRoleModal = () => {
+    if (!roleModalLoading) {
+      setIsRoleModalOpen(false);
+      setRoleModalUser(null);
+    }
+  };
+
+  // Execute confirmed role change (Admin ↔ User)
+  const handleConfirmRoleChange = async () => {
+    if (!roleModalUser) return;
+    setRoleModalLoading(true);
+    const toastId = toast.loading(
+      roleModalTarget === 'admin'
+        ? `Promoting ${roleModalUser.email} to Administrator...`
+        : `Demoting ${roleModalUser.email} to Standard User...`
+    );
+
+    try {
+      const result = await updateUserRoleAction(roleModalUser._id, roleModalTarget);
+      if (result.success) {
+        toast.success(
+          result.message ||
+            (roleModalTarget === 'admin'
+              ? 'User successfully promoted to Administrator'
+              : 'Administrator privileges revoked'),
+          { id: toastId }
+        );
+        setUsers(prev =>
+          prev.map(u =>
+            u._id === roleModalUser._id
+              ? {
+                  ...u,
+                  role: roleModalTarget,
+                  plan: roleModalTarget === 'admin' ? u.plan : 'free',
+                }
+              : u
+          )
+        );
+        setIsRoleModalOpen(false);
+        setRoleModalUser(null);
+      } else {
+        toast.error(result.error || 'Failed to update user role', { id: toastId });
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Network error updating user role', { id: toastId });
+    } finally {
+      setRoleModalLoading(false);
     }
   };
 
   if (sessionPending || (!isAdmin && session?.user)) {
     return (
-      <div className="flex-1 p-6 md:p-8 space-y-6 animate-pulse">
-        <div className="h-8 w-64 bg-muted rounded-xl" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-28 bg-muted/60 rounded-2xl" />
-          ))}
-        </div>
-        <div className="h-12 bg-muted/60 rounded-2xl" />
-        <div className="h-96 bg-muted/40 rounded-2xl" />
+      <div className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 max-w-7xl mx-auto w-full">
+        <PageHeaderSkeleton />
+        <StatsSkeleton count={4} />
+        <TableSkeleton rows={8} cols={5} hasSearch />
       </div>
     );
   }
@@ -176,12 +260,14 @@ export default function AdminUsersPage() {
   return (
     <div className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 max-w-7xl mx-auto w-full">
       {/* Header */}
-      <div className="border-b border-border pb-5">
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">
+      <div className="pb-5 relative">
+        {/* Gradient border bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+        <h1 className="text-2xl font-bold text-foreground tracking-tight font-display">
           User Management
         </h1>
         <p className="text-xs text-muted-foreground mt-1">
-          Manage user permissions, toggle Free/Pro subscription tiers, and soft-block blueprint generation.
+          Manage user permissions, assign administrator roles, and soft-block blueprint generation.
         </p>
       </div>
 
@@ -196,8 +282,10 @@ export default function AdminUsersPage() {
         users={users}
         loading={loading}
         onToggleBlock={handleToggleBlock}
-        onToggleRole={handleToggleRole}
+        onToggleRole={handleOpenPlanModal}
+        onOpenRoleChangeModal={handleOpenRoleModal}
         actionLoadingId={actionLoadingId}
+        currentUserEmail={session?.user?.email}
       />
 
       {/* URL-driven Pagination */}
@@ -207,6 +295,26 @@ export default function AdminUsersPage() {
           totalPages={totalPages}
         />
       )}
+
+      {/* Confirmation Modal for Role Changes (Admin ↔ User) */}
+      <RoleChangeModal
+        isOpen={isRoleModalOpen}
+        onClose={handleCloseRoleModal}
+        onConfirm={handleConfirmRoleChange}
+        user={roleModalUser}
+        targetRole={roleModalTarget}
+        loading={roleModalLoading}
+      />
+
+      {/* Simple Confirmation Modal for Plan Changes (Free ↔ Pro) */}
+      <PlanChangeModal
+        isOpen={isPlanModalOpen}
+        onClose={handleClosePlanModal}
+        onConfirm={handleConfirmPlanChange}
+        user={planModalUser}
+        targetPlan={planModalTarget}
+        loading={planModalLoading}
+      />
     </div>
   );
 }

@@ -27,12 +27,15 @@ import {
 } from '@/lib/api/blueprint/data';
 import PaginationControls from '@/components/ui/Pagination';
 import CustomSelect from '@/components/ui/CustomSelect';
+import { PageHeaderSkeleton, TableSkeleton } from '@/components/ui/skeletons';
 
 interface MarkdownFiles {
   projectOverview?: string;
+  prd?: string;
   requirements?: string;
   architecture?: string;
   design?: string;
+  rules?: string;
   executionPlan?: string;
 }
 
@@ -231,11 +234,9 @@ export default function ManageBlueprintsPage() {
 
   if (sessionPending) {
     return (
-      <div className="flex-grow flex items-center justify-center p-8">
-        <div className="animate-pulse flex flex-col items-center gap-4">
-          <div className="h-8 w-32 bg-muted rounded"></div>
-          <div className="h-4 w-48 bg-muted rounded"></div>
-        </div>
+      <div className="flex-1 p-6 sm:p-8 max-w-7xl mx-auto w-full space-y-8">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={8} cols={5} hasSearch />
       </div>
     );
   }
@@ -361,25 +362,10 @@ export default function ManageBlueprintsPage() {
         </div>
       </div>
 
-      {/* Main List Table */}
-      <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
-        {loading ? (
-          /* Loading State */
-          <div className="p-8 space-y-4">
-            {[1, 2, 3].map(idx => (
-              <div
-                key={idx}
-                className="flex items-center justify-between py-4 border-b border-border last:border-0 animate-pulse"
-              >
-                <div className="space-y-2 flex-1">
-                  <div className="h-4 w-1/3 bg-muted rounded"></div>
-                  <div className="h-3 w-1/2 bg-muted rounded"></div>
-                </div>
-                <div className="h-8 w-24 bg-muted rounded"></div>
-              </div>
-            ))}
-          </div>
-        ) : processedBlueprints.length === 0 ? (
+      {/* Main List — loading shows table skeleton, data shows table */}
+      {loading ? (
+        <TableSkeleton rows={8} cols={5} />
+      ) : processedBlueprints.length === 0 ? (
           /* Empty State */
           <div className="p-16 text-center max-w-sm mx-auto space-y-4">
             <div className="mx-auto h-12 w-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
@@ -544,21 +530,19 @@ export default function ManageBlueprintsPage() {
               </tbody>
             </table>
 
-            {/* Pagination Controls */}
-            {Math.ceil(processedBlueprints.length / itemsPerPage) > 1 && (
-              <div className="p-4 border-t border-border">
-                <PaginationControls
-                  currentPage={currentPage}
-                  totalPages={Math.ceil(
-                    processedBlueprints.length / itemsPerPage,
-                  )}
-                  onPageChange={page => setCurrentPage(page)}
-                />
-              </div>
-            )}
           </div>
         )}
-      </div>
+
+      {/* Pagination Controls (outside the ternary, only shown with data) */}
+      {!loading && Math.ceil(processedBlueprints.length / itemsPerPage) > 1 && (
+        <div className="pt-2">
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={Math.ceil(processedBlueprints.length / itemsPerPage)}
+            onPageChange={page => setCurrentPage(page)}
+          />
+        </div>
+      )}
 
       {/* Edit Modal Component */}
       <EditModal

@@ -18,12 +18,14 @@ export default function TransactionStats({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {/* Total Amount (Gross Revenue) */}
-      <div className="p-5 bg-card rounded-2xl border border-border shadow-xs flex items-center justify-between gap-4">
-        <div>
+      <div className="p-5 bg-card rounded-2xl border border-border shadow-xs flex items-center justify-between gap-4 relative overflow-hidden">
+        {/* Subtle emerald ambient glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent pointer-events-none" />
+        <div className="relative">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Transaction Amount
           </span>
-          <div className="text-2xl sm:text-3xl font-extrabold text-emerald-500 font-display mt-1">
+          <div className="text-2xl sm:text-3xl font-extrabold text-emerald-500 font-display mt-1 tabular-nums">
             {loading ? (
               <span className="inline-block h-8 w-28 bg-muted/60 rounded animate-pulse" />
             ) : (
@@ -48,7 +50,7 @@ export default function TransactionStats({
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Total Orders
           </span>
-          <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-display mt-1">
+          <div className="text-2xl sm:text-3xl font-extrabold text-foreground font-display mt-1 tabular-nums">
             {loading ? (
               <span className="inline-block h-8 w-16 bg-muted/60 rounded animate-pulse" />
             ) : (

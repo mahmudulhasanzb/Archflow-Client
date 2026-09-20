@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Layers, ArrowUpDown, Ban, CheckCircle2 } from 'lucide-react';
+import { Layers, ArrowUpDown, Ban, CheckCircle2, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { AdminUser } from '@/lib/api/admin/data';
 
 interface UserTableProps {
@@ -9,7 +9,9 @@ interface UserTableProps {
   loading?: boolean;
   onToggleBlock: (user: AdminUser) => void;
   onToggleRole: (user: AdminUser) => void;
+  onOpenRoleChangeModal: (user: AdminUser, targetRole: 'admin' | 'user') => void;
   actionLoadingId: string | null;
+  currentUserEmail?: string;
 }
 
 export default function UserTable({
@@ -17,7 +19,9 @@ export default function UserTable({
   loading = false,
   onToggleBlock,
   onToggleRole,
+  onOpenRoleChangeModal,
   actionLoadingId,
+  currentUserEmail,
 }: UserTableProps) {
   return (
     <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-xs">
@@ -52,6 +56,9 @@ export default function UserTable({
               users.map(u => {
                 const isTargetLoading = actionLoadingId === u._id;
                 const isUserAdmin = u.role === 'admin';
+                const isSelf = currentUserEmail
+                  ? u.email.toLowerCase() === currentUserEmail.toLowerCase()
+                  : false;
 
                 return (
                   <tr
@@ -70,6 +77,11 @@ export default function UserTable({
                             {isUserAdmin && (
                               <span className="rounded bg-primary/20 px-1.5 py-0.2 text-[9px] font-mono text-primary font-bold">
                                 ADMIN
+                              </span>
+                            )}
+                            {isSelf && (
+                              <span className="rounded bg-muted px-1.5 py-0.2 text-[9px] font-mono text-muted-foreground font-medium border border-border">
+                                YOU
                               </span>
                             )}
                           </div>
@@ -135,11 +147,37 @@ export default function UserTable({
                     {/* Actions Column */}
                     <td className="py-3.5 px-4 text-right">
                       {isUserAdmin ? (
-                        <span className="text-[11px] text-muted-foreground italic">
-                          Protected Account
-                        </span>
+                        isSelf ? (
+                          <span className="inline-flex items-center px-2.5 py-1 text-[11px] text-muted-foreground font-mono bg-muted/40 rounded-lg border border-border/50">
+                            Current Account
+                          </span>
+                        ) : (
+                          <div className="inline-flex items-center justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => onOpenRoleChangeModal(u, 'user')}
+                              disabled={isTargetLoading}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer border border-amber-500/30 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 disabled:opacity-50"
+                              title="Revoke administrator privileges"
+                            >
+                              <ShieldAlert className="h-3.5 w-3.5" />
+                              <span>Demote to User</span>
+                            </button>
+                          </div>
+                        )
                       ) : (
-                        <div className="inline-flex items-center gap-2">
+                        <div className="inline-flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => onOpenRoleChangeModal(u, 'admin')}
+                            disabled={isTargetLoading}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 disabled:opacity-50"
+                            title="Promote to administrator"
+                          >
+                            <ShieldCheck className="h-3.5 w-3.5" />
+                            <span>Make Admin</span>
+                          </button>
+
                           <button
                             type="button"
                             onClick={() => onToggleBlock(u)}
@@ -148,12 +186,12 @@ export default function UserTable({
                               u.isGenerationBlocked
                                 ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30 hover:bg-emerald-500/20'
                                 : 'bg-rose-500/10 text-rose-500 border-rose-500/30 hover:bg-rose-500/20'
-                            }`}
+                            } disabled:opacity-50`}
                           >
                             {u.isGenerationBlocked ? (
                               <>
                                 <CheckCircle2 className="h-3.5 w-3.5" />
-                                <span>Unblock Generation</span>
+                                <span>Unblock</span>
                               </>
                             ) : (
                               <>

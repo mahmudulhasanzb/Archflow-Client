@@ -6,9 +6,10 @@ import { serverMutation } from '@/lib/api/mutation';
 import { getUserQuota } from '@/lib/api/blueprint/data';
 import {
   generateProjectOverview,
-  generateRequirements,
+  generatePRD,
   generateArchitecture,
   generateDesign,
+  generateRules,
   generateExecutionPlan,
   extractBlueprintMetadata,
   GeneratedBlueprintFiles,
@@ -164,8 +165,8 @@ export default function AddBlueprintPage() {
     },
     {
       id: 2,
-      name: 'System Requirements',
-      file: 'requirements.md',
+      name: 'Product Requirements (PRD)',
+      file: 'PRD.md',
       icon: ListTodo,
       status: 'waiting',
     },
@@ -185,6 +186,13 @@ export default function AddBlueprintPage() {
     },
     {
       id: 5,
+      name: 'Agent Rules & Guardrails',
+      file: 'rules.md',
+      icon: ShieldCheck,
+      status: 'waiting',
+    },
+    {
+      id: 6,
       name: 'Agentic Execution Plan',
       file: 'executionPlan.md',
       icon: CheckCircle2,
@@ -328,9 +336,9 @@ export default function AddBlueprintPage() {
       });
       updateStepStatus(1, 'completed');
 
-      // Step 2: Requirements Specification
+      // Step 2: PRD (Product Requirements Document)
       updateStepStatus(2, 'generating');
-      const requirements = await generateRequirements(
+      const prd = await generatePRD(
         { prompt, exclusions, complexity },
         projectOverview,
       );
@@ -341,7 +349,7 @@ export default function AddBlueprintPage() {
       const architecture = await generateArchitecture(
         { prompt, techStack },
         projectOverview,
-        requirements,
+        prd,
       );
       updateStepStatus(3, 'completed');
 
@@ -354,22 +362,34 @@ export default function AddBlueprintPage() {
       );
       updateStepStatus(4, 'completed');
 
-      // Step 5: Agentic Execution Plan
+      // Step 5: Agent Rules & Guardrails
       updateStepStatus(5, 'generating');
-      const executionPlan = await generateExecutionPlan(
-        { prompt, techStack, exclusions, complexity },
+      const rules = await generateRules(
+        { prompt, techStack, exclusions },
         projectOverview,
-        requirements,
         architecture,
-        design,
       );
       updateStepStatus(5, 'completed');
 
-      const markdownFiles: GeneratedBlueprintFiles = {
+      // Step 6: Agentic Execution Plan
+      updateStepStatus(6, 'generating');
+      const executionPlan = await generateExecutionPlan(
+        { prompt, techStack, exclusions, complexity },
         projectOverview,
-        requirements,
+        prd,
         architecture,
         design,
+        rules,
+      );
+      updateStepStatus(6, 'completed');
+
+      const markdownFiles: GeneratedBlueprintFiles = {
+        projectOverview,
+        prd,
+        requirements: prd, // Backwards compatibility for older viewers
+        architecture,
+        design,
+        rules,
         executionPlan,
       };
 
@@ -395,8 +415,8 @@ export default function AddBlueprintPage() {
             description: architecture.slice(0, 320) + '...',
           },
           features: {
-            title: 'Requirements & Scope',
-            description: requirements.slice(0, 320) + '...',
+            title: 'Product Requirements (PRD)',
+            description: prd.slice(0, 320) + '...',
           },
           plan: {
             title: 'Execution Roadmap',
@@ -445,8 +465,8 @@ export default function AddBlueprintPage() {
               <Sparkles className="h-3 w-3" /> MVP Generator
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Generate 5 deterministic, Agentic-IDE-ready markdown specifications
+          <p className="text-xs text-muted-foreground mt-1 max-w-2xl">
+            Generate 6 deterministic, Agentic-IDE-ready markdown specifications
             with checkable phased tasks.
           </p>
         </div>
@@ -819,7 +839,7 @@ export default function AddBlueprintPage() {
                 {isGenerating ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Generating 5-File Architecture Suite...
+                    Generating 6-File Architecture Suite...
                   </>
                 ) : quota && !quota.canGenerate ? (
                   <>
@@ -837,7 +857,7 @@ export default function AddBlueprintPage() {
           </div>
         </form>
 
-        {/* Right 1 Col: Live 5-Step Progress Stepper */}
+        {/* Right 1 Col: Live 6-Step Progress Stepper */}
         <div className="rounded-2xl border border-border bg-card p-5 shadow-xs space-y-4 lg:sticky lg:top-6">
           <div className="flex items-center justify-between gap-2 border-b border-border pb-3">
             <h3 className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5 min-w-0">
@@ -845,12 +865,12 @@ export default function AddBlueprintPage() {
               <span className="truncate">Blueprint Pipeline</span>
             </h3>
             <span className="inline-flex items-center justify-center shrink-0 whitespace-nowrap text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-muted text-foreground border border-border">
-              5 Files
+              6 Files
             </span>
           </div>
 
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Archflow generates a deterministic 5-file suite optimized for direct
+            Archflow generates a deterministic 6-file suite optimized for direct
             prompt commands in Agentic IDEs (Cursor, Antigravity, Claude Code).
           </p>
 

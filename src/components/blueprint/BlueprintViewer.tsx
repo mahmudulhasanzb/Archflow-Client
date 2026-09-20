@@ -11,6 +11,7 @@ import {
   ListTodo,
   Code2,
   Palette,
+  ShieldCheck,
   CheckCircle2,
   Terminal,
   Eye,
@@ -21,9 +22,11 @@ import { incrementDownloadAction } from '@/lib/api/blueprint/action';
 
 interface MarkdownFiles {
   projectOverview?: string;
+  prd?: string;
   requirements?: string;
   architecture?: string;
   design?: string;
+  rules?: string;
   executionPlan?: string;
 }
 
@@ -64,11 +67,11 @@ const TABS: TabDef[] = [
     description: 'Master briefing file with problem statement, dev commands, and architecture principles.',
   },
   {
-    key: 'requirements',
-    name: 'Requirements',
-    filename: 'requirements.md',
+    key: 'prd',
+    name: 'PRD',
+    filename: 'PRD.md',
     icon: ListTodo,
-    description: 'Functional requirements, user personas, acceptance criteria, and edge cases.',
+    description: 'Product Requirements Document, user personas, Gherkin acceptance criteria, and edge cases.',
   },
   {
     key: 'architecture',
@@ -83,6 +86,13 @@ const TABS: TabDef[] = [
     filename: 'design.md',
     icon: Palette,
     description: 'Design tokens, theme palette, typography scale, component hierarchy, and responsiveness.',
+  },
+  {
+    key: 'rules',
+    name: 'Rules & Guardrails',
+    filename: 'rules.md',
+    icon: ShieldCheck,
+    description: 'Strict coding conventions, forbidden packages, modularity rules, and agent guardrails.',
   },
   {
     key: 'executionPlan',
@@ -129,14 +139,18 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
 
       if (blueprint.markdownFiles) {
         zip.file('projectOverview.md', blueprint.markdownFiles.projectOverview || '# Project Overview\n');
-        zip.file('requirements.md', blueprint.markdownFiles.requirements || '# Requirements\n');
+        const prdContent = blueprint.markdownFiles.prd || blueprint.markdownFiles.requirements || '# PRD\n';
+        zip.file('PRD.md', prdContent);
         zip.file('architecture.md', blueprint.markdownFiles.architecture || '# Architecture\n');
         zip.file('design.md', blueprint.markdownFiles.design || '# Design System\n');
+        if (blueprint.markdownFiles.rules) {
+          zip.file('rules.md', blueprint.markdownFiles.rules);
+        }
         zip.file('executionPlan.md', blueprint.markdownFiles.executionPlan || '# Execution Plan\n');
       } else if (blueprint.architectureFlow) {
         // Fallback for legacy blueprints
         zip.file('architecture.md', `# ${blueprint.architectureFlow.architecture?.title || 'Architecture'}\n\n${blueprint.architectureFlow.architecture?.description || ''}`);
-        zip.file('requirements.md', `# ${blueprint.architectureFlow.features?.title || 'Features'}\n\n${blueprint.architectureFlow.features?.description || ''}`);
+        zip.file('PRD.md', `# ${blueprint.architectureFlow.features?.title || 'Features'}\n\n${blueprint.architectureFlow.features?.description || ''}`);
         zip.file('executionPlan.md', `# ${blueprint.architectureFlow.plan?.title || 'Execution Plan'}\n\n${blueprint.architectureFlow.plan?.description || ''}`);
       }
 
@@ -161,8 +175,15 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
     }
   };
 
-  // Current active file content
-  const activeContent = blueprint.markdownFiles?.[activeTab] || 'No content generated for this section.';
+  // Current active file content with legacy fallback
+  const activeContent = (() => {
+    if (!blueprint.markdownFiles) return 'No content generated for this section.';
+    if (activeTab === 'prd') {
+      return blueprint.markdownFiles.prd || blueprint.markdownFiles.requirements || 'No PRD generated for this section.';
+    }
+    return blueprint.markdownFiles[activeTab] || 'No content generated for this section.';
+  })();
+
   const currentTabDef = TABS.find(t => t.key === activeTab) || TABS[0];
   const wordsCount = activeContent.trim() ? activeContent.trim().split(/\s+/).length : 0;
   const kbSize = (new Blob([activeContent]).size / 1024).toFixed(1);
@@ -177,6 +198,13 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
             const isPlan = tab.key === 'executionPlan';
+            const displayFilename =
+              tab.key === 'prd' &&
+              !blueprint.markdownFiles?.prd &&
+              blueprint.markdownFiles?.requirements
+                ? 'requirements.md'
+                : tab.filename;
+
             return (
               <button
                 key={tab.key}
@@ -190,7 +218,7 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
                 }`}
               >
                 <Icon className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">{tab.filename}</span>
+                <span className="truncate">{displayFilename}</span>
                 {isPlan && !isActive && (
                   <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-muted-foreground/20 text-foreground shrink-0">
                     Agent

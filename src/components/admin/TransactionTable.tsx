@@ -40,7 +40,7 @@ export default function TransactionTable({
             ) : transactions.length === 0 ? (
               <tr>
                 <td colSpan={6} className="text-center py-12 text-muted-foreground">
-                  No transactions recorded yet.
+                  No transactions found matching your criteria.
                 </td>
               </tr>
             ) : (

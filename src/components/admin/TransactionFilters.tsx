@@ -5,27 +5,26 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Search, X } from 'lucide-react';
 import CustomSelect, { SelectOption } from '@/components/ui/CustomSelect';
 
-const roleOptions: SelectOption<string>[] = [
-  { value: 'all', label: 'All Roles' },
-  { value: 'admin', label: 'Administrators' },
-  { value: 'pro', label: 'Pro Plan' },
-  { value: 'free', label: 'Free Plan' },
+const planOptions: SelectOption<string>[] = [
+  { value: 'all', label: 'All Plans' },
+  { value: 'pro', label: 'Pro Subscription' },
 ];
 
-const statusOptions: SelectOption<string>[] = [
-  { value: 'all', label: 'All Statuses' },
-  { value: 'active', label: 'Active' },
-  { value: 'blocked', label: 'Restricted' },
+const timeframeOptions: SelectOption<string>[] = [
+  { value: 'all', label: 'All Time' },
+  { value: 'today', label: 'Past 24 Hours' },
+  { value: '7d', label: 'Past 7 Days' },
+  { value: '30d', label: 'Past 30 Days' },
 ];
 
-export default function UserFilters() {
+export default function TransactionFilters() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const currentSearch = searchParams?.get('search') || '';
-  const currentRole = searchParams?.get('role') || 'all';
-  const currentStatus = searchParams?.get('status') || 'all';
+  const currentPlan = searchParams?.get('plan') || 'all';
+  const currentTimeframe = searchParams?.get('timeframe') || 'all';
 
   const [searchInput, setSearchInput] = useState(currentSearch);
 
@@ -33,17 +32,17 @@ export default function UserFilters() {
     setSearchInput(currentSearch);
   }, [currentSearch]);
 
-  const updateURL = (search: string, role: string, status: string) => {
+  const updateURL = (search: string, plan: string, timeframe: string) => {
     const params = new URLSearchParams(searchParams ? searchParams.toString() : '');
 
     if (search.trim()) params.set('search', search.trim());
     else params.delete('search');
 
-    if (role && role !== 'all') params.set('role', role);
-    else params.delete('role');
+    if (plan && plan !== 'all') params.set('plan', plan);
+    else params.delete('plan');
 
-    if (status && status !== 'all') params.set('status', status);
-    else params.delete('status');
+    if (timeframe && timeframe !== 'all') params.set('timeframe', timeframe);
+    else params.delete('timeframe');
 
     params.set('page', '1');
     router.push(`${pathname}?${params.toString()}`);
@@ -51,12 +50,12 @@ export default function UserFilters() {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateURL(searchInput, currentRole, currentStatus);
+    updateURL(searchInput, currentPlan, currentTimeframe);
   };
 
   const handleClearSearch = () => {
     setSearchInput('');
-    updateURL('', currentRole, currentStatus);
+    updateURL('', currentPlan, currentTimeframe);
   };
 
   return (
@@ -66,7 +65,7 @@ export default function UserFilters() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <input
           type="text"
-          placeholder="Search users by name or email (press Enter)..."
+          placeholder="Search by customer email or transaction ID (press Enter)..."
           value={searchInput}
           onChange={e => setSearchInput(e.target.value)}
           className="w-full pl-9 pr-8 py-2 bg-muted/40 border border-border rounded-xl text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
@@ -76,28 +75,31 @@ export default function UserFilters() {
             type="button"
             onClick={handleClearSearch}
             className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer p-0.5"
+            aria-label="Clear search"
           >
             <X className="h-3.5 w-3.5" />
           </button>
         )}
       </form>
 
-      {/* Filters using CustomSelect */}
-      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
-        <div className="w-full sm:w-40">
+      {/* Filter Dropdowns */}
+      <div className="flex flex-col sm:flex-row items-center gap-2.5">
+        {/* Plan Filter */}
+        <div className="w-full sm:w-44">
           <CustomSelect
-            value={currentRole}
-            onChange={newRole => updateURL(searchInput, newRole, currentStatus)}
-            options={roleOptions}
+            value={currentPlan}
+            onChange={newPlan => updateURL(searchInput, newPlan, currentTimeframe)}
+            options={planOptions}
             size="sm"
           />
         </div>
 
-        <div className="w-full sm:w-44">
+        {/* Timeframe Filter */}
+        <div className="w-full sm:w-40">
           <CustomSelect
-            value={currentStatus}
-            onChange={newStatus => updateURL(searchInput, currentRole, newStatus)}
-            options={statusOptions}
+            value={currentTimeframe}
+            onChange={newTime => updateURL(searchInput, currentPlan, newTime)}
+            options={timeframeOptions}
             size="sm"
           />
         </div>

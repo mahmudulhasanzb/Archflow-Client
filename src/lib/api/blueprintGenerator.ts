@@ -27,12 +27,12 @@ async function callChatWithFallback(
   const openai = getOpenAIClient();
   let lastError: unknown = null;
 
-  for (const model of models) {
+    for (const model of models) {
     try {
       const completion = await openai.chat.completions.create({
         model,
         messages,
-        max_tokens: 2200,
+        max_tokens: 4000,
         temperature: 0.3,
       });
       let content = completion.choices[0]?.message?.content?.trim();
@@ -63,9 +63,11 @@ export interface GeneratorParams {
 
 export interface GeneratedBlueprintFiles {
   projectOverview: string;
-  requirements: string;
+  prd: string;
+  requirements?: string; // Backwards compatibility for legacy blueprints
   architecture: string;
   design: string;
+  rules: string;
   executionPlan: string;
 }
 
@@ -86,16 +88,18 @@ export async function generateProjectOverview(params: GeneratorParams): Promise<
   return await callChatWithFallback([
     {
       role: 'system',
-      content: `You are an elite Software Solutions Architect. Generate a high-value, comprehensive 'projectOverview.md' formatted in GitHub-flavored markdown for an Agentic IDE (Cursor, Antigravity, Claude Code).
+      content: `You are an elite Software Solutions Architect. Generate an authoritative, comprehensive 'projectOverview.md' formatted in GitHub-flavored markdown for autonomous AI coding agents (Cursor, Antigravity, Claude Code).
 Structure strictly with:
 # [Project Title] - Project Overview
 ## 1. Executive Summary & Problem Solved
-## 2. Target Users & Value Proposition
-## 3. Tech Stack & Architectural Decisions (Rationale for choices)
-## 4. Repository Quickstart & Environment Setup (dev commands, port conventions, .env variables)
-## 5. Architectural Principles (modularity, pragmatic engineering, testing standards)
+## 2. Target Users & Key Performance Indicators (KPIs)
+## 3. Tech Stack & Architectural Decisions (Rationale for choices, trade-offs)
+## 4. Repository Quickstart & Environment Setup
+- Exact package manager scripts (\`pnpm install\`, \`pnpm dev\`, \`pnpm build\`)
+- Complete \`.env.example\` template with all required keys and explanations
+## 5. Architectural Principles (Zero-drift modularity, pragmatic engineering, testing standards)
 
-Be direct, technically precise, and avoid fluff.`,
+Be direct, technically precise, and eliminate vague high-level fluff.`,
     },
     {
       role: 'user',
@@ -109,65 +113,85 @@ Scope Exclusions: ${exclusionsStr}`,
   ]);
 }
 
-// 2. Generate requirements.md
-export async function generateRequirements(
+// 2. Generate PRD.md (Product Requirements Document)
+export async function generatePRD(
   params: GeneratorParams,
   projectOverview: string
 ): Promise<string> {
   return await callChatWithFallback([
     {
       role: 'system',
-      content: `You are an elite Product Manager & Specification Engineer. Generate a thorough, deterministic 'requirements.md' in markdown for an Agentic IDE.
+      content: `You are a Principal Product Architect. Generate an authoritative, deterministic 'PRD.md' (Product Requirements Document) formatted in GitHub-flavored markdown for autonomous AI coding agents.
 Structure strictly with:
-# Requirements & Functional Specifications
-## 1. Target Personas & User Journeys
-## 2. Core Functional Requirements (Organized by feature with Acceptance Criteria)
-## 3. Non-Functional Requirements (Security, Auth, Performance, Responsive layout)
-## 4. Scope Boundaries (Strictly IN scope vs OUT of scope for MVP)
-## 5. Edge Cases & Validation Rules
-
-Be rigorous. Provide unambiguous acceptance criteria for each requirement.`,
+# Product Requirements Document (PRD)
+## 1. Product Vision & Core Problem
+## 2. User Personas & User Journeys (Step-by-step user flows)
+## 3. Functional Epics & User Stories
+Format each story as:
+- **Story [ID]**: As a [user role], I want [action], so that [outcome].
+## 4. Acceptance Criteria in Gherkin Syntax
+Provide unambiguous Gherkin scenarios for every core story:
+- Scenario: [Scenario Name]
+  - Given [precondition]
+  - When [action taken]
+  - Then [expected deterministic outcome]
+## 5. Scope Boundaries
+- **In Scope (MVP)**: Strict feature checklist.
+- **Out of Scope**: Explicitly forbidden features for MVP.
+## 6. Edge Cases, Validation Rules & Failure Modes
+Include input length constraints, authentication expiry, rate limits, and network failure fallbacks.`,
     },
     {
       role: 'user',
       content: `Project Context from Overview:
 ${projectOverview}
 
-Original Prompt:
+Original User Prompt:
 ${params.prompt}
 ${params.exclusions ? `Exclusions: ${params.exclusions}` : ''}`,
     },
   ]);
 }
 
+// Backward compatibility wrapper for requirements.md
+export async function generateRequirements(
+  params: GeneratorParams,
+  projectOverview: string
+): Promise<string> {
+  return generatePRD(params, projectOverview);
+}
+
 // 3. Generate architecture.md
 export async function generateArchitecture(
   params: GeneratorParams,
   projectOverview: string,
-  requirements: string
+  prd: string
 ): Promise<string> {
   return await callChatWithFallback([
     {
       role: 'system',
-      content: `You are a Principal Software Systems Architect. Generate an exact, authoritative 'architecture.md' in markdown for an Agentic IDE.
+      content: `You are a Principal Systems Architect. Generate an exact, authoritative 'architecture.md' in markdown for an autonomous AI coding agent.
+DO NOT summarize when concrete code specifications are possible.
 Structure strictly with:
 # Architecture & System Design
-## 1. High-Level Architecture & Component Map
-## 2. Detailed Directory & Folder Structure (ASCII tree diagram with clear folder purposes)
-## 3. Routing Map & URL Structure (Page routes, API routes, route guards)
-## 4. Data Models & Entity Schemas (Fields, data types, relationships, indexes)
-## 5. API Contracts & Endpoint Specifications (HTTP Methods, Request payload, Response schemas)
-## 6. Engineering Conventions & State Management Rules
-
-Ensure file paths and directory structures match standard conventions and project tech stack.`,
+## 1. System Topology & Data Flow (ASCII diagram showing Client, Server, DB, External APIs)
+## 2. Directory & File Structure (Complete ASCII tree matching modern conventions, e.g. Next.js 16 App Router)
+## 3. Complete Data Models & TypeScript Schemas
+Provide FULL, copy-pasteable TypeScript interfaces/types or Zod schemas for all database entities with relationships and indexes.
+## 4. API Specification & Route Contracts
+Provide a comprehensive table and JSON payloads:
+| Method | Endpoint | Auth | Request Payload Shape | Response Payload Shape | Errors |
+## 5. State Management & Server/Client Boundary Rules
+Clarify exact boundaries between Server Components, Server Actions, and Client Components.
+## 6. Security & Authorization Architecture (Middleware rules, JWT/Session validation, RBAC matrices)`,
     },
     {
       role: 'user',
       content: `Project Overview:
 ${projectOverview}
 
-Requirements:
-${requirements}
+PRD / Requirements:
+${prd}
 
 Selected Tech Stack: ${params.techStack?.join(', ') || 'Next.js, Node, MongoDB'}`,
     },
@@ -183,15 +207,17 @@ export async function generateDesign(
   return await callChatWithFallback([
     {
       role: 'system',
-      content: `You are a Senior UI/UX Architect & Design Systems Lead. Generate an actionable, aesthetic 'design.md' in markdown for an Agentic IDE.
+      content: `You are a Senior UI/UX Architect & Design Systems Lead. Generate an actionable, aesthetic 'design.md' in markdown for an autonomous AI coding agent.
 Structure strictly with:
 # Design System & UI Architecture
-## 1. Visual Aesthetic Direction (Theme, dark/light mode, emotional tone)
-## 2. Design Tokens & Color Palette (Primary, secondary, neutral, semantic alert hex codes)
-## 3. Typography & Hierarchy (Font families, weight scale, leading)
-## 4. Component Hierarchy & Key UI Layouts (Navbar, hero, cards, forms, modals, tables)
-## 5. Interactive States & Micro-animations (Hover effects, loading skeletons, toast notifications)
-## 6. Responsive Breakpoints & Mobile Adaptations`,
+## 1. Visual Aesthetic Direction (Theme philosophy, dark/light balance, visual hierarchy)
+## 2. Design Tokens & Color Palette
+Provide exact Tailwind CSS v4 variables / Hex color codes for primary, secondary, neutral, surface, and semantic alerts (success, error, warning).
+## 3. Typography Hierarchy (Font family recommendations, type scale with rem values, font weights)
+## 4. Core Component Specifications & Layouts
+Define layout grid, navbar, hero, cards, forms, tables, and modal components with specific props.
+## 5. Interactive States & Micro-interactions (Hover scales, loading skeletons, error states, toast conventions)
+## 6. Responsive Breakpoints & Mobile Adaptations (Mobile-first rules for sm, md, lg, xl, 2xl)`,
     },
     {
       role: 'user',
@@ -204,73 +230,135 @@ ${architecture}`,
   ]);
 }
 
-// 5. Generate executionPlan.md
-export async function generateExecutionPlan(
+// 5. Generate rules.md (Agent Guardrails & Coding Standards)
+export async function generateRules(
   params: GeneratorParams,
   projectOverview: string,
-  requirements: string,
-  architecture: string,
-  design: string
+  architecture: string
 ): Promise<string> {
+  const stackStr = params.techStack?.length ? params.techStack.join(', ') : 'Next.js, Tailwind, Node, MongoDB';
+  const exclusionsStr = params.exclusions?.trim() ? `Explicit exclusions: ${params.exclusions}` : 'None';
+
   return await callChatWithFallback([
     {
       role: 'system',
-      content: `You are an Agentic Execution Lead. Generate a deterministic, phased 'executionPlan.md' formatted specifically for an AI coding agent (Cursor, Antigravity, Claude Code) to execute task-by-step.
-
-CRITICAL FORMATTING RULES:
-1. Divide into chronological Phases (e.g. Phase 1: Setup & Data Foundation, Phase 2: Core Business Logic, Phase 3: Frontend Views, Phase 4: Integration & Flows, Phase 5: Verification).
-2. Every task MUST be an actionable markdown checkbox: '- [ ] Task X.Y: [Task Name]'
-3. Every task MUST specify targeted file: 'File: [path/to/file]'
-4. Every task MUST specify an explicit verification check: '- Verify: [exact command or browser check]'
-5. Granular sub-tasks allow the agent to execute one step at a time without guessing or getting confused.`,
+      content: `You are a Lead AI Workflow Architect. Generate a deterministic 'rules.md' file that serves as strict system instructions and guardrails for an AI coding agent (Cursor, Antigravity, Claude Code) to build this project without human intervention.
+Structure strictly with:
+# AI Coding Rules & Operational Guardrails
+## 1. Tech Stack Mandates & Fixed Versions
+Specify exact frameworks, libraries, and language versions. Enforce strict conventions (e.g. Next.js 16 App Router only, never use Pages Router).
+## 2. Forbidden Libraries & Anti-Patterns
+Explicitly list banned packages and patterns that the agent MUST NOT use.
+${exclusionsStr}
+## 3. File Architecture & Modularity Rules
+- Maximum file size (e.g. 200 lines per file; modularize components).
+- File placement conventions (actions in /lib/actions, types in /types, components separated into ui vs feature).
+## 4. Type Safety & Code Quality Mandates
+- TypeScript \`strict: true\`. Prohibit \`any\` or \`as unknown as ...\`.
+- All API payloads must use Zod or typed interfaces.
+## 5. Error Handling & API Response Standard
+Enforce unified response format: \`{ success: boolean, data?: T, error?: string, code?: string }\`.
+## 6. AI Agent Self-Verification Checklist
+List exact sanity checks the agent must run after generating any code (lint, typecheck, build).`,
     },
     {
       role: 'user',
       content: `Project Overview:
 ${projectOverview}
 
-Requirements:
-${requirements}
+Tech Stack:
+${stackStr}
+
+Architecture:
+${architecture}`,
+    },
+  ]);
+}
+
+// 6. Generate executionPlan.md
+export async function generateExecutionPlan(
+  params: GeneratorParams,
+  projectOverview: string,
+  prd: string,
+  architecture: string,
+  design: string,
+  rules?: string
+): Promise<string> {
+  return await callChatWithFallback([
+    {
+      role: 'system',
+      content: `You are an Agentic Execution Lead. Generate a deterministic, phased 'executionPlan.md' formatted specifically for an AI coding agent (Cursor, Antigravity, Claude Code) to autonomously execute step-by-step.
+
+CRITICAL RULES:
+1. Divide into 5 chronological Phases:
+   - Phase 1: Environment, Dependencies & Base Types
+   - Phase 2: Database Models, Services & Server APIs
+   - Phase 3: Core UI Components & Design System Tokens
+   - Phase 4: Full Feature Integration & User Flows
+   - Phase 5: Testing, Hardening & End-to-End Verification
+2. Every task MUST follow this exact actionable markdown checkbox format:
+   - [ ] Task X.Y: [Verb] [Feature/Component Name]
+     - Target File: \`exact/path/to/file.ts\`
+     - Description: [Precise instructions on what functions/logic to create]
+     - Dependencies: [Prerequisite tasks or files]
+     - Verification: \`[exact shell command or manual check to verify]\`
+3. Zero dependency deadlocks: Order tasks strictly so models exist before routes, and routes exist before UI components call them.
+4. Granular atomic tasks: No mega-tasks. Break complex flows into distinct sub-tasks.`,
+    },
+    {
+      role: 'user',
+      content: `Project Overview:
+${projectOverview}
+
+PRD / Requirements:
+${prd}
 
 Architecture:
 ${architecture}
 
 Design System:
 ${design}
+${rules ? `\nCoding Rules:\n${rules}` : ''}
 
 Create the complete execution plan now.`,
     },
   ]);
 }
 
-// Optimized Parallel Pipeline: Runs Step 1, then Steps 2, 3, 4 simultaneously, then Step 5
+// Optimized Parallel Pipeline: Runs Step 1, then parallel Steps 2, 3, 4, 5, then Step 6
 export async function generateAllBlueprintFilesOptimized(
   params: GeneratorParams
 ): Promise<GenerationResult> {
   // Step 1: Project Overview
   const projectOverview = await generateProjectOverview(params);
 
-  // Step 2, 3, 4: Parallel Batch (Requirements, Architecture, Design)
-  const [requirements, architecture, design] = await Promise.all([
-    generateRequirements(params, projectOverview),
-    generateArchitecture(params, projectOverview, 'Standard full-stack requirements based on overview.'),
+  // Step 2: PRD
+  const prd = await generatePRD(params, projectOverview);
+
+  // Step 3, 4, 5: Parallel Batch (Architecture, Design, Rules)
+  const [architecture, design, rules] = await Promise.all([
+    generateArchitecture(params, projectOverview, prd),
     generateDesign(params, projectOverview, 'Standard responsive UI layout based on overview.'),
+    generateRules(params, projectOverview, 'Standard architectural conventions based on overview.'),
   ]);
 
-  // Step 5: Execution Plan
+  // Step 6: Execution Plan
   const executionPlan = await generateExecutionPlan(
     params,
     projectOverview,
-    requirements,
+    prd,
     architecture,
-    design
+    design,
+    rules
   );
 
   const files: GeneratedBlueprintFiles = {
     projectOverview,
-    requirements,
+    prd,
+    requirements: prd, // Backwards compatibility
     architecture,
     design,
+    rules,
     executionPlan,
   };
 

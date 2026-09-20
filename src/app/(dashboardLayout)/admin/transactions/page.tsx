@@ -10,8 +10,10 @@ import {
   TransactionRouteStats,
 } from '@/lib/api/admin/data';
 import TransactionStats from '@/components/admin/TransactionStats';
+import TransactionFilters from '@/components/admin/TransactionFilters';
 import TransactionTable from '@/components/admin/TransactionTable';
 import PaginationControls from '@/components/ui/Pagination';
+import { PageHeaderSkeleton, StatsSkeleton, TableSkeleton } from '@/components/ui/skeletons';
 
 export default function AdminTransactionsPage() {
   const router = useRouter();
@@ -24,8 +26,12 @@ export default function AdminTransactionsPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [stats, setStats] = useState<TransactionRouteStats | undefined>(undefined);
 
-  // Read current page from URL
+  // Read URL query parameters
+  const search = searchParams?.get('search') || '';
+  const plan = searchParams?.get('plan') || 'all';
+  const timeframe = searchParams?.get('timeframe') || 'all';
   const currentPage = Number(searchParams?.get('page')) || 1;
+
   const isAdmin = (session?.user as any)?.role?.toLowerCase() === 'admin';
 
   // Protect admin route
@@ -38,11 +44,14 @@ export default function AdminTransactionsPage() {
     }
   }, [sessionPending, session?.user, isAdmin, router]);
 
-  // Fetch transactions and revenue stats from MongoDB on page change
+  // Fetch transactions and revenue stats from MongoDB on filter/page change
   const fetchTransactions = useCallback(async () => {
     setLoading(true);
     try {
       const data = await getAdminTransactions({
+        search,
+        plan,
+        timeframe,
         page: currentPage,
         limit: 10,
       });
@@ -58,7 +67,7 @@ export default function AdminTransactionsPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage]);
+  }, [search, plan, timeframe, currentPage]);
 
   useEffect(() => {
     if (isAdmin) {
@@ -68,13 +77,10 @@ export default function AdminTransactionsPage() {
 
   if (sessionPending || (!isAdmin && session?.user)) {
     return (
-      <div className="flex-1 p-6 md:p-8 space-y-6 animate-pulse">
-        <div className="h-8 w-64 bg-muted rounded-xl" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="h-28 bg-muted/60 rounded-2xl" />
-          <div className="h-28 bg-muted/60 rounded-2xl" />
-        </div>
-        <div className="h-96 bg-muted/40 rounded-2xl" />
+      <div className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 max-w-7xl mx-auto w-full">
+        <PageHeaderSkeleton />
+        <StatsSkeleton count={2} />
+        <TableSkeleton rows={8} cols={5} hasSearch />
       </div>
     );
   }
@@ -84,12 +90,14 @@ export default function AdminTransactionsPage() {
   return (
     <div className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 max-w-7xl mx-auto w-full">
       {/* Header */}
-      <div className="border-b border-border pb-5">
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">
+      <div className="pb-5 relative">
+        {/* Gradient border bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+        <h1 className="text-2xl font-bold text-foreground tracking-tight font-display">
           Transaction History
         </h1>
         <p className="text-xs text-muted-foreground mt-1">
-          Audit customer Stripe checkout orders and subscription payments.
+          Audit customer Stripe checkout orders, search payments, and filter revenue history.
         </p>
       </div>
 
@@ -99,6 +107,9 @@ export default function AdminTransactionsPage() {
         totalTransactions={totalCount}
         loading={loading && !stats}
       />
+
+      {/* Search & Filter Controls */}
+      <TransactionFilters />
 
       {/* Transaction Table */}
       <TransactionTable

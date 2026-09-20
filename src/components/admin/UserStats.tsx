@@ -16,6 +16,7 @@ export default function UserStats({ stats, loading }: UserStatsProps) {
       value: stats?.freeUsers ?? 0,
       icon: Users,
       iconColor: 'text-blue-500 bg-blue-500/10 border-blue-500/20',
+      glow: 'from-blue-500/5',
       description: 'Standard plan accounts',
     },
     {
@@ -23,6 +24,7 @@ export default function UserStats({ stats, loading }: UserStatsProps) {
       value: stats?.proUsers ?? 0,
       icon: Sparkles,
       iconColor: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
+      glow: 'from-amber-500/5',
       description: 'Pro tier subscribers',
     },
     {
@@ -30,6 +32,7 @@ export default function UserStats({ stats, loading }: UserStatsProps) {
       value: stats?.totalBlueprints ?? 0,
       icon: Layers,
       iconColor: 'text-primary bg-primary/10 border-primary/20',
+      glow: 'from-primary/5',
       description: 'Total community architectures',
     },
     {
@@ -37,6 +40,7 @@ export default function UserStats({ stats, loading }: UserStatsProps) {
       value: stats?.blockedUsers ?? 0,
       icon: Ban,
       iconColor: 'text-rose-500 bg-rose-500/10 border-rose-500/20',
+      glow: 'from-rose-500/5',
       description: 'Generation restricted',
     },
   ];
@@ -48,9 +52,11 @@ export default function UserStats({ stats, loading }: UserStatsProps) {
         return (
           <div
             key={card.label}
-            className="p-5 bg-card rounded-2xl border border-border shadow-xs flex flex-col justify-between gap-3"
+            className="p-5 bg-card rounded-2xl border border-border shadow-xs flex flex-col justify-between gap-3 relative overflow-hidden"
           >
-            <div className="flex items-center justify-between">
+            {/* Subtle ambient gradient per card accent */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${card.glow} via-transparent to-transparent pointer-events-none`} />
+            <div className="relative flex items-center justify-between">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 {card.label}
               </span>
@@ -60,8 +66,8 @@ export default function UserStats({ stats, loading }: UserStatsProps) {
                 <IconComponent className="h-4.5 w-4.5" />
               </div>
             </div>
-            <div>
-              <div className="text-2xl font-extrabold text-foreground font-display">
+            <div className="relative">
+              <div className="text-2xl font-extrabold text-foreground font-display tabular-nums">
                 {loading ? (
                   <span className="inline-block h-7 w-12 bg-muted/60 rounded animate-pulse" />
                 ) : (

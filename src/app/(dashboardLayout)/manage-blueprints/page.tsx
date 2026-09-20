@@ -12,7 +12,9 @@ import {
 import AdminBlueprintFilters from '@/components/admin/AdminBlueprintFilters';
 import AdminBlueprintTable from '@/components/admin/AdminBlueprintTable';
 import DeleteModal from '@/components/blueprint/DeleteModal';
+import VisibilityChangeModal from '@/components/admin/VisibilityChangeModal';
 import PaginationControls from '@/components/ui/Pagination';
+import { PageHeaderSkeleton, TableSkeleton } from '@/components/ui/skeletons';
 
 export default function AdminManageBlueprintsPage() {
   const router = useRouter();
@@ -24,8 +26,13 @@ export default function AdminManageBlueprintsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
-  // Mutation loading & delete modal state
-  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+  // Visibility modal state
+  const [visibilityBlueprint, setVisibilityBlueprint] = useState<AdminBlueprint | null>(null);
+  const [targetVisibility, setTargetVisibility] = useState<'public' | 'private'>('public');
+  const [isVisibilityOpen, setIsVisibilityOpen] = useState(false);
+  const [visibilityLoading, setVisibilityLoading] = useState(false);
+
+  // Delete modal state
   const [selectedBlueprint, setSelectedBlueprint] = useState<AdminBlueprint | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -74,28 +81,50 @@ export default function AdminManageBlueprintsPage() {
     }
   }, [isAdmin, fetchBlueprints]);
 
-  // Handle Visibility Toggle
-  const handleToggleVisibility = async (bp: AdminBlueprint) => {
+  // Open Visibility Change Confirmation Modal
+  const handleOpenVisibilityModal = (bp: AdminBlueprint) => {
     const nextVisibility = bp.visibility === 'public' ? 'private' : 'public';
-    setActionLoadingId(bp._id);
-    const toastId = toast.loading(`Setting visibility to ${nextVisibility}...`);
+    setVisibilityBlueprint(bp);
+    setTargetVisibility(nextVisibility);
+    setIsVisibilityOpen(true);
+  };
+
+  const handleCloseVisibilityModal = () => {
+    if (!visibilityLoading) {
+      setIsVisibilityOpen(false);
+      setVisibilityBlueprint(null);
+    }
+  };
+
+  // Confirm Visibility Change
+  const handleConfirmVisibilityChange = async () => {
+    if (!visibilityBlueprint) return;
+    setVisibilityLoading(true);
+    const toastId = toast.loading(`Setting visibility to ${targetVisibility}...`);
 
     try {
-      const result = await toggleAdminBlueprintVisibilityAction(bp._id, nextVisibility);
+      const result = await toggleAdminBlueprintVisibilityAction(
+        visibilityBlueprint._id,
+        targetVisibility
+      );
       if (result.success) {
-        toast.success(`Blueprint is now ${nextVisibility}`, { id: toastId });
+        toast.success(`Blueprint is now ${targetVisibility}`, { id: toastId });
         setBlueprints(prev =>
           prev.map(item =>
-            item._id === bp._id ? { ...item, visibility: nextVisibility } : item
+            item._id === visibilityBlueprint._id
+              ? { ...item, visibility: targetVisibility }
+              : item
           )
         );
+        setIsVisibilityOpen(false);
+        setVisibilityBlueprint(null);
       } else {
         toast.error(result.error || 'Failed to update visibility', { id: toastId });
       }
     } catch (err: any) {
       toast.error(err.message || 'Error updating visibility', { id: toastId });
     } finally {
-      setActionLoadingId(null);
+      setVisibilityLoading(false);
     }
   };
 
@@ -129,10 +158,9 @@ export default function AdminManageBlueprintsPage() {
 
   if (sessionPending || (!isAdmin && session?.user)) {
     return (
-      <div className="flex-1 p-6 md:p-8 space-y-6 animate-pulse">
-        <div className="h-8 w-64 bg-muted rounded-xl" />
-        <div className="h-12 bg-muted/60 rounded-2xl" />
-        <div className="h-96 bg-muted/40 rounded-2xl" />
+      <div className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 max-w-7xl mx-auto w-full">
+        <PageHeaderSkeleton />
+        <TableSkeleton rows={8} cols={5} hasSearch />
       </div>
     );
   }
@@ -142,8 +170,10 @@ export default function AdminManageBlueprintsPage() {
   return (
     <div className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 max-w-7xl mx-auto w-full">
       {/* Header */}
-      <div className="border-b border-border pb-5">
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">
+      <div className="pb-5 relative">
+        {/* Gradient border bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+        <h1 className="text-2xl font-bold text-foreground tracking-tight font-display">
           Manage Platform Blueprints
         </h1>
         <p className="text-xs text-muted-foreground mt-1">
@@ -158,9 +188,9 @@ export default function AdminManageBlueprintsPage() {
       <AdminBlueprintTable
         blueprints={blueprints}
         loading={loading}
-        onToggleVisibility={handleToggleVisibility}
+        onToggleVisibility={handleOpenVisibilityModal}
         onDelete={handleOpenDelete}
-        actionLoadingId={actionLoadingId}
+        actionLoadingId={visibilityLoading && visibilityBlueprint ? visibilityBlueprint._id : null}
       />
 
       {/* URL-driven Pagination */}
@@ -170,6 +200,16 @@ export default function AdminManageBlueprintsPage() {
           totalPages={totalPages}
         />
       )}
+
+      {/* Simple Visibility Confirmation Modal */}
+      <VisibilityChangeModal
+        isOpen={isVisibilityOpen}
+        onClose={handleCloseVisibilityModal}
+        onConfirm={handleConfirmVisibilityChange}
+        blueprint={visibilityBlueprint}
+        targetVisibility={targetVisibility}
+        loading={visibilityLoading}
+      />
 
       {/* Reusable Delete Confirmation Modal */}
       <DeleteModal

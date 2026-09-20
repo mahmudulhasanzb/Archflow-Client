@@ -68,6 +68,9 @@ export interface GetAdminUsersResponse {
 }
 
 export interface GetAdminTransactionsParams {
+  search?: string;
+  plan?: string;
+  timeframe?: string;
   page?: number;
   limit?: number;
 }
@@ -143,6 +146,9 @@ export const getAdminTransactions = async (
   try {
     const authHeaders = await getAuthHeaders();
     const query = new URLSearchParams();
+    if (params?.search) query.set('search', params.search);
+    if (params?.plan && params.plan !== 'all') query.set('plan', params.plan);
+    if (params?.timeframe && params.timeframe !== 'all') query.set('timeframe', params.timeframe);
     if (params?.page) query.set('page', String(params.page));
     if (params?.limit) query.set('limit', String(params.limit));
 

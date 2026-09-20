@@ -13,7 +13,10 @@ export const toggleUserBlockAction = async (userId: string, isBlocked: boolean) 
   }
 };
 
-export const updateUserRoleAction = async (userId: string, role: 'free' | 'pro') => {
+export const updateUserRoleAction = async (
+  userId: string,
+  role: 'admin' | 'user' | 'free' | 'pro'
+) => {
   try {
     const res = await serverMutation(`/api/admin/users/${userId}/role`, 'PATCH', { role });
     revalidatePath('/admin/users');
