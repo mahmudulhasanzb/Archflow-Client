@@ -142,9 +142,6 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-foreground text-background border border-border group-hover:scale-105 transition-transform duration-200">
-                <Activity className="h-5 w-5" />
-              </div>
               <span className="text-foreground font-extrabold text-xl tracking-wider select-none font-display">
                 ARCHFLOW
               </span>

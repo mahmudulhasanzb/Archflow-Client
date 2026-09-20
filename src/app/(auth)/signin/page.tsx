@@ -8,11 +8,11 @@ import { authClient } from '@/lib/auth-client';
 import {
   Eye,
   EyeOff,
-  Activity,
   Mail,
   Lock,
   Zap,
   ArrowRight,
+  Workflow,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -24,7 +24,7 @@ type Inputs = {
 export default function SignInPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/workspace';
+  const callbackUrl = searchParams.get('callbackUrl') || '/blueprints';
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -89,19 +89,6 @@ export default function SignInPage() {
         aria-hidden="true"
         className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[450px] w-[650px] rounded-full bg-primary/10 blur-3xl"
       />
-
-      {/* Top Logo */}
-      <Link
-        href="/"
-        className="relative z-10 flex items-center gap-2.5 mb-8 group transition-opacity hover:opacity-90"
-      >
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs">
-          <Activity className="h-5 w-5" />
-        </div>
-        <span className="text-xl font-bold font-display tracking-tight text-foreground">
-          Archflow
-        </span>
-      </Link>
 
       {/* Centered Floating Card */}
       <div className="w-full max-w-md rounded-2xl border border-border bg-card/90 backdrop-blur-xl p-6 sm:p-8 shadow-xl relative z-10 space-y-6">
@@ -224,6 +211,17 @@ export default function SignInPage() {
             Sign up free
           </Link>
         </div>
+      </div>
+
+      {/* Explore as Guest Option */}
+      <div className="mt-6 text-center relative z-10">
+        <Link
+          href="/blueprints"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors group"
+        >
+          <span>Explore blueprints as guest</span>
+          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        </Link>
       </div>
     </div>
   );

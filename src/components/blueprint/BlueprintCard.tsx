@@ -10,11 +10,10 @@ import {
   Download,
   Bookmark,
   BookmarkCheck,
-  X,
-  LogIn,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import SpotlightCard from '@/components/ui/SpotlightCard';
+import AuthPromptModal from '@/components/blueprint/AuthPromptModal';
 import {
   incrementViewAction,
   toggleBookmarkAction,
@@ -190,11 +189,6 @@ export default function BlueprintCard({
     }
   };
 
-  const handleNavigateToLogin = () => {
-    setShowAuthModal(false);
-    router.push(`/signin?callbackUrl=/blueprints/${id}`);
-  };
-
   return (
     <>
       <SpotlightCard className="h-full group hover:border-foreground/30 transition-all duration-200">
@@ -313,56 +307,16 @@ export default function BlueprintCard({
       </SpotlightCard>
 
       {/* Simple Guest Auth Modal */}
-      {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-background/80 backdrop-blur-xs transition-opacity"
-            onClick={() => setShowAuthModal(false)}
-          />
-
-          {/* Dialog Container */}
-          <div className="relative w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-2xl transition-all animate-in fade-in zoom-in-95">
-            {/* Top-right Close Button */}
-            <button
-              type="button"
-              onClick={() => setShowAuthModal(false)}
-              aria-label="Close modal"
-              className="absolute right-4 top-4 rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
-            {/* Modal Header & Content */}
-            <div className="mt-4 flex flex-col items-center text-center space-y-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20">
-                <Bookmark className="h-5 w-5" />
-              </div>
-              <div className="space-y-1">
-                <h4 className="text-base font-bold text-foreground font-display">
-                  Save Blueprint
-                </h4>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Please log in to save and collect blueprints to your personal
-                  workspace.
-                </p>
-              </div>
-
-              {/* Login Button */}
-              <div className="pt-3 w-full">
-                <button
-                  type="button"
-                  onClick={handleNavigateToLogin}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer shadow-sm"
-                >
-                  <LogIn className="h-4 w-4" />
-                  <span>Log In to Save</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <AuthPromptModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        title="Save Blueprint"
+        description="Please log in to save and collect blueprints to your personal workspace."
+        actionText="Log In to Save"
+        icon={<Bookmark className="h-6 w-6" />}
+        iconBadgeClassName="bg-primary/10 text-primary border-primary/20"
+        redirectPath={`/blueprints/${id}`}
+      />
     </>
   );
 }

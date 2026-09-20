@@ -22,6 +22,7 @@ import {
   getUserBookmarksAction,
 } from '@/lib/api/blueprint/action';
 import RatingWidget from '@/components/blueprint/RatingWidget';
+import AuthPromptModal from '@/components/blueprint/AuthPromptModal';
 
 interface BlueprintHeaderProps {
   blueprint: {
@@ -175,11 +176,6 @@ export default function BlueprintHeader({ blueprint }: BlueprintHeaderProps) {
     }
   };
 
-  const handleNavigateToLogin = () => {
-    setShowAuthModal(false);
-    router.push(`/signin?callbackUrl=/blueprints/${id}`);
-  };
-
   return (
     <>
       <div className="space-y-3.5 pb-4 border-b border-border w-full min-w-0">
@@ -310,57 +306,16 @@ export default function BlueprintHeader({ blueprint }: BlueprintHeaderProps) {
       </div>
 
       {/* Guest Authentication Modal for Bookmarking */}
-      {showAuthModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200"
-          onClick={() => setShowAuthModal(false)}
-        >
-          <div
-            className="relative w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl space-y-4"
-            onClick={e => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => setShowAuthModal(false)}
-              className="absolute right-4 top-4 rounded-lg p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
-              aria-label="Close modal"
-            >
-              <X className="h-4 w-4" />
-            </button>
-
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Bookmark className="h-6 w-6" />
-            </div>
-
-            <div className="space-y-1.5">
-              <h3 className="text-base font-bold text-foreground">
-                Sign in to save blueprint
-              </h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Create a free account or sign in to bookmark this architecture specification and access it anytime from your dashboard.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-2 pt-2">
-              <button
-                type="button"
-                onClick={handleNavigateToLogin}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-xs font-semibold text-primary-foreground shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
-              >
-                <LogIn className="h-4 w-4" />
-                <span>Sign In / Register</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowAuthModal(false)}
-                className="inline-flex w-full items-center justify-center py-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-              >
-                Continue browsing
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AuthPromptModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        title="Sign in to save blueprint"
+        description="Create a free account or sign in to bookmark this architecture specification and access it anytime from your dashboard."
+        actionText="Sign In / Register"
+        icon={<Bookmark className="h-6 w-6" />}
+        iconBadgeClassName="bg-primary/10 text-primary border-primary/20"
+        redirectPath={`/blueprints/${id}`}
+      />
     </>
   );
 }
