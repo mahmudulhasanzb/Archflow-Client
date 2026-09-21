@@ -1,31 +1,38 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { headers } from 'next/headers';
 import { auth } from './lib/auth';
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const isProtectedRoute =
-    pathname.startsWith('/workspace') ||
-    pathname.startsWith('/add-blueprint') ||
-    pathname.startsWith('/my-blueprints') ||
-    pathname.startsWith('/manage-blueprints');
-
+  const isWorkspaceRoute = pathname.startsWith('/workspace');
+  const isAdminRoute = pathname.startsWith('/workspace/admin');
   const isAuthRoute = pathname === '/signin' || pathname === '/signup';
+
+  const sessionCookie =
+    request.cookies.get('better-auth.session_token') ||
+    request.cookies.get('__Secure-better-auth.session_token');
+
+  // Fast-path: unauthenticated visitors trying to access protected workspace routes
+  if (isWorkspaceRoute && !sessionCookie) {
+    const loginUrl = new URL('/signin', request.url);
+    loginUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Fast-path: visitors accessing signin/signup with no existing session cookie
+  if (isAuthRoute && !sessionCookie) {
+    return NextResponse.next();
+  }
 
   let session: any = null;
 
   try {
     session = await auth.api.getSession({
-      headers: await headers(),
+      headers: request.headers,
     });
   } catch {
-    const sessionCookie =
-      request.cookies.get('better-auth.session_token') ||
-      request.cookies.get('__Secure-better-auth.session_token');
-
-    if (!sessionCookie && isProtectedRoute) {
+    if (!sessionCookie && isWorkspaceRoute) {
       const loginUrl = new URL('/signin', request.url);
       loginUrl.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(loginUrl);
@@ -35,20 +42,22 @@ export async function proxy(request: NextRequest) {
   const user = session?.user;
 
   // 1. Unauthenticated -> redirect to /signin
-  if (isProtectedRoute && !user) {
-    const sessionCookie =
-      request.cookies.get('better-auth.session_token') ||
-      request.cookies.get('__Secure-better-auth.session_token');
+  if (isWorkspaceRoute && !user && !sessionCookie) {
+    const loginUrl = new URL('/signin', request.url);
+    loginUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
 
-    if (!sessionCookie) {
-      const loginUrl = new URL('/signin', request.url);
-      loginUrl.searchParams.set('callbackUrl', pathname);
-      return NextResponse.redirect(loginUrl);
+  // 2. Admin authorization -> verify user has admin role
+  if (isAdminRoute && user) {
+    const role = (user as any).role?.toLowerCase();
+    if (role !== 'admin') {
+      return NextResponse.redirect(new URL('/workspace', request.url));
     }
   }
 
-  // 2. Already logged in -> redirect away from /signin & /signup
-  if (isAuthRoute && user) {
+  // 3. Already logged in -> redirect away from /signin & /signup
+  if (isAuthRoute && (user || sessionCookie)) {
     return NextResponse.redirect(new URL('/workspace', request.url));
   }
 
@@ -59,10 +68,6 @@ export const config = {
   matcher: [
     '/workspace',
     '/workspace/:path*',
-    '/add-blueprint',
-    '/my-blueprints',
-    '/my-blueprints/:path*',
-    '/manage-blueprints',
     '/signin',
     '/signup',
   ],

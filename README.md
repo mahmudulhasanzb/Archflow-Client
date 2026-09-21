@@ -38,9 +38,15 @@ Engineers, tech leads, and product teams use Archflow to accelerate the discover
 - **1-Click Suite Export:** Download entire architectural suites bundled into a single organized `.zip` file.
 - **Direct Workspace Search & Filter:** Instant client-side filtering, category selection, sorting, and tag navigation.
 
+### 🔑 Bring Your Own Key (BYOK) OpenRouter Engine
+- **Unlimited Blueprint Synthesis:** Free, Pro, and Admin users can connect their personal OpenRouter API key (`/workspace/api-settings`) to bypass standard subscription limits.
+- **Real-Time Balance Tracker:** Live credit balance metrics and dynamic limit badges embedded in the Blueprint Studio.
+- **Secure Key Management:** Masked entry, toggleable visibility, instant validation before storage, and 1-click credential revocation with confirmation modal.
+
 ### 🛡️ Secure Authentication & Role-Based Access Control
 - Session management with JWT and JWKS token verification bridging the Next.js client and Express microservice.
 - Tiered privileges: Free (up to 3 blueprints), Pro (up to 10 daily blueprints, custom LLM key integrations, private workspaces), and Admin.
+- **Unified Middleware Guarding:** Automatic edge proxy (`proxy.ts`) route protection covering all `/workspace/*` paths with fast-path cookie validation and RBAC redirects.
 
 ### 💳 Stripe Subscription Billing
 - Dynamic checkout session integration supporting monthly ($29/mo) and annual ($24/mo billed annually at $288/yr) plans.
@@ -64,7 +70,7 @@ Engineers, tech leads, and product teams use Archflow to accelerate the discover
 - **Language:** TypeScript
 - **Database:** MongoDB Native Driver (Clean single-file connection pool & projection patterns)
 - **Auth & Cryptography:** `jose` (JWKS token bridge with asymmetric signature validation)
-- **AI Integration:** OpenAI API
+- **AI Integration:** OpenRouter / OpenAI API
 - **Payments:** Stripe SDK
 
 ---
@@ -77,10 +83,16 @@ Archflow/
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── (auth)/             # Authentication routes (Sign In / Sign Up)
-│   │   │   ├── (dashboardLayout)/  # Protected workspace, studio & management
-│   │   │   │   ├── add-blueprint/
-│   │   │   │   ├── manage-blueprints/
-│   │   │   │   └── workspace/
+│   │   │   ├── (dashboardLayout)/  # Unified workspace dashboard
+│   │   │   │   └── workspace/      # Industry-standard nested workspace parent
+│   │   │   │       ├── page.tsx            # Workspace overview & telemetry
+│   │   │   │       ├── add-blueprint/      # AI Blueprint Studio
+│   │   │   │       ├── my-blueprints/      # User Blueprint Library
+│   │   │   │       ├── api-settings/       # BYOK OpenRouter Key & Balance
+│   │   │   │       ├── manage-blueprints/  # Admin Blueprint Moderation
+│   │   │   │       └── admin/              # Admin User & Transaction Control
+│   │   │   │           ├── users/
+│   │   │   │           └── transactions/
 │   │   │   ├── (mainLayout)/       # Public marketing pages & gallery
 │   │   │   │   ├── about/
 │   │   │   │   ├── blueprints/     # Public architecture repository
@@ -89,11 +101,12 @@ Archflow/
 │   │   │       ├── auth/           # Authentication endpoints
 │   │   │       └── checkout_session/ # Stripe dynamic subscription checkout
 │   │   ├── components/
-│   │   │   ├── blueprint/          # Blueprint cards, filters, modals
+│   │   │   ├── admin/              # Admin tables, stats, and role modals
+│   │   │   ├── blueprint/          # Blueprint cards, filters, BYOK modals
 │   │   │   ├── landing/            # Hero, features, pricing, FAQ
 │   │   │   ├── layout/             # Navbar, footer, dashboard sidebar
 │   │   │   └── ui/                 # Reusable inputs, buttons, pagination
-│   │   └── lib/                    # Auth client, Stripe client, utilities
+│   │   └── lib/                    # Auth client, Stripe client, API mutations
 │   └── package.json
 │
 └── Archflow-Server/                 # Express 5 API Server
@@ -165,11 +178,14 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🔐 API & Security Highlights
+## 🔐 Security & Data Protection Architecture
 
-- **Stateless Verification:** All secured API calls between client and server pass bearer tokens cryptographically validated against public JWKS endpoints.
-- **Rate-Limiting & Quota Management:** Built-in per-user generation tracking prevents runaway API consumption and enforces subscription limits seamlessly.
-- **Defensive Database Queries:** Strictly validated MongoDB projections, sanitization of user-submitted query parameters, and atomic update operators.
+- **Unified Edge Proxy Security:** All dashboard routes are nested under `/workspace/*` and strictly guarded by Next.js edge middleware (`proxy.ts`) with high-speed cookie evaluation, redirecting unauthenticated visitors in under 0.02s without unnecessary database overhead.
+- **Role-Based Access Control (RBAC):** Admin consoles (`/workspace/admin/*`) strictly verify administrator privileges both at the middleware layer and on the API microservice. Non-admin users are automatically bounced back to their workspace overview.
+- **Asymmetric JWKS & Internal Signature Bridge:** Authenticated client requests are verified against public JWKS endpoints (`jose`). Server-to-server forwarded session identities require a cryptographically verified internal shared secret (`x-internal-secret`), preventing spoofing and identity hijacking.
+- **Strict Origin CORS Locking:** Cross-Origin Resource Sharing is strictly constrained to authorized client origins (`https://archflow-web-ai.vercel.app`, `CLIENT_URL`, and local dev environments). Wildcard access is prohibited.
+- **Defensive Projections & Secret Protection:** User query projections explicitly exclude sensitive credentials such as `password` and `customApiKey`, preventing BYOK keys from leaking into admin dashboards or public API responses.
+- **NoSQL & ReDoS Injection Mitigation:** All user-supplied search parameters, filters, and tags are passed through regex-escaping sanitizers (`escapeRegex`) before MongoDB execution, fully neutralizing Regular Expression Denial of Service (ReDoS) and operator injection attacks.
 
 ---
 

@@ -279,7 +279,7 @@ export default function ManageBlueprintsPage() {
         </div>
 
         <Link
-          href="/add-blueprint"
+          href="/workspace/add-blueprint"
           className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity shadow-sm"
         >
           <Plus className="h-4 w-4" />
@@ -383,7 +383,7 @@ export default function ManageBlueprintsPage() {
           </div>
           {!searchQuery && (
             <Link
-              href="/add-blueprint"
+              href="/workspace/add-blueprint"
               className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors mt-2"
             >
               Create your first blueprint <ArrowRight className="h-3 w-3" />

@@ -50,7 +50,7 @@ export default function Hero() {
               {/* Subtle ambient border glow */}
               <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-b from-primary/50 to-primary/0 opacity-60 group-hover:opacity-100 blur-[1px] transition-opacity duration-300" />
               <Link
-                href="/add-blueprint"
+                href="/workspace/add-blueprint"
                 className="relative w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground border border-primary-foreground/20 shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.25)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.35)] transition-all duration-200 active:scale-[0.98]"
               >
                 <span>Build A Blueprint</span>

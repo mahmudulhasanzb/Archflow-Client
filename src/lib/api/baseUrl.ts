@@ -40,6 +40,8 @@ export const getAuthHeaders = async (): Promise<Record<string, string>> => {
         if (sessionRes?.user) {
           if (sessionRes.user.email) authHeaders['x-user-email'] = sessionRes.user.email;
           if (sessionRes.user.id) authHeaders['x-user-id'] = sessionRes.user.id;
+          authHeaders['x-internal-secret'] =
+            process.env.INTERNAL_SERVER_SECRET || 'archflow-internal-secure-comm';
         }
       } catch (sessionErr) {
         // Session fallback

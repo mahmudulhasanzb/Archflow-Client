@@ -26,9 +26,9 @@ import toast from 'react-hot-toast';
 
 const menuItems = [
   { label: 'Overview', href: '/workspace', icon: LayoutDashboard },
-  { label: 'New Blueprint', href: '/add-blueprint', icon: PlusCircle },
-  { label: 'My Blueprints', href: '/my-blueprints', icon: FolderHeart },
-  { label: 'API Settings', href: '/add-apikey', icon: KeyRound },
+  { label: 'New Blueprint', href: '/workspace/add-blueprint', icon: PlusCircle },
+  { label: 'My Blueprints', href: '/workspace/my-blueprints', icon: FolderHeart },
+  { label: 'API Settings', href: '/workspace/api-settings', icon: KeyRound },
 ];
 
 function getInitials(name?: string | null) {
@@ -116,9 +116,9 @@ export default function DashboardSidebar() {
   const roleLabel = isAdmin ? 'Admin' : isPro ? 'Pro' : 'Free';
 
   const adminMenuItems = [
-    { label: 'User Control', href: '/admin/users', icon: Users },
-    { label: 'Manage Blueprints', href: '/manage-blueprints', icon: Layers },
-    { label: 'Transactions', href: '/admin/transactions', icon: CreditCard },
+    { label: 'User Control', href: '/workspace/admin/users', icon: Users },
+    { label: 'Manage Blueprints', href: '/workspace/manage-blueprints', icon: Layers },
+    { label: 'Transactions', href: '/workspace/admin/transactions', icon: CreditCard },
   ];
 
   return (
@@ -276,7 +276,7 @@ export default function DashboardSidebar() {
                 {isAdmin && (
                   <>
                     <Link
-                      href="/admin/users"
+                      href="/workspace/admin/users"
                       className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-primary hover:bg-muted transition-all duration-200"
                       onClick={() => setIsUserDropdownOpen(false)}
                     >
@@ -284,7 +284,7 @@ export default function DashboardSidebar() {
                       <span>User Control</span>
                     </Link>
                     <Link
-                      href="/admin/transactions"
+                      href="/workspace/admin/transactions"
                       className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-primary hover:bg-muted transition-all duration-200"
                       onClick={() => setIsUserDropdownOpen(false)}
                     >
@@ -292,7 +292,7 @@ export default function DashboardSidebar() {
                       <span>Transactions</span>
                     </Link>
                     <Link
-                      href="/manage-blueprints"
+                      href="/workspace/manage-blueprints"
                       className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-primary hover:bg-muted transition-all duration-200"
                       onClick={() => setIsUserDropdownOpen(false)}
                     >

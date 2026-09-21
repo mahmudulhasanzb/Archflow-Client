@@ -537,7 +537,7 @@ export default function AddBlueprintPage() {
                 <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                   <span>OpenRouter Key</span>
                   <Link
-                    href="/add-apikey"
+                    href="/workspace/api-settings"
                     className="text-primary hover:underline font-semibold"
                   >
                     Settings &rarr;

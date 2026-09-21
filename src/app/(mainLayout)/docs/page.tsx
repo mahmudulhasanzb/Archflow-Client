@@ -507,7 +507,7 @@ export default function DocsPage() {
                   Browse Blueprints
                 </Link>
                 <Link
-                  href="/add-blueprint"
+                  href="/workspace/add-blueprint"
                   className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl bg-primary text-primary-foreground hover:opacity-90 shadow-xs transition-opacity"
                 >
                   <span>Build Blueprint</span>

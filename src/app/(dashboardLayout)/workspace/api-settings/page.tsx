@@ -25,7 +25,7 @@ import {
 } from '@/lib/api/userApiKey';
 import DisconnectKeyModal from '@/components/blueprint/DisconnectKeyModal';
 
-export default function AddApiKeyPage() {
+export default function ApiSettingsPage() {
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [showKeyText, setShowKeyText] = useState(false);
   const [status, setStatus] = useState<UserApiKeyStatus | null>(null);

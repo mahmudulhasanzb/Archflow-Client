@@ -158,7 +158,7 @@ export default async function PaymentSuccessPage({
             <Activity className="w-4 h-4" /> Go To Dashboard
           </Link>
           <Link
-            href="/add-blueprint"
+            href="/workspace/add-blueprint"
             className="flex-1 bg-card border border-border hover:bg-muted text-foreground font-black py-3.5 rounded-xl text-xs uppercase tracking-widest transition-colors text-center cursor-pointer flex items-center justify-center gap-2 active:scale-[0.98]"
           >
             <PlusCircle className="w-4 h-4 text-foreground" /> New Blueprint

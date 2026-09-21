@@ -92,7 +92,7 @@ export default function DefaultLimitModal({
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
           <Link
-            href="/add-apikey"
+            href="/workspace/api-settings"
             onClick={onClose}
             className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity text-center cursor-pointer"
           >
