@@ -24,11 +24,27 @@ export const metadata = {
 };
 
 const STATS = [
-  { label: 'Deterministic Files', value: '6 Specs', hint: 'Overview, PRD, Arch, Design, Rules, Plan' },
+  {
+    label: 'Deterministic Files',
+    value: '6 Specs',
+    hint: 'Overview, PRD, Arch, Design, Rules, Plan',
+  },
 
-  { label: 'Architecture Drift', value: '0%', hint: 'Unified contracts between client & server' },
-  { label: 'Vendor Lock-in', value: 'Zero', hint: '100% pure GitHub-flavored markdown' },
-  { label: 'Supported Agents', value: 'Universal', hint: 'Cursor, Claude Code, Windsurf, Antigravity' },
+  {
+    label: 'Architecture Drift',
+    value: '0%',
+    hint: 'Unified contracts between client & server',
+  },
+  {
+    label: 'Vendor Lock-in',
+    value: 'Zero',
+    hint: '100% pure GitHub-flavored markdown',
+  },
+  {
+    label: 'Supported Agents',
+    value: 'Universal',
+    hint: 'Cursor, Claude Code, Windsurf, Antigravity',
+  },
 ];
 
 const PIPELINE_STEPS = [
@@ -63,7 +79,6 @@ const PIPELINE_STEPS = [
   },
 ];
 
-
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-background text-foreground py-16 px-4 sm:px-6 lg:px-8">
@@ -83,7 +98,6 @@ export default function AboutPage() {
             into messy spaghetti code, Archflow generates a deterministic 6-file
             specification contract before a single line of code is written.
           </p>
-
 
           {/* Stats Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
@@ -215,13 +229,13 @@ export default function AboutPage() {
               The Output Suite
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Every Archflow generation delivers these six standardized
-              markdown files:
+              Every Archflow generation delivers these six standardized markdown
+              files:
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2 card-hover">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
                 <FileCode2 className="h-4 w-4 shrink-0" />
                 <span>projectOverview.md</span>
@@ -232,7 +246,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2 card-hover">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
                 <ListTodo className="h-4 w-4 shrink-0" />
                 <span>PRD.md</span>
@@ -243,7 +257,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2 card-hover">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
                 <Layers className="h-4 w-4 shrink-0" />
                 <span>architecture.md</span>
@@ -254,7 +268,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2 card-hover">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
                 <Palette className="h-4 w-4 shrink-0" />
                 <span>design.md</span>
@@ -265,7 +279,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2 card-hover">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
                 <ShieldCheck className="h-4 w-4 shrink-0" />
                 <span>rules.md</span>
@@ -276,7 +290,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2 card-hover">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
                 <CheckCircle2 className="h-4 w-4 shrink-0" />
                 <span>executionPlan.md</span>
@@ -290,7 +304,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-
 
         {/* Section 5: Creator & Mission */}
         <section className="rounded-2xl border border-border bg-card p-6 sm:p-8 space-y-5">

@@ -93,7 +93,7 @@ export default function AgentPromptModal({
 
       {/* Modal Container with smooth scale & translation transition */}
       <div
-        className={`relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl border border-border bg-card p-6 shadow-2xl space-y-4 overflow-hidden transform transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl border border-border bg-card p-6 shadow-2xl space-y-4 overflow-hidden transform transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] dark:border-white/15 dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] ${
           visible
             ? 'opacity-100 scale-100 translate-y-0'
             : 'opacity-0 scale-95 translate-y-3 pointer-events-none'

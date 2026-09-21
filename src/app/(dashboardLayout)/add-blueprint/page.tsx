@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { serverMutation } from '@/lib/api/mutation';
 import { getUserQuota } from '@/lib/api/blueprint/data';
+import { getUserApiKeyStatus, UserApiKeyStatus } from '@/lib/api/userApiKey';
 import {
   generateProjectOverview,
   generatePRD,
@@ -32,9 +34,12 @@ import {
   ArrowRight,
   Ban,
   ArrowUpIcon,
+  KeyRound,
+  Coins,
 } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
 import AgentPromptModal from '@/components/blueprint/AgentPromptModal';
+import DefaultLimitModal from '@/components/blueprint/DefaultLimitModal';
 
 interface StarterTemplate {
   label: string;
@@ -145,6 +150,8 @@ export default function AddBlueprintPage() {
     canGenerate: boolean;
     isPro: boolean;
   } | null>(null);
+  const [apiKeyStatus, setApiKeyStatus] = useState<UserApiKeyStatus | null>(null);
+  const [showDefaultLimitModal, setShowDefaultLimitModal] = useState(false);
   const [loadingQuota, setLoadingQuota] = useState(true);
   const [upgradingStripe, setUpgradingStripe] = useState(false);
 
@@ -203,24 +210,28 @@ export default function AddBlueprintPage() {
     },
   ]);
 
-  // Load quota status on mount
+  // Load quota and API key status on mount
   useEffect(() => {
-    async function loadQuota() {
+    async function loadStatus() {
       if (!userEmail) return;
       try {
         setLoadingQuota(true);
-        const data = await getUserQuota(userEmail);
-        setQuota(data);
-        if (data && !data.isPro) {
+        const [quotaData, keyData] = await Promise.all([
+          getUserQuota(userEmail),
+          getUserApiKeyStatus(),
+        ]);
+        setQuota(quotaData);
+        setApiKeyStatus(keyData);
+        if (quotaData && !quotaData.isPro && !keyData?.hasCustomKey) {
           setVisibility('public');
         }
       } catch (err) {
-        console.error('Error fetching quota in add-blueprint:', err);
+        console.error('Error fetching status in add-blueprint:', err);
       } finally {
         setLoadingQuota(false);
       }
     }
-    loadQuota();
+    loadStatus();
   }, [userEmail]);
 
   // Handle Stripe Upgrade Redirect
@@ -308,7 +319,7 @@ export default function AddBlueprintPage() {
       return;
     }
 
-    if (quota && !quota.canGenerate) {
+    if (!apiKeyStatus?.hasCustomKey && quota && !quota.canGenerate) {
       if ((quota as any).isBlocked) {
         toast.error(
           (quota as any).message ||
@@ -317,7 +328,7 @@ export default function AddBlueprintPage() {
         return;
       }
       toast.error(
-        `Blueprint limit reached (${quota.count}/${quota.max}). Upgrade to Pro to continue.`,
+        `Blueprint limit reached (${quota.count}/${quota.max}). Upgrade to Pro or connect your OpenRouter key to continue.`,
       );
       return;
     }
@@ -332,6 +343,8 @@ export default function AddBlueprintPage() {
     setSteps(prev => prev.map(s => ({ ...s, status: 'waiting' })));
 
     try {
+      const customApiKey = apiKeyStatus?.hasCustomKey ? apiKeyStatus.rawKey : undefined;
+
       // Step 1: Project Overview
       updateStepStatus(1, 'generating');
       const projectOverview = await generateProjectOverview({
@@ -339,13 +352,14 @@ export default function AddBlueprintPage() {
         techStack,
         exclusions,
         complexity,
+        customApiKey,
       });
       updateStepStatus(1, 'completed');
 
       // Step 2: PRD (Product Requirements Document)
       updateStepStatus(2, 'generating');
       const prd = await generatePRD(
-        { prompt, exclusions, complexity },
+        { prompt, exclusions, complexity, customApiKey },
         projectOverview,
       );
       updateStepStatus(2, 'completed');
@@ -353,7 +367,7 @@ export default function AddBlueprintPage() {
       // Step 3: Architecture & Schemas
       updateStepStatus(3, 'generating');
       const architecture = await generateArchitecture(
-        { prompt, techStack },
+        { prompt, techStack, customApiKey },
         projectOverview,
         prd,
       );
@@ -362,7 +376,7 @@ export default function AddBlueprintPage() {
       // Step 4: Design System & UI
       updateStepStatus(4, 'generating');
       const design = await generateDesign(
-        { prompt, techStack },
+        { prompt, techStack, customApiKey },
         projectOverview,
         architecture,
       );
@@ -371,7 +385,7 @@ export default function AddBlueprintPage() {
       // Step 5: Agent Rules & Guardrails
       updateStepStatus(5, 'generating');
       const rules = await generateRules(
-        { prompt, techStack, exclusions },
+        { prompt, techStack, exclusions, customApiKey },
         projectOverview,
         architecture,
       );
@@ -380,7 +394,7 @@ export default function AddBlueprintPage() {
       // Step 6: Agentic Execution Plan
       updateStepStatus(6, 'generating');
       const executionPlan = await generateExecutionPlan(
-        { prompt, techStack, exclusions, complexity },
+        { prompt, techStack, exclusions, complexity, customApiKey },
         projectOverview,
         prd,
         architecture,
@@ -417,15 +431,19 @@ export default function AddBlueprintPage() {
         markdownFiles,
         architectureFlow: {
           architecture: {
-            title: 'System Architecture',
+            title: 'System Architecture & Data Contracts',
             description: architecture.slice(0, 320) + '...',
           },
-          features: {
-            title: 'Product Requirements (PRD)',
-            description: prd.slice(0, 320) + '...',
+          design: {
+            title: 'Design System Tokens & 60-30-10 Specs',
+            description: design.slice(0, 320) + '...',
           },
-          plan: {
-            title: 'Execution Roadmap',
+          rules: {
+            title: 'Operational AI Guardrails & Conventions',
+            description: rules.slice(0, 320) + '...',
+          },
+          executionPlan: {
+            title: 'Phased Checklist & Deterministic Verifications',
             description: executionPlan.slice(0, 320) + '...',
           },
         },
@@ -450,9 +468,22 @@ export default function AddBlueprintPage() {
       }
     } catch (err: any) {
       console.error('Generation failure:', err);
-      toast.error(
-        err.message || 'Blueprint generation failed. Please try again.',
-      );
+      const errMsg = String(err?.message || '');
+      if (
+        errMsg.includes('DEFAULT_LIMIT_REACHED') ||
+        (!apiKeyStatus?.hasCustomKey &&
+          (errMsg.includes('402') ||
+            errMsg.includes('429') ||
+            errMsg.includes('rate limit') ||
+            errMsg.includes('credit') ||
+            errMsg.includes('limit')))
+      ) {
+        setShowDefaultLimitModal(true);
+      } else {
+        toast.error(
+          err.message || 'Blueprint generation failed. Please try again.',
+        );
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -477,7 +508,7 @@ export default function AddBlueprintPage() {
           </p>
         </div>
 
-        {/* Quota Badge Header */}
+        {/* Quota / BYOK Badge Header */}
         <div className="flex items-center gap-3">
           {loadingQuota ? (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -487,6 +518,32 @@ export default function AddBlueprintPage() {
             <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-500 text-xs font-semibold shadow-2xs">
               <Ban className="h-4 w-4 shrink-0" />
               <span>Generation Restricted by Admin</span>
+            </div>
+          ) : apiKeyStatus?.hasCustomKey ? (
+            <div className="flex items-center gap-3">
+              <div className="flex flex-col gap-1.5 px-3.5 py-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 shadow-2xs min-w-[210px]">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 text-[11px]">
+                    <KeyRound className="h-3.5 w-3.5 text-emerald-500" />
+                    BYOK Active
+                  </span>
+                  <span className="font-bold text-foreground text-[11px]">
+                    {apiKeyStatus.limit_remaining !== null &&
+                    apiKeyStatus.limit_remaining !== undefined
+                      ? `$${Number(apiKeyStatus.limit_remaining).toFixed(2)} left`
+                      : 'Unlimited'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                  <span>OpenRouter Key</span>
+                  <Link
+                    href="/add-apikey"
+                    className="text-primary hover:underline font-semibold"
+                  >
+                    Settings &rarr;
+                  </Link>
+                </div>
+              </div>
             </div>
           ) : quota ? (
             <div className="flex items-center gap-3">
@@ -542,7 +599,7 @@ export default function AddBlueprintPage() {
       </div>
 
       {/* Quota Limit Reached Warning Banner */}
-      {quota && !quota.canGenerate && (
+      {quota && !quota.canGenerate && !apiKeyStatus?.hasCustomKey && (
         <div className="mb-8 rounded-2xl border border-destructive/30 bg-destructive/10 p-5 text-destructive flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div>
             <h3 className="font-bold text-sm">
@@ -954,6 +1011,12 @@ export default function AddBlueprintPage() {
       <AgentPromptModal
         isOpen={showPromptModal}
         onClose={() => setShowPromptModal(false)}
+      />
+
+      {/* Shared Default Endpoint Limit Reached Modal */}
+      <DefaultLimitModal
+        isOpen={showDefaultLimitModal}
+        onClose={() => setShowDefaultLimitModal(false)}
       />
     </div>
   );

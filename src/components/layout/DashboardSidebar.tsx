@@ -18,6 +18,7 @@ import {
   Users,
   CreditCard,
   Layers,
+  KeyRound,
 } from 'lucide-react';
 import Image from 'next/image';
 import { authClient } from '@/lib/auth-client';
@@ -27,7 +28,7 @@ const menuItems = [
   { label: 'Overview', href: '/workspace', icon: LayoutDashboard },
   { label: 'New Blueprint', href: '/add-blueprint', icon: PlusCircle },
   { label: 'My Blueprints', href: '/my-blueprints', icon: FolderHeart },
-  { label: 'Explore Gallery', href: '/blueprints', icon: Compass },
+  { label: 'API Settings', href: '/add-apikey', icon: KeyRound },
 ];
 
 function getInitials(name?: string | null) {

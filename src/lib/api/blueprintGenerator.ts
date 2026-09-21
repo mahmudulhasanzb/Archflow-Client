@@ -2,9 +2,13 @@
 
 import OpenAI from 'openai';
 
-function getOpenAIClient(): OpenAI {
+function getOpenAIClient(customApiKey?: string): OpenAI {
   const baseURL = process.env.AI_BASE_URL || 'https://openrouter.ai/api/v1';
-  const apiKey = process.env.AI_API_KEY || process.env.OPENROUTER_API_KEY || '';
+  const apiKey =
+    customApiKey?.trim() ||
+    process.env.AI_API_KEY ||
+    process.env.OPENROUTER_API_KEY ||
+    '';
 
   return new OpenAI({
     baseURL: baseURL,
@@ -20,14 +24,16 @@ const FALLBACK_MODELS = [
 ];
 
 async function callChatWithFallback(
-  messages: Array<{ role: 'system' | 'user'; content: string }>
+  messages: Array<{ role: 'system' | 'user'; content: string }>,
+  customApiKey?: string
 ): Promise<string> {
   const primary = process.env.AI_MODEL_NAME || 'inclusionai/ling-3.0-flash-vl:free';
   const models = Array.from(new Set([primary, ...FALLBACK_MODELS]));
-  const openai = getOpenAIClient();
+  const openai = getOpenAIClient(customApiKey);
   let lastError: unknown = null;
+  let hasLimitError = false;
 
-    for (const model of models) {
+  for (const model of models) {
     try {
       const completion = await openai.chat.completions.create({
         model,
@@ -45,10 +51,30 @@ async function callChatWithFallback(
         }
         return content;
       }
-    } catch (err: unknown) {
-      console.warn(`[Blueprint Generator] Model '${model}' failed, attempting fallback...`, (err as Error)?.message || err);
+    } catch (err: any) {
+      console.warn(`[Blueprint Generator] Model '${model}' failed, attempting fallback...`, err?.message || err);
       lastError = err;
+      const status = err?.status || err?.statusCode;
+      const msg = String(err?.message || '').toLowerCase();
+      if (
+        status === 402 ||
+        status === 429 ||
+        msg.includes('credit') ||
+        msg.includes('rate limit') ||
+        msg.includes('quota') ||
+        msg.includes('payment') ||
+        msg.includes('exceeded')
+      ) {
+        hasLimitError = true;
+      }
     }
+  }
+
+  // If shared default endpoint was used and hit rate/credit limit, raise structured error for modal
+  if (hasLimitError && !customApiKey) {
+    throw new Error(
+      'DEFAULT_LIMIT_REACHED: The default API endpoint has reached its limit. Please add your own endpoint.'
+    );
   }
 
   throw new Error(`All generation models failed. Last error: ${(lastError as Error)?.message || lastError}`);
@@ -59,6 +85,7 @@ export interface GeneratorParams {
   techStack?: string[];
   exclusions?: string;
   complexity?: string;
+  customApiKey?: string;
 }
 
 export interface GeneratedBlueprintFiles {
@@ -110,7 +137,7 @@ Tech Stack Preferences: ${stackStr}
 Target Complexity: ${complexityStr}
 Scope Exclusions: ${exclusionsStr}`,
     },
-  ]);
+  ], params.customApiKey);
 }
 
 // 2. Generate PRD.md (Product Requirements Document)
@@ -150,7 +177,7 @@ Original User Prompt:
 ${params.prompt}
 ${params.exclusions ? `Exclusions: ${params.exclusions}` : ''}`,
     },
-  ]);
+  ], params.customApiKey);
 }
 
 // Backward compatibility wrapper for requirements.md
@@ -197,7 +224,7 @@ ${prd}
 
 Selected Tech Stack: ${stackStr}`,
     },
-  ]);
+  ], params.customApiKey);
 }
 
 // 4. Generate design.md
@@ -243,7 +270,7 @@ ${projectOverview}
 System Architecture:
 ${architecture}`,
     },
-  ]);
+  ], params.customApiKey);
 }
 
 // 5. Generate rules.md (Agent Guardrails & Coding Standards)
@@ -298,7 +325,7 @@ ${stackStr}
 Architecture:
 ${architecture}`,
     },
-  ]);
+  ], params.customApiKey);
 }
 
 // 6. Generate executionPlan.md
@@ -350,7 +377,7 @@ Target Complexity: ${complexityStr}
 
 Create the complete execution plan now.`,
     },
-  ]);
+  ], params.customApiKey);
 }
 
 // Optimized Parallel Pipeline: Runs Step 1, then parallel Steps 2, 3, 4, 5, then Step 6

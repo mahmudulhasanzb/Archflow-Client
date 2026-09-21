@@ -24,7 +24,6 @@ export const metadata = {
     'Complete technical documentation for Archflow. Learn how Archflow generates deterministic 6-file architecture suites (projectOverview, PRD, architecture, design, rules, executionPlan) for Cursor, Claude Code, Windsurf, and Antigravity.',
 };
 
-
 const ARCH_FILES = [
   {
     name: 'projectOverview.md',
@@ -131,25 +130,29 @@ const ARCH_FILES = [
 const IDE_PROMPTS = [
   {
     ide: 'Cursor (Composer / Agent)',
-    description: 'Direct Composer to implement a specific phase using project context and architecture contracts.',
+    description:
+      'Direct Composer to implement a specific phase using project context and architecture contracts.',
     command:
       '@projectOverview.md @architecture.md @executionPlan.md Read executionPlan.md and implement Phase 1 tasks. Follow schemas in architecture.md strictly. Run verification commands after each task.',
   },
   {
     ide: 'Claude Code CLI',
-    description: 'Execute step-by-step tasks through the terminal agent with verified file boundaries.',
+    description:
+      'Execute step-by-step tasks through the terminal agent with verified file boundaries.',
     command:
       'claude "Read executionPlan.md and architecture.md. Implement Task 2.1 in Archflow-Server/src/index.ts, verify with the specified curl command, and check off the task."',
   },
   {
     ide: 'Windsurf / Cascade',
-    description: 'Autonomous multi-file execution across both client and server directories.',
+    description:
+      'Autonomous multi-file execution across both client and server directories.',
     command:
       'Execute all unchecked items in executionPlan.md. Ensure all client UI components conform to design.md tokens and backend handlers match architecture.md API contracts.',
   },
   {
     ide: 'Google Antigravity / Agentic Workspace',
-    description: 'Pair-programming prompt for complete milestone execution with automated verification.',
+    description:
+      'Pair-programming prompt for complete milestone execution with automated verification.',
     command:
       'Review projectOverview.md and requirements.md. Work through executionPlan.md Phase by Phase. Verify each step with npm run build or the designated test suite.',
   },
@@ -164,15 +167,12 @@ const NAV_LINKS = [
   { id: 'workflow', title: '3-Step Execution Workflow' },
 ];
 
-
 export default function DocsPage() {
   return (
     <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-
         {/* Standard Docs Layout */}
         <div className="flex flex-col lg:flex-row gap-12 items-start">
-          
           {/* Sticky Navigation Sidebar (Desktop) */}
           <aside className="w-full lg:w-64 shrink-0 lg:sticky lg:top-24 space-y-6">
             <div className="rounded-2xl border border-border bg-card p-5 space-y-4 shadow-xs">
@@ -182,7 +182,7 @@ export default function DocsPage() {
               <Suspense
                 fallback={
                   <nav className="space-y-1 text-xs font-medium">
-                    {NAV_LINKS.map((link) => (
+                    {NAV_LINKS.map(link => (
                       <div
                         key={link.id}
                         className="py-1.5 px-2.5 rounded-xl text-muted-foreground"
@@ -195,14 +195,11 @@ export default function DocsPage() {
               >
                 <DocsSidebarNav navLinks={NAV_LINKS} />
               </Suspense>
-
-
             </div>
           </aside>
 
           {/* Main Docs Content Stream */}
           <main className="flex-1 min-w-0 max-w-4xl space-y-16">
-            
             {/* Section 1: Overview */}
             <section id="overview" className="scroll-mt-28 space-y-4">
               <h1 className="text-2xl sm:text-3xl font-bold font-display text-foreground flex items-center gap-2.5">
@@ -210,27 +207,40 @@ export default function DocsPage() {
                 <span>Architecture Suite Overview</span>
               </h1>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                When developers give ambiguous prompts to AI coding assistants, agents routinely hallucinate folder structures, invent mismatched API contracts, and produce fragmented code. Archflow prevents architectural drift by generating an exact, cohesive 6-file specification suite before a single line of code is written.
+                When developers give ambiguous prompts to AI coding assistants,
+                agents routinely hallucinate folder structures, invent
+                mismatched API contracts, and produce fragmented code. Archflow
+                prevents architectural drift by generating an exact, cohesive
+                6-file specification suite before a single line of code is
+                written.
               </p>
-
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                 <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-                  <span className="text-xs font-bold text-foreground block">Zero Route Drift</span>
+                  <span className="text-xs font-bold text-foreground block">
+                    Zero Route Drift
+                  </span>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Client fetchers and backend endpoints share exact parameter keys, query names, and JSON status contracts.
+                    Client fetchers and backend endpoints share exact parameter
+                    keys, query names, and JSON status contracts.
                   </p>
                 </div>
                 <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-                  <span className="text-xs font-bold text-foreground block">Deterministic Prompts</span>
+                  <span className="text-xs font-bold text-foreground block">
+                    Deterministic Prompts
+                  </span>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Every task in the execution plan has a designated file path and automated verification command.
+                    Every task in the execution plan has a designated file path
+                    and automated verification command.
                   </p>
                 </div>
                 <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
-                  <span className="text-xs font-bold text-foreground block">Agent-First Markdown</span>
+                  <span className="text-xs font-bold text-foreground block">
+                    Agent-First Markdown
+                  </span>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Formatted cleanly in GitHub markdown with ASCII trees and code fences for instant LLM parsing.
+                    Formatted cleanly in GitHub markdown with ASCII trees and
+                    code fences for instant LLM parsing.
                   </p>
                 </div>
               </div>
@@ -243,13 +253,13 @@ export default function DocsPage() {
                   The 6 Core Specification Files
                 </h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Every blueprint generated by Archflow consists of these six deterministic markdown documents:
+                  Every blueprint generated by Archflow consists of these six
+                  deterministic markdown documents:
                 </p>
               </div>
 
-
               <div className="space-y-5">
-                {ARCH_FILES.map((file) => {
+                {ARCH_FILES.map(file => {
                   const Icon = file.icon;
                   return (
                     <div
@@ -295,7 +305,9 @@ export default function DocsPage() {
                       <div className="rounded-xl bg-background border border-border px-3.5 py-2.5 text-xs text-muted-foreground flex items-start gap-2">
                         <Terminal className="h-4 w-4 text-foreground shrink-0 mt-0.5" />
                         <div>
-                          <strong className="text-foreground">AI Agent Usage: </strong>
+                          <strong className="text-foreground">
+                            AI Agent Usage:{' '}
+                          </strong>
                           <span>{file.agentUsage}</span>
                         </div>
                       </div>
@@ -306,13 +318,17 @@ export default function DocsPage() {
             </section>
 
             {/* Section 3: Interactive Specification Output Explorer */}
-            <section id="interactive-preview" className="scroll-mt-28 space-y-4">
+            <section
+              id="interactive-preview"
+              className="scroll-mt-28 space-y-4"
+            >
               <div className="border-b border-border pb-4">
                 <h2 className="text-2xl font-bold font-display text-foreground">
                   Interactive Specification Explorer
                 </h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Click through the live tabs below to inspect authentic markdown output generated by Archflow:
+                  Click through the live tabs below to inspect authentic
+                  markdown output generated by Archflow:
                 </p>
               </div>
               <SpecPreviewTerminal />
@@ -325,7 +341,8 @@ export default function DocsPage() {
                   Agentic-IDE Prompting Patterns
                 </h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Copy and paste the recommended prompt or specific tool commands into your AI coding tool:
+                  Copy and paste the recommended prompt or specific tool
+                  commands into your AI coding tool:
                 </p>
               </div>
 
@@ -333,7 +350,8 @@ export default function DocsPage() {
               <RecommendedPromptCard />
 
               <h3 className="text-xl font-bold text-foreground mt-6 flex items-center gap-2">
-                IDE Prompt Tool Quick-Reference <ArrowDown className="h-5 w-5 text-muted-foreground" />
+                IDE Prompt Tool Quick-Reference{' '}
+                <ArrowDown className="h-5 w-5 text-muted-foreground" />
               </h3>
               <div className="space-y-4">
                 {IDE_PROMPTS.map((item, idx) => (
@@ -348,13 +366,17 @@ export default function DocsPage() {
             </section>
 
             {/* Section 5: Engineering Standards */}
-            <section id="engineering-standards" className="scroll-mt-28 space-y-6">
+            <section
+              id="engineering-standards"
+              className="scroll-mt-28 space-y-6"
+            >
               <div className="border-b border-border pb-4">
                 <h2 className="text-2xl font-bold font-display text-foreground">
                   Production Engineering Standards
                 </h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  All blueprints follow strict, production-tested architecture guidelines:
+                  All blueprints follow strict, production-tested architecture
+                  guidelines:
                 </p>
               </div>
 
@@ -365,7 +387,9 @@ export default function DocsPage() {
                     <span>Single-File Express 5 Gateways</span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Clean, high-throughput micro-gateways using the native MongoDB driver with connection caching, ping healthchecks, and structured error handling.
+                    Clean, high-throughput micro-gateways using the native
+                    MongoDB driver with connection caching, ping healthchecks,
+                    and structured error handling.
                   </p>
                 </div>
 
@@ -375,7 +399,8 @@ export default function DocsPage() {
                     <span>Better Auth & JWKS Verification</span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Stateless cryptographic authentication between Next.js frontend and Express backend using JWKS public key rotation.
+                    Stateless cryptographic authentication between Next.js
+                    frontend and Express backend using JWKS public key rotation.
                   </p>
                 </div>
 
@@ -385,7 +410,8 @@ export default function DocsPage() {
                     <span>Calibrated Contrast Tokens</span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Obsidian dark theme and warm paper light mode with balanced semantic surface, border, and text contrast tokens.
+                    Obsidian dark theme and warm paper light mode with balanced
+                    semantic surface, border, and text contrast tokens.
                   </p>
                 </div>
 
@@ -395,7 +421,12 @@ export default function DocsPage() {
                     <span>Checkbox-Driven Verification</span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Every task in <code className="font-mono bg-muted px-1 py-0.5 rounded text-foreground">executionPlan.md</code> specifies an exact command or browser check so agents never complete unverified work.
+                    Every task in{' '}
+                    <code className="font-mono bg-muted px-1 py-0.5 rounded text-foreground">
+                      executionPlan.md
+                    </code>{' '}
+                    specifies an exact command or browser check so agents never
+                    complete unverified work.
                   </p>
                 </div>
               </div>
@@ -408,7 +439,8 @@ export default function DocsPage() {
                   3-Step Execution Workflow
                 </h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  How to take an Archflow blueprint from idea to working software:
+                  How to take an Archflow blueprint from idea to working
+                  software:
                 </p>
               </div>
 
@@ -417,9 +449,13 @@ export default function DocsPage() {
                   <div className="h-8 w-8 rounded-xl bg-primary text-primary-foreground font-bold text-sm flex items-center justify-center">
                     1
                   </div>
-                  <h3 className="text-sm font-bold text-foreground">Generate & Download</h3>
+                  <h3 className="text-sm font-bold text-foreground">
+                    Generate & Download
+                  </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Input your requirements prompt or choose a community blueprint. Click <strong>Download blueprint (.zip)</strong> to get all 6 markdown specifications.
+                    Input your requirements prompt or choose a community
+                    blueprint. Click <strong>Download blueprint (.zip)</strong>{' '}
+                    to get all 6 markdown specifications.
                   </p>
                 </div>
 
@@ -427,20 +463,26 @@ export default function DocsPage() {
                   <div className="h-8 w-8 rounded-xl bg-primary text-primary-foreground font-bold text-sm flex items-center justify-center">
                     2
                   </div>
-                  <h3 className="text-sm font-bold text-foreground">Drop in Repo Root</h3>
+                  <h3 className="text-sm font-bold text-foreground">
+                    Drop in Repo Root
+                  </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Extract the 6 files directly into your project root folder so your AI coding assistant has immediate local workspace context.
+                    Extract the 6 files directly into your project root folder
+                    so your AI coding assistant has immediate local workspace
+                    context.
                   </p>
                 </div>
-
 
                 <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
                   <div className="h-8 w-8 rounded-xl bg-primary text-primary-foreground font-bold text-sm flex items-center justify-center">
                     3
                   </div>
-                  <h3 className="text-sm font-bold text-foreground">Execute with Agent</h3>
+                  <h3 className="text-sm font-bold text-foreground">
+                    Execute with Agent
+                  </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Copy the Recommended Prompt, paste it into your coding agent, and it will execute the blueprint tasks step by step.
+                    Copy the Recommended Prompt, paste it into your coding
+                    agent, and it will execute the blueprint tasks step by step.
                   </p>
                 </div>
               </div>
@@ -453,7 +495,8 @@ export default function DocsPage() {
                   Ready to architect your next system?
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  Create a custom architecture suite or browse verified community blueprints.
+                  Create a custom architecture suite or browse verified
+                  community blueprints.
                 </p>
               </div>
               <div className="flex items-center gap-3 shrink-0">
@@ -472,10 +515,8 @@ export default function DocsPage() {
                 </Link>
               </div>
             </div>
-
           </main>
         </div>
-
       </div>
     </div>
   );
