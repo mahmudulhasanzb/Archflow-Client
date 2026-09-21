@@ -9,7 +9,8 @@ import {
   ListChecks, 
   Check, 
   Copy,
-  Terminal
+  Terminal,
+  ShieldCheck,
 } from 'lucide-react';
 
 export const BLUEPRINT_PREVIEWS = {
@@ -38,11 +39,11 @@ MONGODB_URI=mongodb+srv://.../flowforge
 BETTER_AUTH_URL=http://localhost:3000
 JWKS_CACHE_TTL_MS=3600000`,
   },
-  requirements: {
-    name: 'requirements.md',
+  prd: {
+    name: 'PRD.md',
     icon: ListChecks,
-    badge: 'Requirements & Scope',
-    content: `# Requirements & Functional Specifications
+    badge: 'Product Requirements (PRD)',
+    content: `# Product Requirements Document (PRD)
 
 ## 1. Target Personas
 - P-01 (Architect): Requires fast visual topology canvas, SVG export, and live presence.
@@ -118,6 +119,24 @@ Indexes: { title: "text" }, { ownerId: 1 }`,
 - Header: Compact sticky bar (avatar, title, telemetry, bookmark, rate).
 - Workbench Tabs: Sticky file switcher with active tab contrast pill.
 - Viewer Container: Responsive min-w-0 wrapper with raw markdown toggle and 1-click clipboard copy.`,
+  },
+  rules: {
+    name: 'rules.md',
+    icon: ShieldCheck,
+    badge: 'Rules & Guardrails',
+    content: `# Agent Rules & Boundaries
+
+## 1. Tech Stack Boundaries
+- Frameworks: Next.js 16 (App Router), Tailwind CSS v4, Express 5, native MongoDB driver.
+- Language Paradigm: Strict TypeScript. Zero 'any' types allowed.
+- Forbidden Packages: No Prisma ORM, No Redux, No Axios, No heavy unapproved packages.
+
+## 2. Security & Secrets Management
+- Zero Hardcoded Secrets: Read all credentials and URIs from .env variables.
+- Fail Loudly: Always return structured error responses; never fall back to mock memory arrays in database handlers.
+
+## 3. Autonomous Verification Contract
+- Verification Protocol: Run typecheck, build validation, and automated tests before checking off any task in executionPlan.md.`,
   },
   executionPlan: {
     name: 'executionPlan.md',

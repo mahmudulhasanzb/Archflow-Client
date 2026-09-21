@@ -132,7 +132,7 @@ export default async function BlueprintDetailsPage({ params }: PageProps) {
       {/* Dynamic Header with Actions, Author & Telemetry */}
       <BlueprintHeader blueprint={blueprint} />
 
-      {/* 5-File Blueprint Suite & Export Viewer */}
+      {/* 6-File Blueprint Suite & Export Viewer */}
       <BlueprintViewer blueprint={blueprint} />
     </div>
   );

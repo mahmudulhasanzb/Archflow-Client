@@ -167,6 +167,8 @@ export async function generateArchitecture(
   projectOverview: string,
   prd: string
 ): Promise<string> {
+  const stackStr = params.techStack?.length ? params.techStack.join(', ') : 'Modern Full-Stack Stack (Next.js, Tailwind, Express/Node, MongoDB)';
+
   return await callChatWithFallback([
     {
       role: 'system',
@@ -175,15 +177,15 @@ DO NOT summarize when concrete code specifications are possible.
 Structure strictly with:
 # Architecture & System Design
 ## 1. System Topology & Data Flow (ASCII diagram showing Client, Server, DB, External APIs)
-## 2. Directory & File Structure (Complete ASCII tree matching modern conventions, e.g. Next.js 16 App Router)
-## 3. Complete Data Models & TypeScript Schemas
-Provide FULL, copy-pasteable TypeScript interfaces/types or Zod schemas for all database entities with relationships and indexes.
+## 2. Directory & File Structure (Complete ASCII tree matching idiomatic conventions of the chosen tech stack: ${stackStr})
+## 3. Complete Data Models & Entity Schemas
+Provide FULL, copy-pasteable data models and schemas tailored to the chosen tech stack (e.g. TypeScript interfaces/Zod if TypeScript, Pydantic/dataclasses if Python, Go structs if Go, or SQL/Prisma schemas).
 ## 4. API Specification & Route Contracts
 Provide a comprehensive table and JSON payloads:
 | Method | Endpoint | Auth | Request Payload Shape | Response Payload Shape | Errors |
-## 5. State Management & Server/Client Boundary Rules
-Clarify exact boundaries between Server Components, Server Actions, and Client Components.
-## 6. Security & Authorization Architecture (Middleware rules, JWT/Session validation, RBAC matrices)`,
+## 5. State Management & Architecture Boundaries
+Clarify state store, caching, and execution boundaries (e.g. Server vs Client Components, or API Gateway vs Services).
+## 6. Security & Authorization Architecture (Middleware rules, Session/JWT validation, RBAC matrices)`,
     },
     {
       role: 'user',
@@ -193,7 +195,7 @@ ${projectOverview}
 PRD / Requirements:
 ${prd}
 
-Selected Tech Stack: ${params.techStack?.join(', ') || 'Next.js, Node, MongoDB'}`,
+Selected Tech Stack: ${stackStr}`,
     },
   ]);
 }
@@ -211,11 +213,25 @@ export async function generateDesign(
 Structure strictly with:
 # Design System & UI Architecture
 ## 1. Visual Aesthetic Direction (Theme philosophy, dark/light balance, visual hierarchy)
-## 2. Design Tokens & Color Palette
-Provide exact Tailwind CSS v4 variables / Hex color codes for primary, secondary, neutral, surface, and semantic alerts (success, error, warning).
-## 3. Typography Hierarchy (Font family recommendations, type scale with rem values, font weights)
-## 4. Core Component Specifications & Layouts
+## 2. Design Tokens & Color Palette (Strict 60-30-10 & Accessibility Rules)
+- **60-30-10 Distribution**:
+  - **60% Dominant Base**: Canvas background, main layout surfaces, and neutral container fills (provide exact hex & Tailwind CSS v4 variables).
+  - **30% Secondary Structure**: Card containers, sidebars, headers, muted borders, and section dividers (provide exact hex & variables).
+  - **10% Accent / Focus**: High-contrast CTA buttons, active state indicators, key metrics, and badges (provide exact hex & variables).
+  - **Semantic Alerts**: Success, error, warning, and info alert hex codes.
+- **WCAG 2.1 AA Compliance**: Strict minimum 4.5:1 contrast ratio for normal body copy; 3:1 for large headings and interactive UI controls.
+- **Surface Elevation Hierarchy**: Surface-0 (canvas), Surface-1 (cards/containers), Surface-2 (modals/popovers) with subtle 1px borders.
+## 3. Spatial System & Typography Hierarchy
+- **8pt / 4pt Grid**: All margins, paddings, and gaps MUST follow 4px/8px multiples (p-2, p-4, gap-4). Prohibit arbitrary pixel values.
+- **Type Scale**: Max 2 font families (Display + UI Sans). Proportional line-heights (\`leading-tight\` on headings, \`leading-relaxed\` on body).
+## 4. Core Component Specifications & 5-State Interactive Contract
 Define layout grid, navbar, hero, cards, forms, tables, and modal components with specific props.
+Every clickable component (buttons, inputs, tabs) MUST define all 5 states:
+1. Default
+2. Hover
+3. Focus-visible
+4. Active / Pressed
+5. Disabled (\`disabled:opacity-50 disabled:cursor-not-allowed\`)
 ## 5. Interactive States & Micro-interactions (Hover scales, loading skeletons, error states, toast conventions)
 ## 6. Responsive Breakpoints & Mobile Adaptations (Mobile-first rules for sm, md, lg, xl, 2xl)`,
     },
@@ -236,30 +252,40 @@ export async function generateRules(
   projectOverview: string,
   architecture: string
 ): Promise<string> {
-  const stackStr = params.techStack?.length ? params.techStack.join(', ') : 'Next.js, Tailwind, Node, MongoDB';
+  const stackStr = params.techStack?.length ? params.techStack.join(', ') : 'Modern Full-Stack Stack';
   const exclusionsStr = params.exclusions?.trim() ? `Explicit exclusions: ${params.exclusions}` : 'None';
 
   return await callChatWithFallback([
     {
       role: 'system',
-      content: `You are a Lead AI Workflow Architect. Generate a deterministic 'rules.md' file that serves as strict system instructions and guardrails for an AI coding agent (Cursor, Antigravity, Claude Code) to build this project without human intervention.
+      content: `You are a Lead AI Workflow Architect. Generate a deterministic 'rules.md' file that serves as strict system instructions and guardrails for an AI coding agent (Cursor, Antigravity, Claude Code, Codex) to build this project without human intervention.
+Calibrate all rules specifically to the selected tech stack: ${stackStr}.
+
 Structure strictly with:
 # AI Coding Rules & Operational Guardrails
-## 1. Tech Stack Mandates & Fixed Versions
-Specify exact frameworks, libraries, and language versions. Enforce strict conventions (e.g. Next.js 16 App Router only, never use Pages Router).
+## 1. Tech Stack Mandates & Ecosystem Conventions
+- Strictly enforce idioms, language versions, and framework paradigms native to the chosen stack: ${stackStr}.
+- Do NOT mix paradigms or force unrelated framework conventions (e.g. if Next.js App Router, ban Pages Router; if Python, follow PEP 8 and modern async patterns; if Go, follow idiomatic project layout).
 ## 2. Forbidden Libraries & Anti-Patterns
-Explicitly list banned packages and patterns that the agent MUST NOT use.
+Explicitly list banned packages and anti-patterns that the agent MUST NOT use.
 ${exclusionsStr}
-## 3. File Architecture & Modularity Rules
-- Maximum file size (e.g. 200 lines per file; modularize components).
-- File placement conventions (actions in /lib/actions, types in /types, components separated into ui vs feature).
-## 4. Type Safety & Code Quality Mandates
-- TypeScript \`strict: true\`. Prohibit \`any\` or \`as unknown as ...\`.
-- All API payloads must use Zod or typed interfaces.
-## 5. Error Handling & API Response Standard
-Enforce unified response format: \`{ success: boolean, data?: T, error?: string, code?: string }\`.
-## 6. AI Agent Self-Verification Checklist
-List exact sanity checks the agent must run after generating any code (lint, typecheck, build).`,
+## 3. Idiomatic File Architecture & Modularity
+- Maximum file size (e.g. 200 lines per file; aggressively modularize helper functions and components).
+- Follow standard ecosystem folder conventions for ${stackStr} (e.g. separate business logic, data models, routes/actions, and UI views).
+## 4. Language-Specific Type Safety & Code Quality
+- If TypeScript: enforce \`strict: true\` and prohibit \`any\` or \`as unknown as ...\`.
+- If Python: enforce type hints (\`typing\` / Pydantic) and zero unannotated functions.
+- If JavaScript: enforce modern ES modules and strict JSDoc annotations.
+- All external API request and response boundaries must be validated with runtime schemas.
+## 5. Security, Secrets & Environment Variables
+- Zero hardcoded secrets: Never hardcode API keys, JWT secrets, DB connection strings, or auth tokens in code.
+- All secrets MUST be read from environment variables with runtime schema validation.
+- Never expose private backend server credentials to client-side code.
+## 6. Error Handling & Data Integrity Standard
+- Unified response format: \`{ success: boolean, data?: T, error?: string, code?: string }\`.
+- Fail loudly: NEVER silently fall back to mock memory arrays when a database or external API call fails.
+## 7. AI Agent Self-Verification Checklist
+List exact ecosystem-native sanity checks the agent must run after generating any code (lint, typecheck, build).`,
     },
     {
       role: 'user',
@@ -284,26 +310,26 @@ export async function generateExecutionPlan(
   design: string,
   rules?: string
 ): Promise<string> {
+  const complexityStr = params.complexity || 'Medium';
+
   return await callChatWithFallback([
     {
       role: 'system',
-      content: `You are an Agentic Execution Lead. Generate a deterministic, phased 'executionPlan.md' formatted specifically for an AI coding agent (Cursor, Antigravity, Claude Code) to autonomously execute step-by-step.
+      content: `You are an Agentic Execution Lead. Generate a deterministic, phased 'executionPlan.md' formatted specifically for an AI coding agent (Cursor, Antigravity, Claude Code, Codex) to autonomously execute step-by-step.
 
 CRITICAL RULES:
-1. Divide into 5 chronological Phases:
-   - Phase 1: Environment, Dependencies & Base Types
-   - Phase 2: Database Models, Services & Server APIs
-   - Phase 3: Core UI Components & Design System Tokens
-   - Phase 4: Full Feature Integration & User Flows
-   - Phase 5: Testing, Hardening & End-to-End Verification
+1. Calibrate Chronological Phases to Project Complexity (${complexityStr}):
+   - Low Complexity / MVP: 3 to 4 focused phases (e.g. Phase 1: Environment & Base Schemas, Phase 2: Core Logic & UI, Phase 3: Integration & Polish).
+   - Medium Complexity: 5 to 6 structured phases (e.g. Phase 1: Foundation & Types, Phase 2: DB Models & Services, Phase 3: UI System, Phase 4: Core Flows & Routing, Phase 5: Verification & Hardening).
+   - High Complexity / Enterprise: 7 or more granular phases (e.g. Phase 1: Infra & Base Schemas, Phase 2: Auth & Role Control, Phase 3: Data Services, Phase 4: UI Engine & Layouts, Phase 5: Complex Workflows, Phase 6: Observability/Telemetry, Phase 7: End-to-End Hardening).
 2. Every task MUST follow this exact actionable markdown checkbox format:
    - [ ] Task X.Y: [Verb] [Feature/Component Name]
-     - Target File: \`exact/path/to/file.ts\`
+     - Target File: \`exact/path/to/file\`
      - Description: [Precise instructions on what functions/logic to create]
      - Dependencies: [Prerequisite tasks or files]
-     - Verification: \`[exact shell command or manual check to verify]\`
-3. Zero dependency deadlocks: Order tasks strictly so models exist before routes, and routes exist before UI components call them.
-4. Granular atomic tasks: No mega-tasks. Break complex flows into distinct sub-tasks.`,
+     - Verification: \`[exact shell command or check to verify, matching the project language/runtime]\`
+3. Zero dependency deadlocks: Order tasks strictly so models exist before routes/services, and routes/services exist before UI views call them.
+4. Granular atomic tasks: Break complex flows into distinct sub-tasks with clear single-file focus.`,
     },
     {
       role: 'user',
@@ -319,6 +345,8 @@ ${architecture}
 Design System:
 ${design}
 ${rules ? `\nCoding Rules:\n${rules}` : ''}
+
+Target Complexity: ${complexityStr}
 
 Create the complete execution plan now.`,
     },

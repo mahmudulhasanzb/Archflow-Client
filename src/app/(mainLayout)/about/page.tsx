@@ -20,11 +20,12 @@ import {
 export const metadata = {
   title: 'About - Archflow | Autonomous Architecture Engineering',
   description:
-    'Learn how Archflow bridges human intent and AI coding assistants like Cursor and Claude Code through deterministic 5-file architecture suites. Built by Mahmudul Hasan.',
+    'Learn how Archflow bridges human intent and AI coding assistants like Cursor and Claude Code through deterministic 6-file architecture suites. Built by Mahmudul Hasan.',
 };
 
 const STATS = [
-  { label: 'Deterministic Files', value: '5 Specs', hint: 'Overview, Req, Arch, Design, Plan' },
+  { label: 'Deterministic Files', value: '6 Specs', hint: 'Overview, PRD, Arch, Design, Rules, Plan' },
+
   { label: 'Architecture Drift', value: '0%', hint: 'Unified contracts between client & server' },
   { label: 'Vendor Lock-in', value: 'Zero', hint: '100% pure GitHub-flavored markdown' },
   { label: 'Supported Agents', value: 'Universal', hint: 'Cursor, Claude Code, Windsurf, Antigravity' },
@@ -47,11 +48,12 @@ const PIPELINE_STEPS = [
   },
   {
     step: '03',
-    title: 'The 5-File Specification Contract',
+    title: 'The 6-File Specification Contract',
     description:
-      'Generates five cohesive markdown files: projectOverview.md, requirements.md, architecture.md, design.md, and executionPlan.md.',
+      'Generates six cohesive markdown files: projectOverview.md, PRD.md, architecture.md, design.md, rules.md, and executionPlan.md.',
     badge: 'Spec Suite',
   },
+
   {
     step: '04',
     title: 'Agentic IDE Execution',
@@ -78,9 +80,10 @@ export default function AboutPage() {
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-3xl">
             Archflow is an autonomous architecture engine built to eliminate{' '}
             <strong>architectural drift</strong>. Instead of prompting AI models
-            into messy spaghetti code, Archflow generates a deterministic 5-file
+            into messy spaghetti code, Archflow generates a deterministic 6-file
             specification contract before a single line of code is written.
           </p>
+
 
           {/* Stats Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
@@ -212,7 +215,7 @@ export default function AboutPage() {
               The Output Suite
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Every Archflow generation delivers these five standardized
+              Every Archflow generation delivers these six standardized
               markdown files:
             </p>
           </div>
@@ -232,11 +235,11 @@ export default function AboutPage() {
             <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
                 <ListTodo className="h-4 w-4 shrink-0" />
-                <span>requirements.md</span>
+                <span>PRD.md</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                User personas, core functional requirements, scope boundaries,
-                and acceptance criteria.
+                User personas, core functional requirements with Gherkin
+                scenarios, scope boundaries, and acceptance criteria.
               </p>
             </div>
 
@@ -257,12 +260,23 @@ export default function AboutPage() {
                 <span>design.md</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Theme aesthetic, color hex tokens, typography scale, component
-                hierarchies, and responsive rules.
+                60-30-10 theme aesthetic, color hex tokens, typography scale,
+                component hierarchies, and responsive rules.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-2 sm:col-span-2">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
+                <ShieldCheck className="h-4 w-4 shrink-0" />
+                <span>rules.md</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Strict tech stack conventions, forbidden packages, secrets
+                management, and autonomous agent guardrails.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-2">
               <div className="flex items-center gap-2 font-mono text-xs font-bold text-foreground">
                 <CheckCircle2 className="h-4 w-4 shrink-0" />
                 <span>executionPlan.md</span>
@@ -276,6 +290,7 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
 
         {/* Section 5: Creator & Mission */}
         <section className="rounded-2xl border border-border bg-card p-6 sm:p-8 space-y-5">
@@ -326,7 +341,7 @@ export default function AboutPage() {
               Ready to explore or build your first blueprint?
             </h3>
             <p className="text-xs text-muted-foreground">
-              Browse community architectures or generate a complete 5-file
+              Browse community architectures or generate a complete 6-file
               specification suite.
             </p>
           </div>

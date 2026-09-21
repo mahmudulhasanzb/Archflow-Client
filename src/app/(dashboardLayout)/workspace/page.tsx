@@ -146,7 +146,7 @@ export default function WorkspacePage() {
             Welcome back, {session?.user?.name || 'Architect'}!
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Generate and manage your AI-engineered 5-file architecture suites.
+            Generate and manage your AI-engineered 6-file architecture suites.
           </p>
         </div>
 

@@ -31,8 +31,10 @@ import {
   Zap,
   ArrowRight,
   Ban,
+  ArrowUpIcon,
 } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
+import AgentPromptModal from '@/components/blueprint/AgentPromptModal';
 
 interface StarterTemplate {
   label: string;
@@ -155,6 +157,7 @@ export default function AddBlueprintPage() {
 
   // Generation States
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showPromptModal, setShowPromptModal] = useState(false);
   const [steps, setSteps] = useState<StepState[]>([
     {
       id: 1,
@@ -307,7 +310,10 @@ export default function AddBlueprintPage() {
 
     if (quota && !quota.canGenerate) {
       if ((quota as any).isBlocked) {
-        toast.error((quota as any).message || 'Your blueprint generation access has been restricted by an administrator.');
+        toast.error(
+          (quota as any).message ||
+            'Your blueprint generation access has been restricted by an administrator.',
+        );
         return;
       }
       toast.error(
@@ -453,7 +459,7 @@ export default function AddBlueprintPage() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl p-6 sm:p-8 flex-grow">
+    <div className="mx-auto max-w-6xl p-6 sm:p-8 flex-grow">
       {/* Top Header */}
       <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border pb-6">
         <div>
@@ -544,8 +550,8 @@ export default function AddBlueprintPage() {
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
               You have created {quota.count} of {quota.max} blueprints allowed
-              on the Free plan. Upgrade to Pro for 10 daily blueprints
-              and private workspaces.
+              on the Free plan. Upgrade to Pro for 10 daily blueprints and
+              private workspaces.
             </p>
           </div>
           <button
@@ -926,22 +932,29 @@ export default function AddBlueprintPage() {
             })}
           </div>
 
-          {/* IDE Tip Box */}
-          <div className="p-3.5 rounded-xl bg-muted/50 border border-border text-[11px] text-muted-foreground space-y-1">
-            <span className="font-bold text-foreground block">
-              Agentic IDE Compatibility:
-            </span>
-            <span>
-              Generated{' '}
-              <code className="text-foreground font-mono bg-muted px-1 py-0.5 rounded">
-                executionPlan.md
-              </code>{' '}
-              uses strict <code className="font-mono">[ ]</code> syntax with
-              explicit verification commands for AI coding assistants.
-            </span>
+          {/* Agent Prompt Callout Box */}
+          <div className="p-3.5 rounded-xl bg-muted/50 border border-border text-[11px] text-muted-foreground space-y-2.5">
+            <p className="leading-relaxed text-foreground/90 font-medium">
+              After generating the blueprint, download it, copy this prompt, and
+              paste it into your coding agent.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowPromptModal(true)}
+              className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 border border-primary/25 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors cursor-pointer"
+            >
+              <ArrowUpIcon className="h-3.5 w-3.5" />
+              <span>Recommended Prompt</span>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Recommended Agent Kickoff Prompt Modal */}
+      <AgentPromptModal
+        isOpen={showPromptModal}
+        onClose={() => setShowPromptModal(false)}
+      />
     </div>
   );
 }

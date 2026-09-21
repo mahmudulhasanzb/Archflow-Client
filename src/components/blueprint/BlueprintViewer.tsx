@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import MdxRenderer from '@/components/mdx/MdxRenderer';
 import { incrementDownloadAction } from '@/lib/api/blueprint/action';
+import AgentPromptModal from '@/components/blueprint/AgentPromptModal';
+import { RECOMMENDED_AGENT_PROMPT } from '@/lib/constants/agentPrompt';
 
 interface MarkdownFiles {
   projectOverview?: string;
@@ -64,52 +66,62 @@ const TABS: TabDef[] = [
     name: 'Overview',
     filename: 'projectOverview.md',
     icon: FileText,
-    description: 'Master briefing file with problem statement, dev commands, and architecture principles.',
+    description:
+      'Master briefing file with problem statement, dev commands, and architecture principles.',
   },
   {
     key: 'prd',
     name: 'PRD',
     filename: 'PRD.md',
     icon: ListTodo,
-    description: 'Product Requirements Document, user personas, Gherkin acceptance criteria, and edge cases.',
+    description:
+      'Product Requirements Document, user personas, Gherkin acceptance criteria, and edge cases.',
   },
   {
     key: 'architecture',
     name: 'Architecture',
     filename: 'architecture.md',
     icon: Code2,
-    description: 'ASCII directory structure, route map, database schemas, and API contracts.',
+    description:
+      'ASCII directory structure, route map, database schemas, and API contracts.',
   },
   {
     key: 'design',
     name: 'Design System',
     filename: 'design.md',
     icon: Palette,
-    description: 'Design tokens, theme palette, typography scale, component hierarchy, and responsiveness.',
+    description:
+      'Design tokens, theme palette, typography scale, component hierarchy, and responsiveness.',
   },
   {
     key: 'rules',
     name: 'Rules & Guardrails',
     filename: 'rules.md',
     icon: ShieldCheck,
-    description: 'Strict coding conventions, forbidden packages, modularity rules, and agent guardrails.',
+    description:
+      'Strict coding conventions, forbidden packages, modularity rules, and agent guardrails.',
   },
   {
     key: 'executionPlan',
     name: 'Execution Plan',
     filename: 'executionPlan.md',
     icon: CheckCircle2,
-    description: 'Agentic IDE phased task roadmap with [ ] checkboxes and explicit verification commands.',
+    description:
+      'Agentic IDE phased task roadmap with [ ] checkboxes and explicit verification commands.',
   },
 ];
 
 export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
-  const [activeTab, setActiveTab] = useState<keyof MarkdownFiles>('projectOverview');
+  const [activeTab, setActiveTab] =
+    useState<keyof MarkdownFiles>('projectOverview');
   const [viewMode, setViewMode] = useState<'mdx' | 'raw'>('mdx');
   const [copiedTab, setCopiedTab] = useState<string | null>(null);
   const [isZipping, setIsZipping] = useState(false);
+  const [showPromptModal, setShowPromptModal] = useState(false);
 
-  const hasMarkdownFiles = Boolean(blueprint.markdownFiles && Object.keys(blueprint.markdownFiles).length > 0);
+  const hasMarkdownFiles = Boolean(
+    blueprint.markdownFiles && Object.keys(blueprint.markdownFiles).length > 0,
+  );
 
   // Copy single file
   const handleCopy = async (filename: string, content: string | undefined) => {
@@ -134,24 +146,51 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
       setIsZipping(true);
       const zip = new JSZip();
       const slug = blueprint.title
-        ? blueprint.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 32)
+        ? blueprint.title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .slice(0, 32)
         : 'archflow-blueprint';
 
       if (blueprint.markdownFiles) {
-        zip.file('projectOverview.md', blueprint.markdownFiles.projectOverview || '# Project Overview\n');
-        const prdContent = blueprint.markdownFiles.prd || blueprint.markdownFiles.requirements || '# PRD\n';
+        zip.file(
+          'projectOverview.md',
+          blueprint.markdownFiles.projectOverview || '# Project Overview\n',
+        );
+        const prdContent =
+          blueprint.markdownFiles.prd ||
+          blueprint.markdownFiles.requirements ||
+          '# PRD\n';
         zip.file('PRD.md', prdContent);
-        zip.file('architecture.md', blueprint.markdownFiles.architecture || '# Architecture\n');
-        zip.file('design.md', blueprint.markdownFiles.design || '# Design System\n');
+        zip.file(
+          'architecture.md',
+          blueprint.markdownFiles.architecture || '# Architecture\n',
+        );
+        zip.file(
+          'design.md',
+          blueprint.markdownFiles.design || '# Design System\n',
+        );
         if (blueprint.markdownFiles.rules) {
           zip.file('rules.md', blueprint.markdownFiles.rules);
         }
-        zip.file('executionPlan.md', blueprint.markdownFiles.executionPlan || '# Execution Plan\n');
+        zip.file(
+          'executionPlan.md',
+          blueprint.markdownFiles.executionPlan || '# Execution Plan\n',
+        );
       } else if (blueprint.architectureFlow) {
         // Fallback for legacy blueprints
-        zip.file('architecture.md', `# ${blueprint.architectureFlow.architecture?.title || 'Architecture'}\n\n${blueprint.architectureFlow.architecture?.description || ''}`);
-        zip.file('PRD.md', `# ${blueprint.architectureFlow.features?.title || 'Features'}\n\n${blueprint.architectureFlow.features?.description || ''}`);
-        zip.file('executionPlan.md', `# ${blueprint.architectureFlow.plan?.title || 'Execution Plan'}\n\n${blueprint.architectureFlow.plan?.description || ''}`);
+        zip.file(
+          'architecture.md',
+          `# ${blueprint.architectureFlow.architecture?.title || 'Architecture'}\n\n${blueprint.architectureFlow.architecture?.description || ''}`,
+        );
+        zip.file(
+          'PRD.md',
+          `# ${blueprint.architectureFlow.features?.title || 'Features'}\n\n${blueprint.architectureFlow.features?.description || ''}`,
+        );
+        zip.file(
+          'executionPlan.md',
+          `# ${blueprint.architectureFlow.plan?.title || 'Execution Plan'}\n\n${blueprint.architectureFlow.plan?.description || ''}`,
+        );
       }
 
       const content = await zip.generateAsync({ type: 'blob' });
@@ -163,10 +202,14 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      toast.success('Downloaded blueprint suite (.zip)!');
+      toast.success(`Downloadeding blueprint.zip`);
       if (blueprint._id) {
         incrementDownloadAction(blueprint._id);
       }
+      // Automatically pop up recommended prompt modal after 3 seconds delay
+      setTimeout(() => {
+        setShowPromptModal(true);
+      }, 3000);
     } catch (err) {
       console.error(err);
       toast.error('Failed to generate ZIP archive.');
@@ -177,15 +220,25 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
 
   // Current active file content with legacy fallback
   const activeContent = (() => {
-    if (!blueprint.markdownFiles) return 'No content generated for this section.';
+    if (!blueprint.markdownFiles)
+      return 'No content generated for this section.';
     if (activeTab === 'prd') {
-      return blueprint.markdownFiles.prd || blueprint.markdownFiles.requirements || 'No PRD generated for this section.';
+      return (
+        blueprint.markdownFiles.prd ||
+        blueprint.markdownFiles.requirements ||
+        'No PRD generated for this section.'
+      );
     }
-    return blueprint.markdownFiles[activeTab] || 'No content generated for this section.';
+    return (
+      blueprint.markdownFiles[activeTab] ||
+      'No content generated for this section.'
+    );
   })();
 
   const currentTabDef = TABS.find(t => t.key === activeTab) || TABS[0];
-  const wordsCount = activeContent.trim() ? activeContent.trim().split(/\s+/).length : 0;
+  const wordsCount = activeContent.trim()
+    ? activeContent.trim().split(/\s+/).length
+    : 0;
   const kbSize = (new Blob([activeContent]).size / 1024).toFixed(1);
 
   return (
@@ -213,8 +266,8 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
                   isActive
                     ? 'bg-primary text-primary-foreground shadow-xs'
                     : isPlan
-                    ? 'bg-muted text-foreground border border-border hover:bg-muted/80'
-                    : 'bg-card border border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                      ? 'bg-muted text-foreground border border-border hover:bg-muted/80'
+                      : 'bg-card border border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
                 <Icon className="h-3.5 w-3.5 shrink-0" />
@@ -237,7 +290,7 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-xs hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
           >
             <Download className="h-3.5 w-3.5" />
-            <span>{isZipping ? 'Archiving...' : 'Download Suite (.zip)'}</span>
+            <span>{isZipping ? 'Downloading...' : 'Download blueprint (.zip)'}</span>
           </button>
         </div>
       </div>
@@ -297,7 +350,9 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
               {copiedTab === currentTabDef.filename ? (
                 <>
                   <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span className="text-emerald-600 dark:text-emerald-400">Copied</span>
+                  <span className="text-emerald-600 dark:text-emerald-400">
+                    Copied
+                  </span>
                 </>
               ) : (
                 <>
@@ -309,27 +364,39 @@ export default function BlueprintViewer({ blueprint }: BlueprintViewerProps) {
           </div>
         </div>
 
-            {/* Markdown Document Content Area */}
-            <div className="p-6 overflow-x-auto max-h-[700px] overflow-y-auto">
-              {viewMode === 'mdx' ? (
-                <MdxRenderer content={activeContent} />
-              ) : (
-                <pre className="font-mono text-xs text-foreground whitespace-pre-wrap leading-relaxed">
-                  {activeContent}
-                </pre>
-              )}
-            </div>
-
-            {/* Bottom Card Footer Tip */}
-            {activeTab === 'executionPlan' && (
-              <div className="p-3.5 bg-muted/60 border-t border-border text-xs text-foreground flex items-center gap-2">
-                <Terminal className="h-4 w-4 text-foreground shrink-0" />
-                <span>
-                  <strong>Agentic IDE Command:</strong> Paste this file into your project as <code className="font-mono bg-card border border-border px-1.5 py-0.5 rounded text-foreground">executionPlan.md</code> and prompt your agent: <em>&quot;Implement Step 1 from executionPlan.md&quot;</em>.
-                </span>
-              </div>
-            )}
-          </div>
+        {/* Markdown Document Content Area */}
+        <div className="p-6 overflow-x-auto max-h-[700px] overflow-y-auto">
+          {viewMode === 'mdx' ? (
+            <MdxRenderer content={activeContent} />
+          ) : (
+            <pre className="font-mono text-xs text-foreground whitespace-pre-wrap leading-relaxed">
+              {activeContent}
+            </pre>
+          )}
         </div>
+
+        {/* Bottom Card Footer Tip */}
+        {activeTab === 'executionPlan' && (
+          <div className="p-3.5 bg-muted/60 border-t border-border text-xs text-foreground flex items-center gap-2">
+            <Terminal className="h-4 w-4 text-foreground shrink-0" />
+            <span>
+              <strong>Agentic IDE Command:</strong> Paste this file into your
+              project as{' '}
+              <code className="font-mono bg-card border border-border px-1.5 py-0.5 rounded text-foreground">
+                executionPlan.md
+              </code>{' '}
+              and prompt your agent:{' '}
+              <em>&quot;Implement Step 1 from executionPlan.md&quot;</em>.
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Recommended Agent Kickoff Prompt Modal */}
+      <AgentPromptModal
+        isOpen={showPromptModal}
+        onClose={() => setShowPromptModal(false)}
+      />
+    </div>
   );
 }

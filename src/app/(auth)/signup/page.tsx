@@ -112,7 +112,7 @@ export default function SignUpPage() {
             Create your account
           </h1>
           <p className="text-xs text-muted-foreground">
-            Start generating deterministic 5-file architecture suites
+            Start generating deterministic 6-file architecture suites
           </p>
         </div>
 

@@ -6,12 +6,12 @@ import { ChevronDown, HelpCircle, Code2, Shield, Layers, Download } from 'lucide
 const FAQS = [
   {
     q: 'What is an Archflow technical blueprint suite?',
-    a: 'An Archflow blueprint is a deterministic 5-file architecture contract synthesized from your project concept. It outputs projectOverview.md, requirements.md, architecture.md, design.md, and executionPlan.md for Cursor, Claude Code, and Windsurf.',
+    a: 'An Archflow blueprint is a deterministic 6-file architecture contract synthesized from your project concept. It outputs projectOverview.md, PRD.md, architecture.md, design.md, rules.md, and executionPlan.md for Cursor, Claude Code, Antigravity, and Windsurf.',
     icon: Code2,
   },
   {
     q: 'How does the multi-stage AI generation pipeline work?',
-    a: 'Archflow executes a sequential 5-stage synthesis pipeline. Each stage builds on the previous output to prevent architectural drift—generating the overview first, deriving exact requirements, structuring schemas and APIs, defining UI tokens, and formulating the execution plan.',
+    a: 'Archflow executes a sequential 6-stage synthesis pipeline. Each stage builds on the previous output to prevent architectural drift—generating the overview first, deriving exact PRD requirements, structuring schemas and APIs, defining UI tokens, enforcing strict guardrails (rules.md), and formulating the execution plan.',
     icon: Layers,
   },
   {

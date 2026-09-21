@@ -69,7 +69,7 @@ export default function HowItWorks() {
               <Download className="h-3.5 w-3.5 text-foreground" />
               <span className="font-semibold text-foreground">blueprint-suite.zip</span>
             </div>
-            <span className="text-[10px] text-muted-foreground font-semibold uppercase">5 Files</span>
+            <span className="text-[10px] text-muted-foreground font-semibold uppercase">6 Files</span>
           </div>
           <div className="flex items-center justify-center gap-2 text-[11px] text-muted-foreground pt-1">
             <Code className="h-3 w-3" />

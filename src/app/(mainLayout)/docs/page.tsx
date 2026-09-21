@@ -10,17 +10,20 @@ import {
   Sparkles,
   ShieldCheck,
   Terminal,
+  ArrowDown,
 } from 'lucide-react';
 
 import SpecPreviewTerminal from '@/components/docs/SpecPreviewTerminal';
 import PromptCard from '@/components/docs/PromptCard';
+import RecommendedPromptCard from '@/components/docs/RecommendedPromptCard';
 import DocsSidebarNav from '@/components/docs/DocsSidebarNav';
 
 export const metadata = {
   title: 'Documentation - Archflow | Agentic IDE Architecture Suite',
   description:
-    'Complete technical documentation for Archflow. Learn how Archflow generates deterministic 5-file architecture suites (projectOverview, requirements, architecture, design, executionPlan) for Cursor, Claude Code, Windsurf, and Antigravity.',
+    'Complete technical documentation for Archflow. Learn how Archflow generates deterministic 6-file architecture suites (projectOverview, PRD, architecture, design, rules, executionPlan) for Cursor, Claude Code, Windsurf, and Antigravity.',
 };
+
 
 const ARCH_FILES = [
   {
@@ -40,14 +43,14 @@ const ARCH_FILES = [
       'Provides AI coding agents with high-level boundary context, repo conventions, and port rules so they do not invent incompatible libraries or clash ports.',
   },
   {
-    name: 'requirements.md',
+    name: 'PRD.md',
     badge: 'Scope & Acceptance Criteria',
     icon: ListTodo,
     summary:
-      'Functional requirements, user personas, non-functional latency/auth constraints, and unambiguous acceptance criteria.',
+      'Product Requirements Document with user personas, functional requirements with Gherkin scenarios, non-functional constraints, and strict MVP scope boundaries.',
     sections: [
       '1. Target Personas & User Journeys',
-      '2. Core Functional Requirements (with acceptance criteria)',
+      '2. Core Functional Requirements (with Gherkin acceptance criteria)',
       '3. Non-Functional Requirements (Security, Latency, Scale)',
       '4. Scope Boundaries (Strictly IN scope vs OUT of scope for MVP)',
       '5. Edge Cases & Validation Rules',
@@ -55,6 +58,7 @@ const ARCH_FILES = [
     agentUsage:
       'Used by coding agents during feature generation to guarantee all acceptance criteria pass before marking any feature as complete.',
   },
+
   {
     name: 'architecture.md',
     badge: 'System Design & Models',
@@ -89,6 +93,23 @@ const ARCH_FILES = [
     agentUsage:
       'Directs AI front-end generation to build cohesive, high-contrast user interfaces with standardized tokens rather than generic browser defaults.',
   },
+  {
+    name: 'rules.md',
+    badge: 'Rules & Guardrails',
+    icon: ShieldCheck,
+    summary:
+      'Strict coding conventions, language rules, forbidden packages, secrets management rules, and autonomous agent guardrails.',
+    sections: [
+      '1. Tech Stack Boundaries & Language Rules',
+      '2. Forbidden Packages & Dependencies',
+      '3. Security Directives & Zero Hardcoded Secrets',
+      '4. Error Handling & Fail Loudly Directives',
+      '5. Autonomous Verification Contract',
+    ],
+    agentUsage:
+      'Ingested by coding agents in Phase 0 to prevent hallucinations, package bloat, leaked secrets, loose typing, or mock memory fallbacks.',
+  },
+
   {
     name: 'executionPlan.md',
     badge: 'Agent Task Roadmap',
@@ -136,12 +157,13 @@ const IDE_PROMPTS = [
 
 const NAV_LINKS = [
   { id: 'overview', title: 'Architecture Suite Overview' },
-  { id: 'five-files', title: 'The 5 Specification Files' },
+  { id: 'six-files', title: 'The 6 Specification Files' },
   { id: 'interactive-preview', title: 'Interactive Spec Explorer' },
   { id: 'agent-prompts', title: 'Agentic IDE Prompts' },
   { id: 'engineering-standards', title: 'Engineering Standards' },
   { id: 'workflow', title: '3-Step Execution Workflow' },
 ];
+
 
 export default function DocsPage() {
   return (
@@ -188,8 +210,9 @@ export default function DocsPage() {
                 <span>Architecture Suite Overview</span>
               </h1>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                When developers give ambiguous prompts to AI coding assistants, agents routinely hallucinate folder structures, invent mismatched API contracts, and produce fragmented code. Archflow prevents architectural drift by generating an exact, cohesive 5-file specification suite before a single line of code is written.
+                When developers give ambiguous prompts to AI coding assistants, agents routinely hallucinate folder structures, invent mismatched API contracts, and produce fragmented code. Archflow prevents architectural drift by generating an exact, cohesive 6-file specification suite before a single line of code is written.
               </p>
+
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                 <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
@@ -213,16 +236,17 @@ export default function DocsPage() {
               </div>
             </section>
 
-            {/* Section 2: The 5 Core Architecture Files */}
-            <section id="five-files" className="scroll-mt-28 space-y-6">
+            {/* Section 2: The 6 Core Architecture Files */}
+            <section id="six-files" className="scroll-mt-28 space-y-6">
               <div className="border-b border-border pb-4">
                 <h2 className="text-2xl font-bold font-display text-foreground">
-                  The 5 Core Specification Files
+                  The 6 Core Specification Files
                 </h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Every blueprint generated by Archflow consists of these five deterministic markdown documents:
+                  Every blueprint generated by Archflow consists of these six deterministic markdown documents:
                 </p>
               </div>
+
 
               <div className="space-y-5">
                 {ARCH_FILES.map((file) => {
@@ -301,10 +325,16 @@ export default function DocsPage() {
                   Agentic-IDE Prompting Patterns
                 </h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Copy and paste these verified prompt structures into your AI coding tool to execute the suite smoothly:
+                  Copy and paste the recommended prompt or specific tool commands into your AI coding tool:
                 </p>
               </div>
 
+              {/* Recommended Prompt Hero Card */}
+              <RecommendedPromptCard />
+
+              <h3 className="text-xl font-bold text-foreground mt-6 flex items-center gap-2">
+                IDE Prompt Tool Quick-Reference <ArrowDown className="h-5 w-5 text-muted-foreground" />
+              </h3>
               <div className="space-y-4">
                 {IDE_PROMPTS.map((item, idx) => (
                   <PromptCard
@@ -389,7 +419,7 @@ export default function DocsPage() {
                   </div>
                   <h3 className="text-sm font-bold text-foreground">Generate & Download</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Input your requirements prompt or choose a community blueprint. Click <strong>Download Suite (.zip)</strong> to get all 5 markdown specifications.
+                    Input your requirements prompt or choose a community blueprint. Click <strong>Download blueprint (.zip)</strong> to get all 6 markdown specifications.
                   </p>
                 </div>
 
@@ -399,9 +429,10 @@ export default function DocsPage() {
                   </div>
                   <h3 className="text-sm font-bold text-foreground">Drop in Repo Root</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Extract the 5 files directly into your project root folder so your AI coding assistant has immediate local workspace context.
+                    Extract the 6 files directly into your project root folder so your AI coding assistant has immediate local workspace context.
                   </p>
                 </div>
+
 
                 <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
                   <div className="h-8 w-8 rounded-xl bg-primary text-primary-foreground font-bold text-sm flex items-center justify-center">
@@ -409,7 +440,7 @@ export default function DocsPage() {
                   </div>
                   <h3 className="text-sm font-bold text-foreground">Execute with Agent</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Open Cursor Composer or Claude Code CLI and prompt: <em>&quot;Read executionPlan.md and implement Phase 1&quot;</em>.
+                    Copy the Recommended Prompt, paste it into your coding agent, and it will execute the blueprint tasks step by step.
                   </p>
                 </div>
               </div>
