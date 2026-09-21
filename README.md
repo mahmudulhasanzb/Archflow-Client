@@ -45,6 +45,7 @@ Engineers, tech leads, and product teams use Archflow to accelerate the discover
 
 ### 🛡️ Secure Authentication & Role-Based Access Control
 - Session management with JWT and JWKS token verification bridging the Next.js client and Express microservice.
+- **Google OAuth & Social Sign-In:** 1-click Google authentication powered by Better Auth social providers.
 - Tiered privileges: Free (up to 3 blueprints), Pro (up to 10 daily blueprints, custom LLM key integrations, private workspaces), and Admin.
 - **Unified Middleware Guarding:** Automatic edge proxy (`proxy.ts`) route protection covering all `/workspace/*` paths with fast-path cookie validation and RBAC redirects.
 

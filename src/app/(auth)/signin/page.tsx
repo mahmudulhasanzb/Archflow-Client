@@ -57,22 +57,35 @@ export default function SignInPage() {
   };
 
   /* ── DEMO LOGIN HANDLER (Easily toggled/removed when ready) ── */
-  const handleDemoLogin = async () => {
-    const toastId = toast.loading('Logging in as Demo User...');
+  // const handleDemoLogin = async () => {
+  //   const toastId = toast.loading('Logging in as Demo User...');
+  //   try {
+  //     const { error } = await authClient.signIn.email({
+  //       email: 'demo@gmail.com',
+  //       password: 'DemoP@ssord',
+  //       callbackURL: callbackUrl,
+  //     });
+  //     if (!error) {
+  //       toast.success('Signed in as Demo User!', { id: toastId });
+  //       router.push(callbackUrl);
+  //     } else {
+  //       toast.error(error.message || 'Demo login failed.', { id: toastId });
+  //     }
+  //   } catch {
+  //     toast.error('Failed to log in as demo user.', { id: toastId });
+  //   }
+  // };
+
+  /* ── GOOGLE AUTHENTICATION HANDLER ── */
+  const handleGoogleSignIn = async () => {
+    const toastId = toast.loading('Connecting with Google...');
     try {
-      const { error } = await authClient.signIn.email({
-        email: 'demo@gmail.com',
-        password: 'DemoP@ssord',
-        callbackURL: callbackUrl,
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: callbackUrl || '/workspace',
       });
-      if (!error) {
-        toast.success('Signed in as Demo User!', { id: toastId });
-        router.push(callbackUrl);
-      } else {
-        toast.error(error.message || 'Demo login failed.', { id: toastId });
-      }
-    } catch {
-      toast.error('Failed to log in as demo user.', { id: toastId });
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to initiate Google sign in.', { id: toastId });
     }
   };
 
@@ -181,15 +194,44 @@ export default function SignInPage() {
             <ArrowRight className="h-3.5 w-3.5" />
           </button>
 
-          {/* ── DEMO LOGIN SECTION (Easily toggled/removed when ready) ── */}
+          {/* ── SOCIAL AUTH & DEMO SECTION ── */}
           <div className="relative flex items-center pt-2">
             <div className="flex-1 border-t border-border" />
             <span className="mx-3 text-[11px] uppercase tracking-wider text-muted-foreground">
-              Or
+              Or continue with
             </span>
             <div className="flex-1 border-t border-border" />
           </div>
 
+          {/* Google Sign In Button */}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-border bg-card/80 hover:bg-muted px-4 py-2.5 text-xs font-semibold text-foreground transition-all duration-200 cursor-pointer shadow-2xs active:scale-[0.99]"
+          >
+            <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
+              <path
+                fill="#EA4335"
+                d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
+              />
+              <path
+                fill="#4285F4"
+                d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.4C3.7 20.1 7.5 23 12 23z"
+              />
+            </svg>
+            <span>Continue with Google</span>
+          </button>
+
+          {/* ── DEMO LOGIN SECTION (Preserved as commented-out / ready) ── */}
+          {/*
           <button
             type="button"
             onClick={handleDemoLogin}
@@ -198,7 +240,7 @@ export default function SignInPage() {
             <Zap className="h-3.5 w-3.5 text-primary" />
             <span>One Click Demo Login</span>
           </button>
-          {/* ──────────────────────────────────────────────────────────── */}
+          */}
         </form>
 
         {/* Card Footer Switch */}

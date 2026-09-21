@@ -20,7 +20,14 @@ export const auth = betterAuth({
   trustedOrigins: [
     process.env.BETTER_AUTH_URL || '',
     process.env.NEXT_PUBLIC_APP_URL || '',
+    'https://archflow-web-ai.vercel.app',
   ].filter(Boolean),
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    },
+  },
   emailAndPassword: {
     enabled: true,
   },
