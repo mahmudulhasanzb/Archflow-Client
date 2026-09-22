@@ -132,6 +132,7 @@ export default function AddBlueprintPage() {
   const userEmail = session?.user?.email;
 
   // Form states
+  const [title, setTitle] = useState('');
   const [prompt, setPrompt] = useState('');
   const [techStackInput, setTechStackInput] = useState(
     'Next.js 16, Tailwind CSS v4, Express 5, MongoDB',
@@ -262,6 +263,7 @@ export default function AddBlueprintPage() {
   // Select starter template
   const applyTemplate = (t: StarterTemplate) => {
     setActiveTemplate(t.label);
+    setTitle(t.label);
     setPrompt(t.prompt);
     setTechStackInput(t.techStack);
     setExclusions(t.exclusions);
@@ -415,12 +417,12 @@ export default function AddBlueprintPage() {
 
       const metadata = await extractBlueprintMetadata(
         projectOverview,
-        'New Software Blueprint',
+        title.trim() || 'New Software Blueprint',
       );
 
       // Save to MongoDB via Express Backend
       const payload = {
-        title: metadata.title,
+        title: title.trim() || metadata.title,
         description: metadata.description,
         prompt,
         teckStack: techStack.length
@@ -682,6 +684,26 @@ export default function AddBlueprintPage() {
         {/* Left 2 Cols: Form */}
         <form onSubmit={handleGenerate} className="lg:col-span-2 space-y-6">
           <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5">
+            {/* Blueprint Title */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-foreground uppercase tracking-wider">
+                  Blueprint Title
+                </label>
+                <span className="text-[11px] text-muted-foreground">
+                  Optional (AI auto-generates if left blank)
+                </span>
+              </div>
+              <input
+                type="text"
+                disabled={isGenerating}
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                placeholder="e.g. NextGen SaaS Billing Engine"
+                className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-foreground focus:outline-none transition-all disabled:opacity-60"
+              />
+            </div>
+
             {/* Project Requirements Prompt */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
