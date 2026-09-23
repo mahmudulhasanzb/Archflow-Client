@@ -2,20 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { authClient } from '@/lib/auth-client';
-import {
-  Check,
-  Eye,
-  EyeOff,
-  Workflow,
-  User,
-  Mail,
-  Lock,
-  ArrowRight,
-} from 'lucide-react';
+import { Check, Eye, EyeOff, User, Mail, Lock, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
+import VerificationModal from '../VerificationModal';
 
 type Inputs = {
   name: string;
@@ -24,8 +15,9 @@ type Inputs = {
 };
 
 export default function SignUpPage() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
 
   const {
     register,
@@ -50,15 +42,15 @@ export default function SignUpPage() {
         email,
         password,
         name,
-        callbackURL: '/workspace',
       });
       if (signUpError) {
         toast.error(signUpError.message || 'Failed to create account.', {
           id: toastId,
         });
       } else {
-        toast.success('Account created successfully!', { id: toastId });
-        router.push('/blueprints');
+        toast.dismiss(toastId);
+        setUserEmail(email);
+        setIsVerificationModalOpen(true);
       }
     } catch {
       toast.error('An unexpected error occurred. Please try again.', {
@@ -249,6 +241,12 @@ export default function SignUpPage() {
           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
       </div>
+      {/* Verification Modal */}
+      <VerificationModal
+        isOpen={isVerificationModalOpen}
+        email={userEmail}
+        onClose={() => setIsVerificationModalOpen(false)}
+      />
     </div>
   );
 }

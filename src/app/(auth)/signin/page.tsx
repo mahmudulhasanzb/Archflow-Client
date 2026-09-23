@@ -10,11 +10,10 @@ import {
   EyeOff,
   Mail,
   Lock,
-  Zap,
   ArrowRight,
-  Workflow,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import VerificationModal from '../VerificationModal';
 
 type Inputs = {
   email: string;
@@ -26,6 +25,9 @@ export default function SignInPage() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/blueprints';
   const [showPassword, setShowPassword] = useState(false);
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+
 
   const {
     register,
@@ -41,7 +43,17 @@ export default function SignInPage() {
         password,
         callbackURL: callbackUrl,
       });
+
       if (error) {
+        if (
+          error.code === 'EMAIL_NOT_VERIFIED' ||
+          error.message?.toLowerCase().includes('verif')
+        ) {
+          toast.dismiss(toastId);
+          setUserEmail(email);
+          setIsVerificationModalOpen(true);
+          return;
+        }
         toast.error(error.message || 'Invalid email or password.', {
           id: toastId,
         });
@@ -82,7 +94,7 @@ export default function SignInPage() {
     try {
       await authClient.signIn.social({
         provider: 'google',
-        callbackURL: callbackUrl || '/workspace',
+        callbackURL: callbackUrl || '/blueprints',
       });
     } catch (err: any) {
       toast.error(err?.message || 'Failed to initiate Google sign in.', { id: toastId });
@@ -265,6 +277,12 @@ export default function SignInPage() {
           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
       </div>
+      {/* Verificaiton Modal */}
+      <VerificationModal
+        isOpen={isVerificationModalOpen}
+        email={userEmail}
+        onClose={() => setIsVerificationModalOpen(false)}
+      />
     </div>
   );
 }
