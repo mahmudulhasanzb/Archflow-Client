@@ -2,6 +2,7 @@ import { betterAuth } from 'better-auth';
 import { MongoClient } from 'mongodb';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { jwt } from 'better-auth/plugins';
+import { sendVerificationEmail } from './email';
 
 const uri = process.env.MONGODB_URI;
 
@@ -30,6 +31,19 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
+    async sendVerificationEmail({ user, url, token }) {
+      await sendVerificationEmail(user.email, url);
+      // console.log('\n============================');
+      // console.log('Sending verification email to', user.email);
+      // console.log('Verification URL:', url);
+      // console.log('============================\n');
+    },
   },
   user: {
     additionalFields: {
