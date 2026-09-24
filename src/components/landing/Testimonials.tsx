@@ -78,10 +78,10 @@ export default function Testimonials() {
             {/* Author info & stack pill */}
             <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
               <div>
-                <h4 className="text-sm font-bold text-foreground font-display flex items-center gap-1.5">
+                <h3 className="text-sm font-bold text-foreground font-display flex items-center gap-1.5">
                   {rev.author}
                   <CheckCircle2 className="h-3.5 w-3.5 text-foreground fill-blue-500/10 stroke-blue-500" />
-                </h4>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   {rev.role} • {rev.company}
                 </p>

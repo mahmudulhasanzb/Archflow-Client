@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter, Space_Grotesk, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import dynamic from 'next/dynamic';
 import { Toaster } from 'react-hot-toast';
-import SupportChat from '@/components/SupportChat';
+
+const SupportChat = dynamic(() => import('@/components/SupportChat'));
 
 const inter = Inter({
   variable: '--font-inter',

@@ -68,6 +68,7 @@ const SupportChat = ({
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl hover:opacity-90 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
         title="AI Support Chat"
+        aria-label="AI Support Chat"
         id="support-chat-toggle"
       >
         <AnimatePresence mode="wait">
@@ -125,7 +126,8 @@ const SupportChat = ({
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Close support chat"
+                  className="text-muted-foreground hover:text-foreground transition-colors p-1"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -194,6 +196,7 @@ const SupportChat = ({
                 <button
                   type="submit"
                   disabled={input.trim() === ''}
+                  aria-label="Send message"
                   className={`absolute right-1 rounded-full p-2 ${
                     input.trim() === ''
                       ? 'text-muted-foreground bg-muted cursor-not-allowed'

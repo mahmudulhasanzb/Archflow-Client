@@ -83,6 +83,7 @@ export default function FAQ() {
             >
               <button
                 onClick={() => toggleFaq(idx)}
+                aria-expanded={isOpen}
                 className="w-full flex justify-between items-center p-6 text-left font-bold text-foreground font-display gap-4"
               >
                 <div className="flex items-center gap-3">

@@ -21,9 +21,9 @@ const Footer = () => {
 
           {/* Product Links */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4 font-display">
+            <p className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4 font-display">
               Product
-            </h3>
+            </p>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
@@ -54,9 +54,9 @@ const Footer = () => {
 
           {/* Company Links */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4 font-display">
+            <p className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4 font-display">
               Company
-            </h3>
+            </p>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
@@ -80,27 +80,32 @@ const Footer = () => {
 
           {/* Social / Contact */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4 font-display">
+            <p className="text-sm font-semibold text-foreground uppercase tracking-wider mb-4 font-display">
               Contact & Socials
-            </h3>
-            <div className="flex space-x-4 mb-4">
+            </p>
+            <div className="flex space-x-2 mb-4">
               <Link
                 href="https://github.com/mahmudulhasanzb"
                 target="_blank"
-                className="hover:text-foreground transition-colors"
+                rel="noopener noreferrer"
+                aria-label="GitHub Profile"
+                className="inline-flex items-center justify-center p-2.5 rounded-lg min-h-[44px] min-w-[44px] hover:text-foreground transition-colors"
               >
                 <Github className="h-5 w-5" />
               </Link>
               <Link
                 href="https://mahmudulhasan-dev.vercel.app"
                 target="_blank"
-                className="hover:text-foreground transition-colors"
+                rel="noopener noreferrer"
+                aria-label="Creator Portfolio"
+                className="inline-flex items-center justify-center p-2.5 rounded-lg min-h-[44px] min-w-[44px] hover:text-foreground transition-colors"
               >
                 <Globe className="h-5 w-5" />
               </Link>
               <Link
                 href="mailto:mahmudulhasankk9@gmail.com"
-                className="hover:text-foreground transition-colors"
+                aria-label="Email Support"
+                className="inline-flex items-center justify-center p-2.5 rounded-lg min-h-[44px] min-w-[44px] hover:text-foreground transition-colors"
               >
                 <Mail className="h-5 w-5" />
               </Link>

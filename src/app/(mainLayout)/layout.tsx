@@ -6,7 +6,9 @@ const MainLayout = ({children}: {children: React.ReactNode}) => {
     return (
       <>
         <Navbar />
-            {children}
+        <main id="main-content" className="flex-1">
+          {children}
+        </main>
         <Footer />
       </>
     )
