@@ -18,16 +18,17 @@ function getOpenAIClient(customApiKey?: string): OpenAI {
 }
 
 const FALLBACK_MODELS = [
-  'inclusionai/ling-3.0-flash-vl:free',
+  'nvidia/nemotron-3-ultra-550b-a55b:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
   'cohere/north-mini-code:free',
-  'liquid/lfm-2.5-2.6b:free',
+  'inclusionai/ling-3.0-flash-vl',
 ];
 
 async function callChatWithFallback(
   messages: Array<{ role: 'system' | 'user'; content: string }>,
   customApiKey?: string
 ): Promise<string> {
-  const primary = process.env.AI_MODEL_NAME || 'inclusionai/ling-3.0-flash-vl:free';
+  const primary = process.env.AI_MODEL_NAME || 'nvidia/nemotron-3-ultra-550b-a55b:free';
   const models = Array.from(new Set([primary, ...FALLBACK_MODELS]));
   const openai = getOpenAIClient(customApiKey);
   let lastError: unknown = null;
