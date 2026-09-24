@@ -1,6 +1,6 @@
-# 🏗️ Archflow — AI Multi-Agent Architecture Engine
+# Archflow — AI Multi-Agent Architecture Engine
 
-> An enterprise-grade, agentic software engineering platform that orchestrates specialized AI agents to generate production-ready software architecture specs, technical blueprints, and full markdown documentation suites.
+An enterprise-grade, agentic software engineering platform that orchestrates specialized AI agents to generate production-ready software architecture specs, technical blueprints, and full markdown documentation suites.
 
 [![Live Application](https://img.shields.io/badge/Live-Demo-22c55e?style=for-the-badge&logo=vercel&logoColor=white)](https://archflow-web-ai.vercel.app/)
 [![Frontend Repo](https://img.shields.io/badge/GitHub-Frontend_Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mahmudulhasanzb/Archflow-Client.git)
@@ -8,15 +8,24 @@
 
 ---
 
-## 📌 Links
+## Table of Contents
 
-- **Live Deployment:** [https://archflow-web-ai.vercel.app/](https://archflow-web-ai.vercel.app/)
-- **Frontend Repository:** [https://github.com/mahmudulhasanzb/Archflow-Client.git](https://github.com/mahmudulhasanzb/Archflow-Client.git)
-- **Backend Repository:** [https://github.com/mahmudulhasanzb/Archflow-Server.git](https://github.com/mahmudulhasanzb/Archflow-Server.git)
+- [Overview](#overview)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Multi-Agent Pipeline](#multi-agent-pipeline)
+- [Getting Started](#getting-started)
+- [Scripts](#scripts)
+- [Architecture & Data Flow](#architecture--data-flow)
+- [Component Reference](#component-reference)
+- [Security & Access Control](#security--access-control)
+- [Accessibility & Standards](#accessibility--standards)
+- [License](#license)
 
 ---
 
-## 🚀 Overview
+## Overview
 
 **Archflow** transforms natural language system prompts into fully articulated engineering architecture blueprints. Instead of generating generic code snippets, Archflow coordinates a pipeline of specialized AI agents to analyze requirements, construct system topologies, model database schemas, and output standard MDX architectural specifications.
 
@@ -24,169 +33,225 @@ Engineers, tech leads, and product teams use Archflow to accelerate the discover
 
 ---
 
-## ✨ Key Features
+## Tech Stack
 
-### 🤖 4-Stage Multi-Agent Synthesis Pipeline
-1. **Agent 01 — System Architect:** Analyzes high-level product intent, non-functional requirements (NFRs), and performance constraints to produce `projectOverview.md`.
-2. **Agent 02 — Requirements Engineer:** Deconstructs system scope into verifiable functional specifications and acceptance criteria in `requirements.md`.
-3. **Agent 03 — Data & Systems Modeler:** Designs database schemas, indexing strategies, API contracts, and integration models in `architecture.md`.
-4. **Agent 04 — UI/UX & Design Systems Architect:** Outlines design tokens, responsive layout principles, component hierarchies, and interactive states in `designSystem.md`.
-
-### ⚡ Interactive Architecture Workspace
-- **Real-Time Step Progression:** Visual stepper displaying live status, latency metrics, and synthesis execution states.
-- **Tabbed Spec Viewer & Live MDX Preview:** View generated markdown specs with syntax-highlighted code stubs, collapsible sections, and copyable snippets.
-- **1-Click Suite Export:** Download entire architectural suites bundled into a single organized `.zip` file.
-- **Direct Workspace Search & Filter:** Instant client-side filtering, category selection, sorting, and tag navigation.
-
-### 🔑 Bring Your Own Key (BYOK) OpenRouter Engine
-- **Unlimited Blueprint Synthesis:** Free, Pro, and Admin users can connect their personal OpenRouter API key (`/workspace/api-settings`) to bypass standard subscription limits.
-- **Real-Time Balance Tracker:** Live credit balance metrics and dynamic limit badges embedded in the Blueprint Studio.
-- **Secure Key Management:** Masked entry, toggleable visibility, instant validation before storage, and 1-click credential revocation with confirmation modal.
-
-### 🛡️ Secure Authentication & Role-Based Access Control
-- Session management with JWT and JWKS token verification bridging the Next.js client and Express microservice.
-- **Google OAuth & Social Sign-In:** 1-click Google authentication powered by Better Auth social providers.
-- Tiered privileges: Free (up to 3 blueprints), Pro (up to 10 daily blueprints, custom LLM key integrations, private workspaces), and Admin.
-- **Unified Middleware Guarding:** Automatic edge proxy (`proxy.ts`) route protection covering all `/workspace/*` paths with fast-path cookie validation and RBAC redirects.
-
-### 💳 Stripe Subscription Billing
-- Dynamic checkout session integration supporting monthly ($29/mo) and annual ($24/mo billed annually at $288/yr) plans.
-- Automated webhook handling and instant account role upgrades with secure session verification.
+| Layer | Technology | Version / Details |
+|---|---|---|
+| **Framework** | Next.js | 16.3.5 (App Router, Turbopack) |
+| **Frontend Library** | React | 19.0.0 |
+| **Styling** | Tailwind CSS | v4 (`@tailwindcss/typography`, OKLCH tokens) |
+| **Icons & Motion** | Lucide React & Framer Motion | Dynamic deferred animations |
+| **AI Models (Blueprint)** | NVIDIA NeMoTron-3 Ultra | 550B MoE, 1M context window |
+| **AI Models (Support)** | nex-agi n2.5-mini | Low-latency plain-text assistant |
+| **Backend API** | Express | 5.x (Node.js 22, TypeScript) |
+| **Database** | MongoDB Atlas | Native Driver (Connection pooling & projections) |
+| **Authentication** | Better Auth | MongoDB adapter + JWT + JWKS bridge |
+| **Payments** | Stripe | Dynamic subscription checkout sessions |
+| **Package Manager** | npm / pnpm | `package-lock.json` |
+| **Deployment** | Vercel | Production CDN edge network |
 
 ---
 
-## 🛠️ Technology Stack
+## Features
 
-### Frontend (`Archflow-Client`)
-- **Framework:** Next.js 16 (App Router)
-- **Library:** React 19, TypeScript
-- **Styling:** Tailwind CSS v4, `@tailwindcss/typography`
-- **Animations & Icons:** Framer Motion, Lucide React
-- **Markdown & Code:** `react-markdown`, `remark-gfm`, `prismjs`, `@mdx-js/loader`
-- **Utilities:** `jszip`, `react-hot-toast`, `react-hook-form`
-- **Deployment:** Vercel
-
-### Backend (`Archflow-Server`)
-- **Runtime:** Node.js, Express 5
-- **Language:** TypeScript
-- **Database:** MongoDB Native Driver (Clean single-file connection pool & projection patterns)
-- **Auth & Cryptography:** `jose` (JWKS token bridge with asymmetric signature validation)
-- **AI Integration:** OpenRouter / OpenAI API
-- **Payments:** Stripe SDK
+- **4-Stage multi-agent synthesis** — Coordinated AI pipeline generating project overview, functional specs, data models, and design systems.
+- **550B MoE blueprint reasoning** — Powered by NVIDIA NeMoTron-3 Ultra with 1,000,000 token context window for exhaustive architectures.
+- **Interactive architecture workspace** — Live stepper progression, tabbed spec viewer, and syntax-highlighted MDX preview.
+- **1-Click suite export** — Client-side ZIP compilation bundling all four architectural documents into downloadable suites.
+- **Bring Your Own Key (BYOK)** — Free, Pro, and Admin users can plug in their own OpenRouter API key to bypass default generation quotas.
+- **Real-time credit tracker** — Live balance metrics and quota indicator badges embedded directly in the Blueprint Studio.
+- **Embedded AI support chat** — Low-latency, plain-text technical assistant with deep context of Archflow auth rules and troubleshooting.
+- **Resilient AI fallback pool** — Auto-failover across multiple models to guarantee zero downtime if an upstream provider rate-limits.
+- **Mandatory email verification** — Automated Nodemailer verification links with instant auto-login upon confirmation.
+- **Google OAuth social login** — 1-click verified authentication powered by Better Auth.
+- **Stripe subscription billing** — Seamless Pro upgrades with monthly and annual discount tiers.
+- **Unified edge middleware guard** — Fast-path cookie evaluation protecting all `/workspace/*` routes with RBAC redirects in < 20 ms.
+- **Accessible & high-performance** — WCAG AA color contrast, semantic HTML landmarks, tap targets ≥ 44 px, and 100/100 accessibility score.
 
 ---
 
-## 📂 Project Architecture
+## Project Structure
 
 ```
 Archflow/
-├── Archflow-Client/                 # Next.js 16 App Router Client
+├── Archflow-Client/                      # Next.js 16 App Router Client
+│   ├── public/                           # Static assets, branding, and icons
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── (auth)/             # Authentication routes (Sign In / Sign Up)
-│   │   │   ├── (dashboardLayout)/  # Unified workspace dashboard
-│   │   │   │   └── workspace/      # Industry-standard nested workspace parent
-│   │   │   │       ├── page.tsx            # Workspace overview & telemetry
-│   │   │   │       ├── add-blueprint/      # AI Blueprint Studio
-│   │   │   │       ├── my-blueprints/      # User Blueprint Library
-│   │   │   │       ├── api-settings/       # BYOK OpenRouter Key & Balance
-│   │   │   │       ├── manage-blueprints/  # Admin Blueprint Moderation
-│   │   │   │       └── admin/              # Admin User & Transaction Control
-│   │   │   │           ├── users/
-│   │   │   │           └── transactions/
-│   │   │   ├── (mainLayout)/       # Public marketing pages & gallery
-│   │   │   │   ├── about/
-│   │   │   │   ├── blueprints/     # Public architecture repository
-│   │   │   │   └── payment-success/
-│   │   │   └── api/
-│   │   │       ├── auth/           # Authentication endpoints
-│   │   │       └── checkout_session/ # Stripe dynamic subscription checkout
+│   │   │   ├── (auth)/                   # Signin, signup, and verification modal
+│   │   │   ├── (dashboardLayout)/        # Authenticated workspace shell
+│   │   │   │   └── workspace/
+│   │   │   │       ├── page.tsx          # Telemetry & workspace dashboard
+│   │   │   │       ├── add-blueprint/    # AI Blueprint Studio (studio generator)
+│   │   │   │       ├── my-blueprints/    # Personal user blueprint library
+│   │   │   │       ├── api-settings/     # BYOK OpenRouter key & credit tracker
+│   │   │   │       ├── manage-blueprints/# Admin blueprint moderation
+│   │   │   │       └── admin/            # User & transaction control consoles
+│   │   │   ├── (mainLayout)/             # Public marketing site & gallery
+│   │   │   │   ├── about/                # Product mission & engineering overview
+│   │   │   │   └── blueprints/           # Public blueprint gallery & viewer
+│   │   │   ├── api/                      # Auth catch-all & Stripe checkout routes
+│   │   │   ├── globals.css               # OKLCH design tokens & Tailwind v4 theme
+│   │   │   └── layout.tsx                # Root layout, dynamic SupportChat, fonts
 │   │   ├── components/
-│   │   │   ├── admin/              # Admin tables, stats, and role modals
-│   │   │   ├── blueprint/          # Blueprint cards, filters, BYOK modals
-│   │   │   ├── landing/            # Hero, features, pricing, FAQ
-│   │   │   ├── layout/             # Navbar, footer, dashboard sidebar
-│   │   │   └── ui/                 # Reusable inputs, buttons, pagination
-│   │   └── lib/                    # Auth client, Stripe client, API mutations
+│   │   │   ├── admin/                    # Admin data tables, filters, role modals
+│   │   │   ├── blueprint/                # Spec viewers, stepper, export buttons
+│   │   │   ├── landing/                  # Hero, features, pricing, FAQ, reviews
+│   │   │   ├── layout/                   # Navbar, footer, dashboard sidebar
+│   │   │   └── SupportChat.tsx           # Floating AI technical support assistant
+│   │   └── lib/
+│   │       ├── api/                      # Blueprint generator & Support agent APIs
+│   │       ├── auth.ts                   # Better Auth server configuration
+│   │       └── email.ts                  # Nodemailer verification dispatcher
+│   ├── .env.example                      # Documented environment template
 │   └── package.json
 │
-└── Archflow-Server/                 # Express 5 API Server
+└── Archflow-Server/                      # Express 5 API Microservice
     ├── src/
-    │   └── index.ts                # Unified modular API routes, MongoDB collections & auth middleware
+    │   └── index.ts                      # Single-file API, MongoDB pool, JWKS bridge
+    ├── .env.example                      # Server environment template
     └── package.json
 ```
 
 ---
 
-## ⚙️ Getting Started Locally
+## Multi-Agent Pipeline
 
-### Prerequisites
-- Node.js `>= 20.x`
-- MongoDB instance (local or MongoDB Atlas)
-- Stripe account (with test API keys)
-- OpenAI API key
+```
+User Prompt (Single Paragraph Idea)
+    │
+    ▼
+[ Agent 01: System Architect ] ──► projectOverview.md
+  - High-level topology, tech stack selection, NFRs
+    │
+    ▼
+[ Agent 02: Requirements Engineer ] ──► requirements.md
+  - Functional breakdown, user stories, acceptance criteria
+    │
+    ▼
+[ Agent 03: Data & Systems Modeler ] ──► architecture.md
+  - Database schema, API specifications, sequence diagrams
+    │
+    ▼
+[ Agent 04: UI/UX & Design Systems ] ──► designSystem.md
+  - Design tokens, component hierarchies, responsive layout
+    │
+    ▼
+1-Click ZIP Suite Export (.zip download or cloud save)
+```
 
 ---
 
-### 1. Backend Setup (`Archflow-Server`)
+## Getting Started
+
+### Prerequisites
+
+- **Node.js** `>= 20.x`
+- **npm** or **pnpm**
+- **MongoDB Atlas** database cluster
+- **OpenRouter API Key** (for AI synthesis)
+- **Stripe Account** (for subscription billing)
+
+### 1. Backend Setup
 
 ```bash
 cd Archflow-Server
 npm install
-```
-
-Create a `.env` file in `Archflow-Server/`:
-```env
-PORT=5000
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/archflow?retryWrites=true&w=majority
-OPENAI_API_KEY=your_openai_api_key
-JWKS_URL=http://localhost:3000/api/auth/jwks
-STRIPE_SECRET_KEY=your_stripe_secret_key
-STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
-```
-
-Run the development server:
-```bash
+cp .env.example .env
 npm run dev
 ```
-The server will start at `http://localhost:5000`.
 
----
+*Server starts on `http://localhost:5000`.*
 
-### 2. Frontend Setup (`Archflow-Client`)
+### 2. Frontend Setup
 
 ```bash
 cd Archflow-Client
 npm install
-```
-
-Create a `.env.local` file in `Archflow-Client/`:
-```env
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_API_URL=http://localhost:5000
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/archflow?retryWrites=true&w=majority
-BETTER_AUTH_SECRET=your_auth_secret_key
-BETTER_AUTH_URL=http://localhost:3000
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-STRIPE_SECRET_KEY=your_stripe_secret_key
-```
-
-Run the development server:
-```bash
+cp .env.example .env
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+*Client starts on `http://localhost:3000`.*
 
 ---
 
-## 🔐 Security & Data Protection Architecture
+## Scripts
 
-- **Unified Edge Proxy Security:** All dashboard routes are nested under `/workspace/*` and strictly guarded by Next.js edge middleware (`proxy.ts`) with high-speed cookie evaluation, redirecting unauthenticated visitors in under 0.02s without unnecessary database overhead.
-- **Role-Based Access Control (RBAC):** Admin consoles (`/workspace/admin/*`) strictly verify administrator privileges both at the middleware layer and on the API microservice. Non-admin users are automatically bounced back to their workspace overview.
-- **Asymmetric JWKS & Internal Signature Bridge:** Authenticated client requests are verified against public JWKS endpoints (`jose`). Server-to-server forwarded session identities require a cryptographically verified internal shared secret (`x-internal-secret`), preventing spoofing and identity hijacking.
-- **Strict Origin CORS Locking:** Cross-Origin Resource Sharing is strictly constrained to authorized client origins (`https://archflow-web-ai.vercel.app`, `CLIENT_URL`, and local dev environments). Wildcard access is prohibited.
-- **Defensive Projections & Secret Protection:** User query projections explicitly exclude sensitive credentials such as `password` and `customApiKey`, preventing BYOK keys from leaking into admin dashboards or public API responses.
-- **NoSQL & ReDoS Injection Mitigation:** All user-supplied search parameters, filters, and tags are passed through regex-escaping sanitizers (`escapeRegex`) before MongoDB execution, fully neutralizing Regular Expression Denial of Service (ReDoS) and operator injection attacks.
+| Script | Purpose |
+|---|---|
+| `npm run dev` | Starts local Next.js dev server with Turbopack |
+| `npm run build` | Compiles optimized production bundle with type checking |
+| `npm run start` | Boots production server |
+| `npm run lint` | Runs Next.js ESLint validation |
+| `npx tsc --noEmit` | Validates TypeScript types across entire codebase |
 
 ---
 
+## Architecture & Data Flow
+
+### Session & Identity Bridge
+
+```
+Next.js Client (Browser)
+    │  (Better Auth Session Cookie)
+    ▼
+Edge Middleware (`proxy.ts`)
+    │  (Validates session token in < 20 ms)
+    ▼
+Next.js API Handler (`/api/auth/*`)
+    │  (Exposes public JWKS endpoint)
+    ▼
+Express Microservice (`Archflow-Server`)
+    │  (Asymmetric verification via `jose` + `x-internal-secret`)
+    ▼
+MongoDB Atlas Native Driver
+```
+
+### Key Design Decisions
+
+- **Single source of truth in workspace**: All authenticated tools live under `/workspace/*`, sharing a unified sidebar shell and token telemetry.
+- **Dynamic AI chunking**: Heavy interactive widgets (like `SupportChat` and `framer-motion`) are dynamically imported with deferred client execution to eliminate render-blocking JS on initial paint.
+- **Zero-downtime AI fallback**: Both blueprint synthesis and support chat loop through a resilient pool of models with graceful error catching on 404, 429, or 500 responses.
+- **Strict query sanitization**: All user-supplied search parameters and tags are sanitized through `escapeRegex` to prevent NoSQL and ReDoS injections.
+
+---
+
+## Component Reference
+
+| Component | Location | Purpose |
+|---|---|---|
+| `SupportChat` | `components/SupportChat.tsx` | Floating AI assistant with fallback pool and auth context |
+| `Navbar` | `components/layout/Navbar.tsx` | Responsive header with auth status, mobile drawer, and quick links |
+| `Footer` | `components/layout/Footer.tsx` | Accessible footer with min 44 px touch targets and semantic landmarks |
+| `VerificationModal` | `app/(auth)/VerificationModal.tsx` | Auto-dispatched modal prompting users to check their verification email |
+| `FAQ` | `components/landing/FAQ.tsx` | Accessible accordion with JSON-LD schema and `aria-expanded` state |
+| `Testimonials` | `components/landing/Testimonials.tsx` | Social proof showcase with strict heading hierarchy |
+| `AddBlueprintStudio` | `app/(dashboardLayout)/workspace/add-blueprint` | Interactive studio orchestrating the 4-stage generation pipeline |
+| `ApiSettings` | `app/(dashboardLayout)/workspace/api-settings` | BYOK OpenRouter key configuration and live balance monitor |
+
+---
+
+## Security & Access Control
+
+- **Edge Route Protection:** All `/workspace/*` paths evaluate authenticated cookies at the edge, rejecting unauthorized requests before hitting the database.
+- **Role-Based Access Control (RBAC):** Admin consoles (`/workspace/admin/*`) verify administrative privileges on both client middleware and backend API endpoints.
+- **Cryptographic JWKS Bridge:** Next.js and Express communicate using asymmetric JWT verification (`jose`) and shared internal headers (`x-internal-secret`).
+- **Defensive Projections:** User queries strictly exclude `password` and `customApiKey` fields to prevent secret leakage in admin tables.
+- **Origin-Locked CORS:** Cross-Origin Resource Sharing is locked to authorized deployment URLs (`https://archflow-web-ai.vercel.app`) and local dev hosts.
+
+---
+
+## Accessibility & Standards
+
+- **WCAG AA Compliance:** All text tokens meet or exceed 4.5:1 contrast ratio in both Light and Dark themes (`oklch` tailored palette).
+- **Semantic Landmarks:** Full structure with `<header>`, `<main id="main-content">`, `<section>`, and `<footer>`.
+- **Keyboard Navigation:** Focus rings and visible `:focus-visible` styling across all interactive elements.
+- **Touch-Friendly Targets:** All interactive links and buttons enforce minimum dimensions of `44 × 44 px`.
+- **Screen Reader Support:** Icon-only buttons feature explicit `aria-label` tags, and dynamic accordions announce `aria-expanded` state.
+
+---
+
+## License
+
+MIT © [Mahmudul Hasan](https://github.com/mahmudulhasanzb). Built for the EJP-SCIC Agentic-AI Assessment.
