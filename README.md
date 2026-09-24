@@ -21,7 +21,6 @@ An enterprise-grade, agentic software engineering platform that orchestrates spe
 - [Component Reference](#component-reference)
 - [Security & Access Control](#security--access-control)
 - [Accessibility & Standards](#accessibility--standards)
-- [License](#license)
 
 ---
 
@@ -249,9 +248,3 @@ MongoDB Atlas Native Driver
 - **Keyboard Navigation:** Focus rings and visible `:focus-visible` styling across all interactive elements.
 - **Touch-Friendly Targets:** All interactive links and buttons enforce minimum dimensions of `44 × 44 px`.
 - **Screen Reader Support:** Icon-only buttons feature explicit `aria-label` tags, and dynamic accordions announce `aria-expanded` state.
-
----
-
-## License
-
-MIT © [Mahmudul Hasan](https://github.com/mahmudulhasanzb). Built for the EJP-SCIC Agentic-AI Assessment.
