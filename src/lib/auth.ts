@@ -22,6 +22,8 @@ export const auth = betterAuth({
     process.env.BETTER_AUTH_URL || '',
     process.env.NEXT_PUBLIC_APP_URL || '',
     'https://archflow-web-ai.vercel.app',
+    'https://archflow-ai.vercel.app',
+    'https://archflow-client.vercel.app',
   ].filter(Boolean),
   socialProviders: {
     google: {

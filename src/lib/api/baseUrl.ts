@@ -1,6 +1,21 @@
 import { authClient } from '../auth-client';
 
-export const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const resolveBaseUrl = (): string => {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (typeof window !== 'undefined') {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return 'http://localhost:5000';
+    }
+    return 'https://archflow-server.vercel.app';
+  }
+  return process.env.NODE_ENV === 'production'
+    ? 'https://archflow-server.vercel.app'
+    : 'http://localhost:5000';
+};
+
+export const baseUrl = resolveBaseUrl();
 export const baseURL = baseUrl;
 
 export const getAuthHeaders = async (): Promise<Record<string, string>> => {

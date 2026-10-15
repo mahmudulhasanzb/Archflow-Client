@@ -481,6 +481,10 @@ export default function AddBlueprintPage() {
             errMsg.includes('limit')))
       ) {
         setShowDefaultLimitModal(true);
+      } else if (errMsg.includes('Failed to fetch') || errMsg.includes('NetworkError') || errMsg.includes('Load failed')) {
+        toast.error(
+          'API connection failed. Please ensure the backend server is reachable and CORS is permitted.',
+        );
       } else {
         toast.error(
           err.message || 'Blueprint generation failed. Please try again.',
